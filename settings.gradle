@@ -1,0 +1,5 @@
+rootProject.name = 'dating-match'
+include 'api'
+include 'admin'
+include 'common'
+
