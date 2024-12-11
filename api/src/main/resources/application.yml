@@ -1,3 +1,9 @@
 spring:
   profiles:
     include: db
+  config:
+    import: application-secret.yml
+
+oauth:
+  kakaoUserInfoUri: https://kapi.kakao.com/v2/user/me
+  googleUserInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
