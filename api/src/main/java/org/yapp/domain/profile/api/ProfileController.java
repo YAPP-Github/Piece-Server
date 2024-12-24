@@ -28,6 +28,8 @@ public class ProfileController {
   private final ProfileService profileService;
 
   @GetMapping
+  @Operation(summary = "프로필 조회", description = "현재 로그인된 사용자의 프로필을 조회합니다.", tags = {"Profile"})
+  @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
   public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@AuthenticationPrincipal User user) {
     Profile profile = profileService.getProfileById(user.getProfile().getId());
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(ProfileResponse.from(profile)));
