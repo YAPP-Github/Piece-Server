@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.yapp.domain.auth.application.oauth.service.OauthService;
 import org.yapp.domain.auth.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.dto.response.OauthLoginResponse;
+import org.yapp.global.common.dto.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,9 +19,9 @@ public class LoginController {
   private final OauthService oauthService;
 
   @PostMapping("/oauth")
-  public ResponseEntity<OauthLoginResponse> oauthLogin(@RequestBody OauthLoginRequest request) {
+  public ResponseEntity<ApiResponse<OauthLoginResponse>> oauthLogin(@RequestBody OauthLoginRequest request) {
     OauthLoginResponse response = oauthService.login(request);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(ApiResponse.createSuccess(response));
   }
 
 }
