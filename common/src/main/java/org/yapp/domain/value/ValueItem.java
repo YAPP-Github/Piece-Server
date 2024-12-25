@@ -25,6 +25,9 @@ public class ValueItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column
+  private String category;
+
   @Column(nullable = false)
   private String question;
 
