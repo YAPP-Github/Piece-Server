@@ -1,5 +1,7 @@
 package org.yapp.domain.profile;
 
+import org.yapp.domain.value.ValueItem;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

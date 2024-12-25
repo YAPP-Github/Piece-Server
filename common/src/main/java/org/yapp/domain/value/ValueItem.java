@@ -1,4 +1,4 @@
-package org.yapp.domain.profile;
+package org.yapp.domain.value;
 
 import org.hibernate.annotations.Type;
 
