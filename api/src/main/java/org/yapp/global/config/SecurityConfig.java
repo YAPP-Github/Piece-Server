@@ -37,8 +37,6 @@ public class SecurityConfig {
                                                           .hasAnyRole("USER", "ADMIN")
                                                           .requestMatchers(getMatcherForAnyone())
                                                           .permitAll()
-                                                          .requestMatchers(getMatcherForSwagger())
-                                                          .permitAll()
                                                           .anyRequest()
                                                           .hasAnyRole("ADMIN"))
                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -56,16 +54,12 @@ public class SecurityConfig {
   }
 
   private RequestMatcher getMatcherForAnyone() {
-    return RequestMatchers.anyOf(antMatcher("/login/oauth"));
+    return RequestMatchers.anyOf(antMatcher("/login/**"), antMatcher("/api/**"), antMatcher("/swagger-ui/**"),
+        antMatcher("/v3/api-docs/**"), antMatcher("/swagger-ui.html"));
   }
 
   private RequestMatcher getMatcherForUserAndAdmin() {
     return RequestMatchers.anyOf(antMatcher("/user") //TODO: 임시이며 추후 url에 따라 수정해야.
     );
-  }
-
-  private RequestMatcher getMatcherForSwagger() {
-    return RequestMatchers.anyOf(antMatcher("/swagger-ui/**"), antMatcher("/v3/api-docs/**"),
-        antMatcher("/swagger-ui.html"));
   }
 }
