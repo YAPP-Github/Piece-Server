@@ -26,6 +26,6 @@ public class ValueItemController {
   @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "가치관 리스트가 성공적으로 조회되었습니다.")
   public ResponseEntity<ApiResponse<ValueItemResponses>> getValueItems() {
     List<ValueItem> allValueItems = valueItemService.getAllValueItems();
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(ValueItemResponses.from(allValueItems)));
+    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(ValueItemResponses.from(allValueItems)));
   }
 }

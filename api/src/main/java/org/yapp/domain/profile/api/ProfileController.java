@@ -34,7 +34,8 @@ public class ProfileController {
   @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
   public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@AuthenticationPrincipal Long userId) {
     User user = userService.getUserById(userId);
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(ProfileResponse.from(user.getProfile())));
+    return ResponseEntity.status(HttpStatus.OK)
+                         .body(ApiResponse.createSuccess(ProfileResponse.from(user.getProfile())));
   }
 
   @PutMapping()
@@ -43,6 +44,6 @@ public class ProfileController {
   public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@AuthenticationPrincipal Long userId,
       @RequestBody @Valid ProfileUpdateRequest request) {
     Profile profile = profileService.updateByUserId(userId, request);
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(ProfileResponse.from(profile)));
+    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(ProfileResponse.from(profile)));
   }
 }
