@@ -30,15 +30,19 @@ public class User {
   @Column(name = "name")
   private String name;
 
+  @Column(name = "role")
+  private String role;
+
   @OneToOne
   @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
   private Profile profile;
 
   @Builder
-  public User(String oauthId, String name, Profile profile) {
+  public User(String oauthId, String name, Profile profile, String role) {
     this.oauthId = oauthId;
     this.name = name;
     this.profile = profile;
+    this.role = role;
   }
 
   public void setProfile(Profile profile) {
