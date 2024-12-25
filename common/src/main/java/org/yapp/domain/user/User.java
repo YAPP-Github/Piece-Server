@@ -31,7 +31,7 @@ public class User {
   private String name;
 
   @Column(name = "role")
-  private String role;
+  private String role = "USER";
 
   @OneToOne
   @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐

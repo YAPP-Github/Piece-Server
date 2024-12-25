@@ -30,15 +30,31 @@ public class OauthService {
       User newUser = User.builder().oauthId(oauthId).build();
       User savedUser = userRepository.save(newUser);
       Long userId = savedUser.getId();
-      String accessToken = jwtUtil.createJwt("access_token", userId, oauthId, "member", 600000L);
-      String refreshToken = jwtUtil.createJwt("refresh_token", userId, oauthId, "member", 864000000L);
+      String accessToken = jwtUtil.createJwt("access_token", userId, oauthId, "USER", 600000L);
+      String refreshToken = jwtUtil.createJwt("refresh_token", userId, oauthId, "USER", 864000000L);
       return new OauthLoginResponse(true, accessToken, refreshToken);
     }
 
     //이미 가입한 유저인 경우 로그인 처리
     Long userId = userOptional.get().getId();
-    String accessToken = jwtUtil.createJwt("access_token", userId, oauthId, "member", 600000L);
-    String refreshToken = jwtUtil.createJwt("refresh_token", userId, oauthId, "member", 864000000L);
+    final User user = userOptional.get();
+    String accessToken = jwtUtil.createJwt("access_token", userId, oauthId, user.getRole(), 600000L);
+    String refreshToken = jwtUtil.createJwt("refresh_token", userId, oauthId, user.getRole(), 864000000L);
+
+    return new OauthLoginResponse(false, accessToken, refreshToken);
+  }
+
+
+  public OauthLoginResponse tmpTokenGet(Long userId) {
+    //이미 가입된 유저인지 확인하고 가입되어 있지 않으면 회원가입 처리
+    Optional<User> userOptional = userRepository.findById(userId);
+
+    System.out.println("userOptional = " + userOptional);
+
+    User user = userOptional.get();
+
+    String accessToken = jwtUtil.createJwt("access_token", userId, user.getOauthId(), user.getRole(), 600000L);
+    String refreshToken = jwtUtil.createJwt("refresh_token", userId, user.getOauthId(), user.getRole(), 864000000L);
 
     return new OauthLoginResponse(false, accessToken, refreshToken);
   }
