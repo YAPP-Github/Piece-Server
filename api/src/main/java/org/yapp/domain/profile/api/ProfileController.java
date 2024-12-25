@@ -13,6 +13,7 @@ import org.yapp.domain.profile.api.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.api.response.ProfileResponse;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.user.User;
+import org.yapp.domain.user.application.UserService;
 import org.yapp.util.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,21 +27,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/profiles")
 public class ProfileController {
   private final ProfileService profileService;
+  private final UserService userService;
 
   @GetMapping
   @Operation(summary = "프로필 조회", description = "현재 로그인된 사용자의 프로필을 조회합니다.", tags = {"Profile"})
   @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
-  public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@AuthenticationPrincipal User user) {
-    Profile profile = profileService.getProfileById(user.getProfile().getId());
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(ProfileResponse.from(profile)));
+  public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@AuthenticationPrincipal Long userId) {
+    User user = userService.getUserById(userId);
+    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(ProfileResponse.from(user.getProfile())));
   }
 
   @PutMapping()
   @Operation(summary = "프로필 업데이트", description = "현재 로그인된 사용자의 프로필을 업데이트합니다.", tags = {"Profile"})
   @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로필이 성공적으로 업데이트되었습니다.")
-  public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@AuthenticationPrincipal User user,
+  public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@AuthenticationPrincipal Long userId,
       @RequestBody @Valid ProfileUpdateRequest request) {
-    Profile profile = profileService.updateByUserId(user.getId(), request);
+    Profile profile = profileService.updateByUserId(userId, request);
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(ProfileResponse.from(profile)));
   }
 }
