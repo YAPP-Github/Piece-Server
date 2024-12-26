@@ -25,7 +25,6 @@ public class LoginController {
     return ResponseEntity.ok(ApiResponse.createSuccess(response));
   }
 
-
   /**
    * 개발중 소셜 로그인으로 사용자으 accessToken을 가져오기 어렵기 때문에 만든 임시 메서드
    */
