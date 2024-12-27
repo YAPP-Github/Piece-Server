@@ -1,11 +1,20 @@
 package org.yapp.domain.profile.api.response;
 
 import org.yapp.domain.profile.ProfileValue;
-import org.yapp.domain.profile.ValueItem;
 
-public record ProfileValueResponse(Long id, ValueItem valueItem, Integer selectedValue) {
-  public static ProfileValueResponse from(ProfileValue profileValue) {
-    return new ProfileValueResponse(profileValue.getId(), profileValue.getValueItem(),
-        profileValue.getSelectedAnswer());
+import lombok.Getter;
+
+@Getter
+public class ProfileValueResponse {
+  private Long id;
+  private Long valueItemId;
+  private String question;
+  private Integer selectedAnswer;
+
+  public ProfileValueResponse(ProfileValue profileValue) {
+    this.id = profileValue.getId();
+    this.valueItemId = profileValue.getValueItem().getId();
+    this.question = profileValue.getValueItem().getQuestion();
+    this.selectedAnswer = profileValue.getSelectedAnswer();
   }
 }

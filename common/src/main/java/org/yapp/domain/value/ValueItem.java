@@ -1,4 +1,4 @@
-package org.yapp.domain.profile;
+package org.yapp.domain.value;
 
 import org.hibernate.annotations.Type;
 
@@ -24,6 +24,9 @@ public class ValueItem {
   @Column(name = "value_item_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column
+  private String category;
 
   @Column(nullable = false)
   private String question;
