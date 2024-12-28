@@ -36,8 +36,9 @@ public class ValueItem {
   private Map<Integer, Object> answers;
 
   @Builder
-  public ValueItem(String question, Map<Integer, Object> answers) {
+  public ValueItem(String question, String category, Map<Integer, Object> answers) {
     this.question = question;
+    this.category = category;
     this.answers = answers;
   }
 }
