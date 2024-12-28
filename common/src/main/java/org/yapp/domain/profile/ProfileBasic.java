@@ -23,7 +23,7 @@ public class ProfileBasic {
   private Date birthdate;
 
   @Column(name = "height")
-  private int height;
+  private Integer height;
 
   @Column(name = "job")
   private String job;
