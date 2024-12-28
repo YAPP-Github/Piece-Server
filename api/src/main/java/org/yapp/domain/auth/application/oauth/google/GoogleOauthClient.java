@@ -1,34 +1,37 @@
 package org.yapp.domain.auth.application.oauth.google;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.yapp.domain.auth.application.oauth.OauthClient;
+import org.yapp.error.code.auth.AuthErrorCode;
+import org.yapp.error.exception.ApplicationException;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class GoogleOauthClient implements OauthClient {
-    @Value("${oauth.googleUserInfoUri}")
-    private String userInfoUri;
-    private final RestTemplate restTemplate;
+  private final GoogleIdTokenVerifier googleIdTokenVerifier;
 
-    @Override
-    public String getOAuthProviderUserId(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        HttpEntity<Object> entity = new HttpEntity<>(headers);
+  @Override
+  public String getOAuthProviderUserId(String token) {
+    GoogleIdToken googleIdToken;
 
-        ResponseEntity<JsonNode> response = restTemplate.exchange(
-                userInfoUri, HttpMethod.GET, entity, JsonNode.class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody().get("sub").asText();
-        }
-        throw new RuntimeException();
+    try {
+      googleIdToken = googleIdTokenVerifier.verify(token);
+    } catch (GeneralSecurityException e) {
+      throw new ApplicationException(AuthErrorCode.OAUTH_ERROR);
+    } catch (IOException e) {
+      throw new ApplicationException(AuthErrorCode.OAUTH_ERROR);
     }
+    if (googleIdToken == null) {
+      throw new ApplicationException(AuthErrorCode.OAUTH_ERROR);
+    }
+    return googleIdToken.getPayload().getSubject();
+  }
 }

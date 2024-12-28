@@ -10,8 +10,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.yapp.domain.auth.application.jwt.JwtUtil;
 import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
-import org.yapp.domain.auth.dto.request.OauthLoginRequest;
-import org.yapp.domain.auth.dto.response.OauthLoginResponse;
+import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
+import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.dao.UserRepository;
 
@@ -63,6 +63,21 @@ class OauthServiceTest {
   }
 
   @Test
+  @DisplayName("존재하지 않는 Provider로 로그인을 요청하여 로그인에 실패한다.")
+  void testLogin_Failure() {
+    // Given
+    String providerName = "nonexistent";
+    String token = "oauth_token";
+    OauthLoginRequest request = new OauthLoginRequest(providerName, token);
+
+    // Mocking
+    when(oauthProviderResolver.find(providerName)).thenThrow(new RuntimeException());
+
+    // When & Then
+    assertThrows(RuntimeException.class, () -> oauthService.login(request));
+  }
+
+  @Test
   @DisplayName("회원가입이 된 상태에서 로그인에 성공하여 액세스, 리프레시 토큰을 반환한다.")
   void testNotFirstLogin_Success() {
     //given
@@ -86,20 +101,5 @@ class OauthServiceTest {
     assertThat(response.isRegistered()).isFalse();
     assertThat(response.getAccessToken()).isEqualTo("access_token");
     assertThat(response.getRefreshToken()).isEqualTo("refresh_token");
-  }
-
-  @Test
-  @DisplayName("존재하지 않는 Provider로 로그인을 요청하여 로그인에 실패한다.")
-  void testLogin_Failure() {
-    // Given
-    String providerName = "nonexistent";
-    String token = "oauth_token";
-    OauthLoginRequest request = new OauthLoginRequest(providerName, token);
-
-    // Mocking
-    when(oauthProviderResolver.find(providerName)).thenThrow(new RuntimeException());
-
-    // When & Then
-    assertThrows(RuntimeException.class, () -> oauthService.login(request));
   }
 }

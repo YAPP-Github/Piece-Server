@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ApiResponse<T> {
+public class CommonResponse<T> {
   private static final String SUCCESS_STATUS = "success";
   private static final String FAIL_STATUS = "fail";
   private static final String ERROR_STATUS = "error";
@@ -23,17 +23,17 @@ public class ApiResponse<T> {
   private String message;
   private T data;
 
-  private ApiResponse(String status, T data, String message) {
+  private CommonResponse(String status, T data, String message) {
     this.status = status;
     this.data = data;
     this.message = message;
   }
 
-  public static ApiResponse<?> createError(String message) {
-    return new ApiResponse<>(ERROR_STATUS, null, message);
+  public static CommonResponse<?> createError(String message) {
+    return new CommonResponse<>(ERROR_STATUS, null, message);
   }
 
-  public static ApiResponse<?> createFail(BindingResult bindingResult) {
+  public static CommonResponse<?> createFail(BindingResult bindingResult) {
     Map<String, String> errors = new HashMap<>();
 
     List<ObjectError> allErrors = bindingResult.getAllErrors();
@@ -44,14 +44,14 @@ public class ApiResponse<T> {
         errors.put(error.getObjectName(), error.getDefaultMessage());
       }
     }
-    return new ApiResponse<>(FAIL_STATUS, errors, null);
+    return new CommonResponse<>(FAIL_STATUS, errors, null);
   }
 
-  public static <T> ApiResponse<T> createSuccess(T data) {
-    return new ApiResponse<>(SUCCESS_STATUS, data, "요청이 성공적으로 처리되었습니다.");
+  public static <T> CommonResponse<T> createSuccess(T data) {
+    return new CommonResponse<>(SUCCESS_STATUS, data, "요청이 성공적으로 처리되었습니다.");
   }
 
-  public static ApiResponse<?> createSuccessWithNoContent() {
-    return new ApiResponse<>(SUCCESS_STATUS, null, null);
+  public static CommonResponse<?> createSuccessWithNoContent() {
+    return new CommonResponse<>(SUCCESS_STATUS, null, null);
   }
 }
