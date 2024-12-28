@@ -1,4 +1,4 @@
-package org.yapp.domain.profile.api;
+package org.yapp.domain.profile.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.api.request.ProfileUpdateRequest;
-import org.yapp.domain.profile.api.response.ProfileResponse;
+import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
+import org.yapp.domain.profile.presentation.response.ProfileResponse;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;

@@ -33,7 +33,7 @@ public class ProfileValue {
   @JoinColumn(name = "value_item_id", nullable = false)
   private ValueItem valueItem;
 
-  @Column(nullable = false)
+  @Column
   private Integer selectedAnswer;
 
   @Builder

@@ -1,4 +1,4 @@
-package org.yapp.domain.profile.api.request;
+package org.yapp.domain.profile.presentation.request;
 
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileBio;

@@ -1,4 +1,4 @@
-package org.yapp.domain.profile.api.response;
+package org.yapp.domain.profile.presentation.response;
 
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;

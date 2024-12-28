@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileBio;
-import org.yapp.domain.profile.api.request.ProfileUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.user.User;
