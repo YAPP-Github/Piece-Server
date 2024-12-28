@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.value.ValueItem;
 import org.yapp.domain.value.application.ValueItemService;
 import org.yapp.domain.value.presentation.dto.ValueItemResponses;
-import org.yapp.util.ApiResponse;
+import org.yapp.util.CommonResponse;
 
 import java.util.List;
 
@@ -24,8 +24,9 @@ public class ValueItemController {
   @GetMapping()
   @Operation(summary = "가치관 질문 리스트 조회", description = "서비스에 등록된 모든 가치관 질문을 조회합니다.", tags = {"ValueItem"})
   @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "가치관 리스트가 성공적으로 조회되었습니다.")
-  public ResponseEntity<ApiResponse<ValueItemResponses>> getValueItems() {
+  public ResponseEntity<CommonResponse<ValueItemResponses>> getValueItems() {
     List<ValueItem> allValueItems = valueItemService.getAllValueItems();
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.createSuccess(ValueItemResponses.from(allValueItems)));
+    return ResponseEntity.status(HttpStatus.OK)
+                         .body(CommonResponse.createSuccess(ValueItemResponses.from(allValueItems)));
   }
 }

@@ -1,4 +1,4 @@
-package org.yapp.domain.auth.dto.request;
+package org.yapp.domain.auth.presentation.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
