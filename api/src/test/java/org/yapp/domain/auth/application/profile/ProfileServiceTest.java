@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.yapp.domain.auth.application.dummy.TestDataService;
 import org.yapp.domain.profile.Profile;
+import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
@@ -29,6 +31,12 @@ class ProfileServiceTest {
   @Autowired
   private UserRepository userRepository;
 
+  @Autowired
+  private TestDataService testDataService;
+
+  @Autowired
+  private ProfileValueRepository profileValueRepository;
+
   private User testUser;
   private Profile testProfile;
 
@@ -43,6 +51,7 @@ class ProfileServiceTest {
 
     testUser.setProfile(testProfile);
     userRepository.save(testUser);
+    testDataService.createValueItems();
   }
 
   @Test
@@ -58,6 +67,7 @@ class ProfileServiceTest {
     assertThat(savedProfile).isNotNull();
     assertThat(savedProfile.getProfileBasic().getNickname()).isEqualTo("nickname123");
     assertThat(savedProfile.getProfileBasic().getPhoneNumber()).isEqualTo("010-1234-5678");
+    assertThat(savedProfile.getProfileValues().size()).isEqualTo(profileValueRepository.count());
   }
 
   @Test
@@ -65,8 +75,8 @@ class ProfileServiceTest {
   void shouldUpdateProfileByUserId() {
     // Given: 업데이트 요청 생성
     ProfileUpdateRequest updateRequest =
-        new ProfileUpdateRequest("updatedNickname", "1995-05-20", 172, "개발자", "서울시 강남구", "비흡연", "기독교", "활발",
-            "01011112222", "https://example.com/profile.jpg", "안녕하세요. 개발자입니다.", "10년 안에 CTO가 되는 것", "기술, 클라이밍, 여행");
+            new ProfileUpdateRequest("updatedNickname", "1995-05-20", 172, "개발자", "서울시 강남구", "비흡연", "기독교", "활발",
+                    "01011112222", "https://example.com/profile.jpg", "안녕하세요. 개발자입니다.", "10년 안에 CTO가 되는 것", "기술, 클라이밍, 여행");
 
     // When: 업데이트 실행
     Profile updatedProfile = profileService.updateByUserId(testUser.getId(), updateRequest);
