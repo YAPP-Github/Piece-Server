@@ -84,4 +84,8 @@ public class ProfileService {
 
     return profile;
   }
+
+  public boolean isNicknameAvailable(String nickname) {
+    return !profileRepository.existsByProfileBasic_Nickname(nickname);
+  }
 }

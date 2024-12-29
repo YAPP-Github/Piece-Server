@@ -6,4 +6,5 @@ import org.yapp.domain.profile.Profile;
 
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
+    boolean existsByProfileBasic_Nickname(String nickname);
 }
