@@ -8,13 +8,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.auth.application.dummy.TestDataService;
 import org.yapp.domain.profile.Profile;
+import org.yapp.domain.profile.ProfileValue;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
+import org.yapp.domain.profile.presentation.request.ProfileValuePair;
+import org.yapp.domain.profile.presentation.request.ProfileValueUpdateRequest;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.dao.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,5 +104,44 @@ class ProfileServiceTest {
     assertThat(updatedProfile.getProfileBio().getIntroduction()).isEqualTo(updateRequest.introduction());
     assertThat(updatedProfile.getProfileBio().getGoal()).isEqualTo(updateRequest.goal());
     assertThat(updatedProfile.getProfileBio().getInterest()).isEqualTo(updateRequest.interest());
+  }
+
+  @Test
+  @DisplayName("프로필 값 업데이트 테스트 - 정상 동작")
+  void updateProfileValues_Success() {
+    // given
+    Long userId = testUser.getId();
+    ProfileCreateDto dto = new ProfileCreateDto("홍길동", "nickname123", "010-1234-5678");
+    Profile savedProfile = profileService.create(dto);
+    testUser.setProfile(savedProfile);
+    profileRepository.flush();
+
+    // 업데이트 요청 생성 (ValueItem 2개 선택)
+    List<ProfileValuePair> profileValuePairList = new ArrayList<>();
+    savedProfile.getProfileValues().forEach((e)->{
+      profileValuePairList.add(new ProfileValuePair(e.getValueItem().getId(), 1));
+    });
+
+    ProfileValueUpdateRequest updateRequest = new ProfileValueUpdateRequest(
+            profileValuePairList
+    );
+
+    // when
+    profileService.updateProfileValues(userId, updateRequest);
+
+    // then
+    List<ProfileValue> updatedProfileValues = profileValueRepository.findByProfileId(savedProfile.getId());
+
+    // 업데이트 검증
+    updatedProfileValues.forEach(profileValue -> {
+      Long valueItemId = profileValue.getValueItem().getId();
+      Integer expectedAnswer = updateRequest.profileValuePairs().stream()
+              .filter(pair -> pair.valueItemId().equals(valueItemId))
+              .findFirst()
+              .map(ProfileValuePair::selectedAnswer)
+              .orElse(null);
+
+      assertThat(profileValue.getSelectedAnswer()).isEqualTo(expectedAnswer);
+    });
   }
 }
