@@ -4,11 +4,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueUpdateRequest;
@@ -58,5 +54,13 @@ public class ProfileController {
   ){
     Profile profile = profileService.updateProfileValues(userId, request);
     return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(ProfileResponse.from(profile)));
+  }
+
+  @PostMapping("/check-nickname")
+  @Operation(summary = "프로필 닉네임 중복 확인", description = "요청 파라미터로 전달된 닉네임이 중복되는지 확인합니다.", tags = {"profile"})
+  @ApiResponse(responseCode = "200", description = "중복되지 않은 닉네임입니다.")
+  public ResponseEntity<CommonResponse<Boolean>> checkNickname(@RequestParam String nickname) {
+    boolean isAvailable = profileService.isNicknameAvailable(nickname);
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(isAvailable));
   }
 }
