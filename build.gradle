@@ -61,6 +61,9 @@ subprojects {
 		implementation 'com.google.oauth-client:google-oauth-client:1.32.1'
 		implementation 'com.google.http-client:google-http-client-jackson2:1.40.1'
 
+		//S3
+		implementation 'com.amazonaws:aws-java-sdk-s3:1.12.331'
+
 		compileOnly 'org.projectlombok:lombok'
 		runtimeOnly 'com.mysql:mysql-connector-j'
 		annotationProcessor 'org.projectlombok:lombok'
