@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.yapp.domain.profile.Profile;
+import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileResponse;
@@ -19,6 +21,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProfileController {
   private final ProfileService profileService;
   private final UserService userService;
+  private final ProfileImageService profileImageService;
 
   @GetMapping
   @Operation(summary = "프로필 조회", description = "현재 로그인된 사용자의 프로필을 조회합니다.", tags = {"Profile"})
@@ -62,5 +67,13 @@ public class ProfileController {
   public ResponseEntity<CommonResponse<Boolean>> checkNickname(@RequestParam String nickname) {
     boolean isAvailable = profileService.isNicknameAvailable(nickname);
     return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(isAvailable));
+  }
+
+  @PostMapping("/images")
+  @Operation(summary = "프로필 이미지 등록", description = "업로드한 이미지지를 버킷에 등록합니다.", tags = {"profileImage"})
+  @ApiResponse(responseCode = "200", description = "이미지가 버킷에 저장되었습니다.")
+  public ResponseEntity<CommonResponse<String>> checkNickname(@RequestParam("file") MultipartFile file) throws IOException {
+    String profileImageUrl = profileImageService.uploadProfileImage(file);
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(profileImageUrl));
   }
 }
