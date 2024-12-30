@@ -27,6 +27,17 @@ public class SmsSenderService {
     this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
   }
 
+  /**
+   * 테스트를 위한 초기화 메서드
+   */
+  public void initForTest(String apiKey, String apiSecret, String fromNumber,
+      DefaultMessageService defaultMessageService) {
+    this.apiKey = apiKey;
+    this.apiSecret = apiSecret;
+    this.fromNumber = fromNumber;
+    this.messageService = defaultMessageService;
+  }
+
   public void sendSMS(String to, String smsMessage) {
     Message message = new Message();
     message.setFrom(fromNumber);
