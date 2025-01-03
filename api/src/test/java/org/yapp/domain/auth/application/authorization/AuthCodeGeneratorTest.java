@@ -17,6 +17,6 @@ class AuthCodeGeneratorTest {
     int authCode = authCodeGenerator.generate();
 
     //then
-    assertThat(authCode).isLessThanOrEqualTo(999999).isGreaterThanOrEqualTo(100000);
+    assertThat(authCode).isLessThanOrEqualTo(999999).isGreaterThanOrEqualTo(1);
   }
 }

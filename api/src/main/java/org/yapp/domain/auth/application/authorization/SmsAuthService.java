@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SmsAuthService {
-  private static final String AUTH_CODE_FORMAT = "[PIECE] 인증 번호는 %d 입니다.";
+  private static final String AUTH_CODE_FORMAT = "[PIECE] 인증 번호는 %06d 입니다.";
   private final AuthCodeGenerator authCodeGenerator;
   private final SmsSenderService smsSenderService;
 
