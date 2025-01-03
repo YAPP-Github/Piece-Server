@@ -72,7 +72,7 @@ public class ProfileController {
   @PostMapping("/images")
   @Operation(summary = "프로필 이미지 등록", description = "업로드한 이미지지를 버킷에 등록합니다.", tags = {"profileImage"})
   @ApiResponse(responseCode = "200", description = "이미지가 버킷에 저장되었습니다.")
-  public ResponseEntity<CommonResponse<String>> checkNickname(@RequestParam("file") MultipartFile file) throws IOException {
+  public ResponseEntity<CommonResponse<String>> uploadProfileImage(@RequestParam("file") MultipartFile file) throws IOException {
     String profileImageUrl = profileImageService.uploadProfileImage(file);
     return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(profileImageUrl));
   }
