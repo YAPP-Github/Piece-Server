@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -36,7 +37,10 @@ class SmsSenderServiceTest {
   @BeforeEach
   void setUp() {
     smsSenderService = new SmsSenderService();
-    smsSenderService.initForTest(apiKey, apiSecret, fromNumber, messageService);
+    ReflectionTestUtils.setField(smsSenderService, "apiKey", apiKey);
+    ReflectionTestUtils.setField(smsSenderService, "apiSecret", apiSecret);
+    ReflectionTestUtils.setField(smsSenderService, "fromNumber", fromNumber);
+    ReflectionTestUtils.setField(smsSenderService, "messageService", messageService);
   }
 
   @Test
