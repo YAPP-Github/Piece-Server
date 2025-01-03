@@ -42,4 +42,11 @@ public class ProfileValue {
     this.valueItem = valueItem;
     this.selectedAnswer = selectedAnswer;
   }
+
+  public void updatedSelectedAnswer(Integer newSelectedAnswer) {
+    if (newSelectedAnswer == null || newSelectedAnswer <= 0)
+      throw new IllegalArgumentException("선택된 항목은 1 이상이어야 합니다.");
+
+    this.selectedAnswer = newSelectedAnswer;
+  }
 }

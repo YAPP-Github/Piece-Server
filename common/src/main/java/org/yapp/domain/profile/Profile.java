@@ -50,4 +50,6 @@ public class Profile {
   public void updateBasic(ProfileBasic profileBasic) {
     this.profileBasic = profileBasic;
   }
+
+  public void updateProfileValues(List<ProfileValue> profileValues) {this.profileValues = profileValues;}
 }
