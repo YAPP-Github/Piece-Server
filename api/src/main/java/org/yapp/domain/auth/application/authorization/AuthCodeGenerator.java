@@ -17,6 +17,6 @@ public class AuthCodeGenerator {
    * @return 6자리 난수
    */
   public int generate() {
-    return secureRandom.nextInt(900000) + 100000;
+    return secureRandom.nextInt(1000000);
   }
 }

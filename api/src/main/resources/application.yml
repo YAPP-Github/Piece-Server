@@ -1,8 +1,6 @@
 spring:
   profiles:
-    include: db
-  config:
-    import: application-secret.yml
+    include: db, secret, devtool, s3
 
 oauth:
   kakaoUserInfoUri: https://kapi.kakao.com/v2/user/me

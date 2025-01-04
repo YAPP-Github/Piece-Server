@@ -6,13 +6,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.yapp.domain.auth.application.dummy.TestDataService;
 import org.yapp.domain.profile.Profile;
+import org.yapp.domain.profile.ProfileValue;
+import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
+import org.yapp.domain.profile.presentation.request.ProfileValuePair;
+import org.yapp.domain.profile.presentation.request.ProfileValueUpdateRequest;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.dao.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,6 +37,12 @@ class ProfileServiceTest {
   @Autowired
   private UserRepository userRepository;
 
+  @Autowired
+  private TestDataService testDataService;
+
+  @Autowired
+  private ProfileValueRepository profileValueRepository;
+
   private User testUser;
   private Profile testProfile;
 
@@ -43,6 +57,7 @@ class ProfileServiceTest {
 
     testUser.setProfile(testProfile);
     userRepository.save(testUser);
+    testDataService.createValueItems();
   }
 
   @Test
@@ -58,6 +73,7 @@ class ProfileServiceTest {
     assertThat(savedProfile).isNotNull();
     assertThat(savedProfile.getProfileBasic().getNickname()).isEqualTo("nickname123");
     assertThat(savedProfile.getProfileBasic().getPhoneNumber()).isEqualTo("010-1234-5678");
+    assertThat(savedProfile.getProfileValues().size()).isEqualTo(profileValueRepository.count());
   }
 
   @Test
@@ -65,8 +81,8 @@ class ProfileServiceTest {
   void shouldUpdateProfileByUserId() {
     // Given: 업데이트 요청 생성
     ProfileUpdateRequest updateRequest =
-        new ProfileUpdateRequest("updatedNickname", "1995-05-20", 172, "개발자", "서울시 강남구", "비흡연", "기독교", "활발",
-            "01011112222", "https://example.com/profile.jpg", "안녕하세요. 개발자입니다.", "10년 안에 CTO가 되는 것", "기술, 클라이밍, 여행");
+            new ProfileUpdateRequest("updatedNickname", "1995-05-20", 172, "개발자", "서울시 강남구", "비흡연", "기독교", "활발",
+                    "01011112222", "https://example.com/profile.jpg", "안녕하세요. 개발자입니다.", "10년 안에 CTO가 되는 것", "기술, 클라이밍, 여행");
 
     // When: 업데이트 실행
     Profile updatedProfile = profileService.updateByUserId(testUser.getId(), updateRequest);
@@ -88,5 +104,44 @@ class ProfileServiceTest {
     assertThat(updatedProfile.getProfileBio().getIntroduction()).isEqualTo(updateRequest.introduction());
     assertThat(updatedProfile.getProfileBio().getGoal()).isEqualTo(updateRequest.goal());
     assertThat(updatedProfile.getProfileBio().getInterest()).isEqualTo(updateRequest.interest());
+  }
+
+  @Test
+  @DisplayName("프로필 값 업데이트 테스트 - 정상 동작")
+  void updateProfileValues_Success() {
+    // given
+    Long userId = testUser.getId();
+    ProfileCreateDto dto = new ProfileCreateDto("홍길동", "nickname123", "010-1234-5678");
+    Profile savedProfile = profileService.create(dto);
+    testUser.setProfile(savedProfile);
+    profileRepository.flush();
+
+    // 업데이트 요청 생성 (ValueItem 2개 선택)
+    List<ProfileValuePair> profileValuePairList = new ArrayList<>();
+    savedProfile.getProfileValues().forEach((e)->{
+      profileValuePairList.add(new ProfileValuePair(e.getValueItem().getId(), 1));
+    });
+
+    ProfileValueUpdateRequest updateRequest = new ProfileValueUpdateRequest(
+            profileValuePairList
+    );
+
+    // when
+    profileService.updateProfileValues(userId, updateRequest);
+
+    // then
+    List<ProfileValue> updatedProfileValues = profileValueRepository.findByProfileId(savedProfile.getId());
+
+    // 업데이트 검증
+    updatedProfileValues.forEach(profileValue -> {
+      Long valueItemId = profileValue.getValueItem().getId();
+      Integer expectedAnswer = updateRequest.profileValuePairs().stream()
+              .filter(pair -> pair.valueItemId().equals(valueItemId))
+              .findFirst()
+              .map(ProfileValuePair::selectedAnswer)
+              .orElse(null);
+
+      assertThat(profileValue.getSelectedAnswer()).isEqualTo(expectedAnswer);
+    });
   }
 }

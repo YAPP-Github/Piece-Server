@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class SmsSenderService {
   @Value("${coolsms.apikey}")
   private String apiKey;
@@ -25,17 +23,6 @@ public class SmsSenderService {
   @PostConstruct // 의존성 주입이 완료된 후 초기화를 수행하는 메서드
   public void init() {
     this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
-  }
-
-  /**
-   * 테스트를 위한 초기화 메서드
-   */
-  public void initForTest(String apiKey, String apiSecret, String fromNumber,
-      DefaultMessageService defaultMessageService) {
-    this.apiKey = apiKey;
-    this.apiSecret = apiSecret;
-    this.fromNumber = fromNumber;
-    this.messageService = defaultMessageService;
   }
 
   public void sendSMS(String to, String smsMessage) {
