@@ -1,29 +1,29 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.5'
-	id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'org.yapp'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 
 bootJar.enabled = false
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 subprojects {
@@ -60,6 +60,9 @@ subprojects {
 		implementation 'com.google.api-client:google-api-client:1.32.1'
 		implementation 'com.google.oauth-client:google-oauth-client:1.32.1'
 		implementation 'com.google.http-client:google-http-client-jackson2:1.40.1'
+    
+    //cool sms
+    implementation 'net.nurigo:sdk:4.3.0'
 
 		//S3
 		implementation 'com.amazonaws:aws-java-sdk-s3:1.12.331'
@@ -77,5 +80,5 @@ subprojects {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
