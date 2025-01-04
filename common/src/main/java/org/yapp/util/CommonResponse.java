@@ -51,7 +51,7 @@ public class CommonResponse<T> {
     return new CommonResponse<>(SUCCESS_STATUS, data, "요청이 성공적으로 처리되었습니다.");
   }
 
-  public static CommonResponse<?> createSuccessWithNoContent() {
+  public static CommonResponse<Void> createSuccessWithNoContent() {
     return new CommonResponse<>(SUCCESS_STATUS, null, null);
   }
 }
