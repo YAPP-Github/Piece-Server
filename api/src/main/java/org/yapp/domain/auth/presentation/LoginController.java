@@ -11,6 +11,7 @@ import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.util.CommonResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -23,12 +24,14 @@ public class LoginController {
    * 개발중 소셜 로그인으로 사용자의 accessToken을 가져오기 어렵기 때문에 만든 임시 메서드
    */
   @PostMapping("/test/users/{userId}")
+  @Operation(summary = "테스트 로그인", description = "테스트용 임시 토큰을 발급합니다.", tags = {"로그인"})
   public ResponseEntity<CommonResponse<OauthLoginResponse>> getToken(@PathVariable Long userId) {
     OauthLoginResponse response = oauthService.tmpTokenGet(userId);
     return ResponseEntity.ok(CommonResponse.createSuccess(response));
   }
 
   @PostMapping("/oauth")
+  @Operation(summary = "Oauth 로그인", description = "Oauth 로그인을 하고 토큰들을 발급합니다.", tags = {"로그인"})
   public ResponseEntity<CommonResponse<OauthLoginResponse>> oauthLogin(@RequestBody OauthLoginRequest request) {
     OauthLoginResponse response = oauthService.login(request);
     return ResponseEntity.ok(CommonResponse.createSuccess(response));
