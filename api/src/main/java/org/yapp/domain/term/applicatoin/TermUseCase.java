@@ -30,7 +30,7 @@ public class TermUseCase {
         boolean hasAgreedToAllRequired = agreedTermIds.containsAll(requiredTermIds);
 
         if (!hasAgreedToAllRequired) {
-            throw new IllegalStateException("모든 필수 약관에 동의해야 회원가입이 가능합니다.");
+            throw new ApplicationException(TermErrorCode.NOT_REQUIRED_TERM);
         }
 
         User user = userService.getUserById(dto.userId());

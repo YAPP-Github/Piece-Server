@@ -7,9 +7,10 @@ public record TermResponse(
         Long termId,
         String title,
         String content,
+        boolean required,
         LocalDateTime startDate
 ) {
     public static TermResponse from(Term term) {
-        return new TermResponse(term.getId(), term.getTitle(), term.getContent(), term.getStartDate());
+        return new TermResponse(term.getId(), term.getTitle(), term.getContent(), term.isRequired(),term.getStartDate());
     }
 }

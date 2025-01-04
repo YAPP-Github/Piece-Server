@@ -26,12 +26,11 @@ public class Term {
 
     private String content;
 
+    @Column(nullable = false)
     private boolean required;
 
     @Column(nullable = false)
-
     private LocalDateTime startDate;
-    @Column(nullable = false)
 
     @ColumnDefault(value = "true")
     private boolean isActive;
