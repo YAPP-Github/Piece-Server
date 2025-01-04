@@ -1,5 +1,6 @@
 package org.yapp.domain.user;
 
+import lombok.AllArgsConstructor;
 import org.yapp.domain.profile.Profile;
 
 import jakarta.persistence.Column;
@@ -14,9 +15,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "user_common")
+@Table(name = "user_table")
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class User {
   @Id
@@ -39,14 +42,6 @@ public class User {
   @OneToOne
   @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
   private Profile profile;
-
-  @Builder
-  public User(String oauthId, String name, Profile profile, String role) {
-    this.oauthId = oauthId;
-    this.name = name;
-    this.profile = profile;
-    this.role = role;
-  }
 
   public void initializePhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
