@@ -22,13 +22,13 @@ public class SmsAuthController {
   private final UserService userService;
 
   @PostMapping("/code")
-  public ResponseEntity<CommonResponse> sendSms(@RequestBody SmsAuthRequest smsAuthRequest) {
+  public ResponseEntity<CommonResponse<Void>> sendSms(@RequestBody SmsAuthRequest smsAuthRequest) {
     smsAuthService.sendAuthCodeTo(smsAuthRequest.getPhoneNumber());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
 
   @PostMapping("/code/verify")
-  public ResponseEntity<CommonResponse> verifyCode(@RequestBody SmsAuthVerifyRequest request) {
+  public ResponseEntity<CommonResponse<OauthLoginResponse>> verifyCode(@RequestBody SmsAuthVerifyRequest request) {
     smsAuthService.verifySmsAuthCode(request.getPhoneNumber(), request.getCode());
     OauthLoginResponse registerToken = userService.registerPhoneNumber(request.getPhoneNumber());
     return ResponseEntity.ok(CommonResponse.createSuccess(registerToken));
