@@ -11,7 +11,7 @@ import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
-import org.yapp.domain.profile.presentation.request.ProfileValueUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileValueItemUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileResponse;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.user.User;
@@ -67,7 +67,7 @@ public class ProfileController {
   @ApiResponse(responseCode = "200", description = "프로필 가치관이 성공적으로 업데이트되었습니다.")
   public ResponseEntity<CommonResponse<ProfileResponse>> updateProfileValues(
           @AuthenticationPrincipal Long userId,
-          @RequestBody @Valid ProfileValueUpdateRequest request
+          @RequestBody @Valid ProfileValueItemUpdateRequest request
   ){
     Profile profile = profileService.updateProfileValues(userId, request);
     return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(ProfileResponse.from(profile)));

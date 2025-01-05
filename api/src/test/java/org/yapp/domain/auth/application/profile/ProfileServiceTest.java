@@ -8,14 +8,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.auth.application.dummy.TestDataService;
 import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.ProfileValue;
+import org.yapp.domain.profile.ProfileValueItem;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
-import org.yapp.domain.profile.presentation.request.ProfileValuePair;
-import org.yapp.domain.profile.presentation.request.ProfileValueUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileValueItemPair;
+import org.yapp.domain.profile.presentation.request.ProfileValueItemUpdateRequest;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.dao.UserRepository;
 
@@ -73,7 +73,7 @@ class ProfileServiceTest {
     assertThat(savedProfile).isNotNull();
     assertThat(savedProfile.getProfileBasic().getNickname()).isEqualTo("nickname123");
     assertThat(savedProfile.getProfileBasic().getPhoneNumber()).isEqualTo("010-1234-5678");
-    assertThat(savedProfile.getProfileValues().size()).isEqualTo(profileValueRepository.count());
+    assertThat(savedProfile.getProfileValueItems().size()).isEqualTo(profileValueRepository.count());
   }
 
   @Test
@@ -117,28 +117,28 @@ class ProfileServiceTest {
     profileRepository.flush();
 
     // 업데이트 요청 생성 (ValueItem 2개 선택)
-    List<ProfileValuePair> profileValuePairList = new ArrayList<>();
-    savedProfile.getProfileValues().forEach((e)->{
-      profileValuePairList.add(new ProfileValuePair(e.getValueItem().getId(), 1));
+    List<ProfileValueItemPair> profileValueItemPairList = new ArrayList<>();
+    savedProfile.getProfileValueItems().forEach((e)->{
+      profileValueItemPairList.add(new ProfileValueItemPair(e.getValueItem().getId(), 1));
     });
 
-    ProfileValueUpdateRequest updateRequest = new ProfileValueUpdateRequest(
-            profileValuePairList
+    ProfileValueItemUpdateRequest updateRequest = new ProfileValueItemUpdateRequest(
+            profileValueItemPairList
     );
 
     // when
     profileService.updateProfileValues(userId, updateRequest);
 
     // then
-    List<ProfileValue> updatedProfileValues = profileValueRepository.findByProfileId(savedProfile.getId());
+    List<ProfileValueItem> updatedProfileValueItems = profileValueRepository.findByProfileId(savedProfile.getId());
 
     // 업데이트 검증
-    updatedProfileValues.forEach(profileValue -> {
+    updatedProfileValueItems.forEach(profileValue -> {
       Long valueItemId = profileValue.getValueItem().getId();
-      Integer expectedAnswer = updateRequest.profileValuePairs().stream()
+      Integer expectedAnswer = updateRequest.profileValueItemPairs().stream()
               .filter(pair -> pair.valueItemId().equals(valueItemId))
               .findFirst()
-              .map(ProfileValuePair::selectedAnswer)
+              .map(ProfileValueItemPair::selectedAnswer)
               .orElse(null);
 
       assertThat(profileValue.getSelectedAnswer()).isEqualTo(expectedAnswer);

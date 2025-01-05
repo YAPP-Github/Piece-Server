@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileBio;
-import org.yapp.domain.profile.ProfileValue;
+import org.yapp.domain.profile.ProfileValueItem;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.user.User;
@@ -106,18 +106,18 @@ public class TestDataService {
 
     // ProfileValue 더미 데이터 생성
     public void createProfileValues(Profile profile, List<ValueItem> valueItems) {
-        ProfileValue profileValue1 = ProfileValue.builder()
+        ProfileValueItem profileValueItem1 = ProfileValueItem.builder()
                 .profile(profile)
                 .valueItem(valueItems.get(0))  // 음주
                 .selectedAnswer(2)  // "같이 술을 즐길 수 없어도 괜찮아요"
                 .build();
 
-        ProfileValue profileValue2 = ProfileValue.builder()
+        ProfileValueItem profileValueItem2 = ProfileValueItem.builder()
                 .profile(profile)
                 .valueItem(valueItems.get(1))  // 만남 빈도
                 .selectedAnswer(1)  // "주말에는 최대한 같이 있고 싶어요"
                 .build();
 
-        profileValueRepository.saveAll(List.of(profileValue1, profileValue2));
+        profileValueRepository.saveAll(List.of(profileValueItem1, profileValueItem2));
     }
 }

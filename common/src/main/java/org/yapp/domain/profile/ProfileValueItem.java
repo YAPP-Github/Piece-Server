@@ -16,12 +16,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "profile_value")
+@Table(name = "profile_value_item")
 @Getter
 @NoArgsConstructor
-public class ProfileValue {
+public class ProfileValueItem {
   @Id
-  @Column(name = "profile_value_id")
+  @Column(name = "profile_value_item_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
@@ -37,7 +37,7 @@ public class ProfileValue {
   private Integer selectedAnswer;
 
   @Builder
-  public ProfileValue(Profile profile, ValueItem valueItem, Integer selectedAnswer) {
+  public ProfileValueItem(Profile profile, ValueItem valueItem, Integer selectedAnswer) {
     this.profile = profile;
     this.valueItem = valueItem;
     this.selectedAnswer = selectedAnswer;

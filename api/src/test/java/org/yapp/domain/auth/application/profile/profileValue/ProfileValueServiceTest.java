@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.auth.application.dummy.TestDataService;
-import org.yapp.domain.profile.ProfileValue;
+import org.yapp.domain.profile.ProfileValueItem;
 import org.yapp.domain.profile.application.ProfileValueService;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.user.User;
@@ -47,7 +47,7 @@ class ProfileValueServiceTest {
         Long profileId = savedUser.getProfile().getId();
 
         // when
-        List<ProfileValue> createdValues = profileValueService.createAllProfileValues(profileId);
+        List<ProfileValueItem> createdValues = profileValueService.createAllProfileValues(profileId);
 
         // then
         assertThat(createdValues).isNotEmpty();
@@ -59,8 +59,8 @@ class ProfileValueServiceTest {
         });
 
         // DB에서 데이터 확인
-        List<ProfileValue> savedProfileValues = profileValueRepository.findAll();
-        assertThat(savedProfileValues).hasSize(savedValueItems.size());
+        List<ProfileValueItem> savedProfileValueItems = profileValueRepository.findAll();
+        assertThat(savedProfileValueItems).hasSize(savedValueItems.size());
     }
 
     @Test

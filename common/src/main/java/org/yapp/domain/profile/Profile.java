@@ -41,7 +41,10 @@ public class Profile {
   private ProfileBio profileBio;
 
   @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ProfileValue> profileValues;
+  private List<ProfileValueTalk> profileValueTalks;
+
+  @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ProfileValueItem> profileValueItems;
 
   public void updateBio(ProfileBio profileBio) {
     this.profileBio = profileBio;
@@ -51,5 +54,5 @@ public class Profile {
     this.profileBasic = profileBasic;
   }
 
-  public void updateProfileValues(List<ProfileValue> profileValues) {this.profileValues = profileValues;}
+  public void updateProfileValues(List<ProfileValueItem> profileValueItems) {this.profileValueItems = profileValueItems;}
 }

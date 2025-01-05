@@ -5,12 +5,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileBio;
-import org.yapp.domain.profile.ProfileValue;
+import org.yapp.domain.profile.ProfileValueItem;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
-import org.yapp.domain.profile.presentation.request.ProfileValuePair;
-import org.yapp.domain.profile.presentation.request.ProfileValueUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileValueItemPair;
+import org.yapp.domain.profile.presentation.request.ProfileValueItemUpdateRequest;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.error.dto.ProfileErrorCode;
@@ -36,8 +36,8 @@ public class ProfileService {
 
     Profile profile = Profile.builder().profileBasic(profileBasic).profileBio(profileBio).build();
     Profile savedProfile = profileRepository.save(profile);
-    List<ProfileValue> allProfileValues = profileValueService.createAllProfileValues(savedProfile.getId());
-    savedProfile.updateProfileValues(allProfileValues);
+    List<ProfileValueItem> allProfileValueItems = profileValueService.createAllProfileValues(savedProfile.getId());
+    savedProfile.updateProfileValues(allProfileValueItems);
 
     return savedProfile;
   }
@@ -63,23 +63,23 @@ public class ProfileService {
   }
 
   @Transactional
-  public Profile updateProfileValues(long userId, ProfileValueUpdateRequest dto) {
+  public Profile updateProfileValues(long userId, ProfileValueItemUpdateRequest dto) {
     User user = this.userService.getUserById(userId);
     Profile profile = getProfileById(user.getProfile().getId());
 
-    List<ProfileValue> profileValues = profile.getProfileValues();
+    List<ProfileValueItem> profileValueItems = profile.getProfileValueItems();
 
     Map<Long, Integer> userValueItemAnswerMap = new HashMap<>();
-    for (ProfileValuePair profileValuePair : dto.profileValuePairs()) {
-      final Long valueItemId = profileValuePair.valueItemId();
-      final Integer selectedAnswer = profileValuePair.selectedAnswer();
+    for (ProfileValueItemPair profileValueItemPair : dto.profileValueItemPairs()) {
+      final Long valueItemId = profileValueItemPair.valueItemId();
+      final Integer selectedAnswer = profileValueItemPair.selectedAnswer();
 
       userValueItemAnswerMap.put(valueItemId, selectedAnswer);
     }
 
-    for (ProfileValue profileValue : profileValues) {
-      final Long profileValueItemID = profileValue.getValueItem().getId();
-      profileValue.updatedSelectedAnswer(userValueItemAnswerMap.get(profileValueItemID));
+    for (ProfileValueItem profileValueItem : profileValueItems) {
+      final Long profileValueItemID = profileValueItem.getValueItem().getId();
+      profileValueItem.updatedSelectedAnswer(userValueItemAnswerMap.get(profileValueItemID));
     }
 
     return profile;
