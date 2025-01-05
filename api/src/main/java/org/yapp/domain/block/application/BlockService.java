@@ -41,4 +41,9 @@ public class BlockService {
 
         blockRepository.saveAll(newBlocks);
     }
+
+    @Transactional(readOnly = false)
+    public List<Block> findBlocksByUserId(Long userId) {
+        return blockRepository.findBlocksByUserId(userId);
+    }
 }
