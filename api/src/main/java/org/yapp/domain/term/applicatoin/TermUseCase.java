@@ -36,22 +36,22 @@ public class TermUseCase {
         User user = userService.getUserById(dto.userId());
 
         List<Long> alreadyAgreedTermIds = termAgreementRepository.findByUserId(user.getId())
-                .stream()
-                .map(agreement -> agreement.getTerm().getId())
-                .toList();
+            .stream()
+            .map(agreement -> agreement.getTerm().getId())
+            .toList();
 
         List<Long> newAgreementTermIds = agreedTermIds.stream()
-                .filter(termId -> !alreadyAgreedTermIds.contains(termId))
-                .toList();
+            .filter(termId -> !alreadyAgreedTermIds.contains(termId))
+            .toList();
 
         List<TermAgreement> agreements = newAgreementTermIds.stream()
-                .map(termId -> TermAgreement.builder()
-                        .user(user)
-                        .term(termRepository.findById(termId)
-                                .orElseThrow(() -> new ApplicationException(TermErrorCode.NOTFOUND_TERM)))
-                        .agreedAt(LocalDateTime.now())
-                        .build())
-                .toList();
+            .map(termId -> TermAgreement.builder()
+                .user(user)
+                .term(termRepository.findById(termId)
+                    .orElseThrow(() -> new ApplicationException(TermErrorCode.NOTFOUND_TERM)))
+                .agreedAt(LocalDateTime.now())
+                .build())
+            .toList();
 
         termAgreementRepository.saveAll(agreements);
     }
