@@ -30,9 +30,9 @@ public class Profile {
   @Column(name = "profile_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
   @OneToOne(mappedBy = "profile")
   private User user;
+
 
   @Embedded
   private ProfileBasic profileBasic;
@@ -44,7 +44,7 @@ public class Profile {
   private List<ProfileValueTalk> profileValueTalks;
 
   @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ProfileValueItem> profileValueItems;
+  private List<ProfileValuePick> profileValuePicks;
 
   public void updateBio(ProfileBio profileBio) {
     this.profileBio = profileBio;
@@ -54,5 +54,5 @@ public class Profile {
     this.profileBasic = profileBasic;
   }
 
-  public void updateProfileValues(List<ProfileValueItem> profileValueItems) {this.profileValueItems = profileValueItems;}
+  public void updateProfileValues(List<ProfileValuePick> profileValuePicks) {this.profileValuePicks = profileValuePicks;}
 }

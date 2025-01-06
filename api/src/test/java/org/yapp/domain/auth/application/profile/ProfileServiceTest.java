@@ -8,14 +8,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.auth.application.dummy.TestDataService;
 import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.ProfileValueItem;
+import org.yapp.domain.profile.ProfileValuePick;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
-import org.yapp.domain.profile.presentation.request.ProfileValueItemPair;
-import org.yapp.domain.profile.presentation.request.ProfileValueItemUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileValuePickPair;
+import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.dao.UserRepository;
 
@@ -73,7 +73,7 @@ class ProfileServiceTest {
     assertThat(savedProfile).isNotNull();
     assertThat(savedProfile.getProfileBasic().getNickname()).isEqualTo("nickname123");
     assertThat(savedProfile.getProfileBasic().getPhoneNumber()).isEqualTo("010-1234-5678");
-    assertThat(savedProfile.getProfileValueItems().size()).isEqualTo(profileValueRepository.count());
+    assertThat(savedProfile.getProfileValuePicks().size()).isEqualTo(profileValueRepository.count());
   }
 
   @Test
@@ -117,28 +117,28 @@ class ProfileServiceTest {
     profileRepository.flush();
 
     // 업데이트 요청 생성 (ValueItem 2개 선택)
-    List<ProfileValueItemPair> profileValueItemPairList = new ArrayList<>();
-    savedProfile.getProfileValueItems().forEach((e)->{
-      profileValueItemPairList.add(new ProfileValueItemPair(e.getValueItem().getId(), 1));
+    List<ProfileValuePickPair> profileValuePickPairList = new ArrayList<>();
+    savedProfile.getProfileValuePicks().forEach((e)->{
+      profileValuePickPairList.add(new ProfileValuePickPair(e.getValuePick().getId(), 1));
     });
 
-    ProfileValueItemUpdateRequest updateRequest = new ProfileValueItemUpdateRequest(
-            profileValueItemPairList
+    ProfileValuePickUpdateRequest updateRequest = new ProfileValuePickUpdateRequest(
+            profileValuePickPairList
     );
 
     // when
     profileService.updateProfileValues(userId, updateRequest);
 
     // then
-    List<ProfileValueItem> updatedProfileValueItems = profileValueRepository.findByProfileId(savedProfile.getId());
+    List<ProfileValuePick> updatedProfileValuePicks = profileValueRepository.findByProfileId(savedProfile.getId());
 
     // 업데이트 검증
-    updatedProfileValueItems.forEach(profileValue -> {
-      Long valueItemId = profileValue.getValueItem().getId();
-      Integer expectedAnswer = updateRequest.profileValueItemPairs().stream()
+    updatedProfileValuePicks.forEach(profileValue -> {
+      Long valueItemId = profileValue.getValuePick().getId();
+      Integer expectedAnswer = updateRequest.profileValuePickPairs().stream()
               .filter(pair -> pair.valueItemId().equals(valueItemId))
               .findFirst()
-              .map(ProfileValueItemPair::selectedAnswer)
+              .map(ProfileValuePickPair::selectedAnswer)
               .orElse(null);
 
       assertThat(profileValue.getSelectedAnswer()).isEqualTo(expectedAnswer);

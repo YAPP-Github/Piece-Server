@@ -1,6 +1,6 @@
 package org.yapp.domain.profile.presentation.response;
 
-import org.yapp.domain.profile.ProfileValueItem;
+import org.yapp.domain.profile.ProfileValuePick;
 
 import lombok.Getter;
 
@@ -11,10 +11,10 @@ public class ProfileValueItemResponse {
   private String question;
   private Integer selectedAnswer;
 
-  public ProfileValueItemResponse(ProfileValueItem profileValueItem) {
-    this.id = profileValueItem.getId();
-    this.valueItemId = profileValueItem.getValueItem().getId();
-    this.question = profileValueItem.getValueItem().getQuestion();
-    this.selectedAnswer = profileValueItem.getSelectedAnswer();
+  public ProfileValueItemResponse(ProfileValuePick profileValuePick) {
+    this.id = profileValuePick.getId();
+    this.valueItemId = profileValuePick.getValuePick().getId();
+    this.question = profileValuePick.getValuePick().getQuestion();
+    this.selectedAnswer = profileValuePick.getSelectedAnswer();
   }
 }

@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.ProfileValueItem;
+import org.yapp.domain.profile.ProfileValuePick;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
-import org.yapp.domain.value.ValueItem;
-import org.yapp.domain.value.application.ValueItemService;
+import org.yapp.domain.value.ValuePick;
+import org.yapp.domain.value.application.ValuePickService;
 import org.yapp.error.dto.ProfileErrorCode;
 import org.yapp.error.exception.ApplicationException;
 import java.util.List;
@@ -17,27 +17,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfileValueService {
     private final ProfileRepository profileRepository;
-    private final ValueItemService valueItemService;
+    private final ValuePickService valuePickService;
     private final ProfileValueRepository profileValueRepository;
 
     @Transactional
-    public  List<ProfileValueItem> createAllProfileValues(Long profileId) {
+    public  List<ProfileValuePick> createAllProfileValues(Long profileId) {
         Profile profile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
 
-        List<ValueItem> allValueItems = valueItemService.getAllValueItems();
-        List<ProfileValueItem> profileValueItems = allValueItems.stream()
+        List<ValuePick> allValuePicks = valuePickService.getAllValueItems();
+        List<ProfileValuePick> profileValuePicks = allValuePicks.stream()
                 .map(valueItem -> createProfileValue(profile, valueItem))
                 .toList();
 
-        profileValueRepository.saveAll(profileValueItems);
-        return profileValueItems;
+        profileValueRepository.saveAll(profileValuePicks);
+        return profileValuePicks;
     }
 
-    private ProfileValueItem createProfileValue(Profile profile, ValueItem valueItem) {
-        return ProfileValueItem.builder()
+    private ProfileValuePick createProfileValue(Profile profile, ValuePick valuePick) {
+        return ProfileValuePick.builder()
                 .profile(profile)
-                .valueItem(valueItem)
+                .valuePick(valuePick)
                 .selectedAnswer(null)
                 .build();
     }

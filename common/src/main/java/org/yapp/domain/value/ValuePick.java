@@ -1,5 +1,6 @@
 package org.yapp.domain.value;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
@@ -16,12 +17,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "value_item")
+@Table(name = "value_pick")
 @Getter
 @NoArgsConstructor
-public class ValueItem {
+@AllArgsConstructor
+@Builder
+public class ValuePick {
   @Id
-  @Column(name = "value_item_id")
+  @Column(name = "value_pick_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
@@ -34,11 +37,4 @@ public class ValueItem {
   @Type(JsonType.class)
   @Column(name = "answers", columnDefinition = "longtext", nullable = false)
   private Map<Integer, Object> answers;
-
-  @Builder
-  public ValueItem(String question, String category, Map<Integer, Object> answers) {
-    this.question = question;
-    this.category = category;
-    this.answers = answers;
-  }
 }

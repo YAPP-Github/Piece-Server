@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.auth.application.dummy.TestDataService;
-import org.yapp.domain.profile.ProfileValueItem;
+import org.yapp.domain.profile.ProfileValuePick;
 import org.yapp.domain.profile.application.ProfileValueService;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.user.User;
-import org.yapp.domain.value.ValueItem;
+import org.yapp.domain.value.ValuePick;
 import org.yapp.error.exception.ApplicationException;
 
 import java.util.List;
@@ -32,12 +32,12 @@ class ProfileValueServiceTest {
     private TestDataService testDataService;
 
     private User savedUser;
-    private List<ValueItem> savedValueItems;
+    private List<ValuePick> savedValuePicks;
 
     @BeforeEach
     void setUp() {
         savedUser = testDataService.createUserWithProfile("John Doe", "oauth123123213123");
-        savedValueItems = testDataService.createValueItems();
+        savedValuePicks = testDataService.createValueItems();
     }
 
     @Test
@@ -47,11 +47,11 @@ class ProfileValueServiceTest {
         Long profileId = savedUser.getProfile().getId();
 
         // when
-        List<ProfileValueItem> createdValues = profileValueService.createAllProfileValues(profileId);
+        List<ProfileValuePick> createdValues = profileValueService.createAllProfileValues(profileId);
 
         // then
         assertThat(createdValues).isNotEmpty();
-        assertThat(createdValues).hasSize(savedValueItems.size());
+        assertThat(createdValues).hasSize(savedValuePicks.size());
 
         createdValues.forEach(profileValue -> {
             assertThat(profileValue.getProfile()).isEqualTo(savedUser.getProfile());
@@ -59,8 +59,8 @@ class ProfileValueServiceTest {
         });
 
         // DB에서 데이터 확인
-        List<ProfileValueItem> savedProfileValueItems = profileValueRepository.findAll();
-        assertThat(savedProfileValueItems).hasSize(savedValueItems.size());
+        List<ProfileValuePick> savedProfileValuePicks = profileValueRepository.findAll();
+        assertThat(savedProfileValuePicks).hasSize(savedValuePicks.size());
     }
 
     @Test

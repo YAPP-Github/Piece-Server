@@ -1,7 +1,9 @@
 package org.yapp.domain.profile;
 
 import java.util.Date;
+import java.util.Map;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -9,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 @Embeddable
 @Getter
@@ -40,7 +43,10 @@ public class ProfileBasic {
   @Column(name = "sns_activity_level")
   private String snsActivityLevel;
 
-  @Column(name = "phone_number", nullable = false)
+  @Type(JsonType.class)
+  @Column(columnDefinition = "json")
+  private Map<String, String> contacts;
+
   private String phoneNumber;
 
   @Column(name = "image_url")

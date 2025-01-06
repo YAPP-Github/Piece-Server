@@ -15,7 +15,7 @@ public record ProfileResponse(Long id, String nickname, String birthdate, int he
     ProfileBasic basic = profile.getProfileBasic();
     ProfileBio bio = profile.getProfileBio();
 
-    List<ProfileValueItemResponse> values = profile.getProfileValueItems().stream().map(ProfileValueItemResponse::new).toList();
+    List<ProfileValueItemResponse> values = profile.getProfileValuePicks().stream().map(ProfileValueItemResponse::new).toList();
 
     return new ProfileResponse(profile.getId(), basic.getNickname(), basic.getBirthdate().toString(), basic.getHeight(),
         basic.getJob(), basic.getLocation(), basic.getSmokingStatus(), basic.getReligion(), basic.getSnsActivityLevel(),
