@@ -23,7 +23,7 @@ public class BlockController {
     private  final BlockService blockService;
 
     @PostMapping("")
-    @Operation(summary = "핸드폰 번호 차단", description = "핸드폰 번호 리스트를 전달받고, 전달받은 핸드폰 번호 차단을 수행합니다.", tags = {"Block"})
+    @Operation(summary = "핸드폰 번호 차단", description = "핸드폰 번호 리스트를 전달받고, 전달받은 핸드폰 번호 차단을 수행합니다.", tags = {"차단"})
     @ApiResponse(responseCode = "200", description = "핸드폰 차단 성공")
     public ResponseEntity<CommonResponse<Void>> blockPhoneNumbers(@AuthenticationPrincipal Long userId, @RequestBody BlockPhoneNumbersRequest request) {
         blockService.blockPhoneNumbers(new BlockCreateDto(userId, request.phoneNumbers()));
@@ -31,7 +31,7 @@ public class BlockController {
     }
 
     @GetMapping("")
-    @Operation(summary = "핸드폰 번호 차단", description = "핸드폰 번호 리스트를 전달받고, 전달받은 핸드폰 번호 차단을 수행합니다.", tags = {"Block"})
+    @Operation(summary = "핸드폰 번호 차단", description = "핸드폰 번호 리스트를 전달받고, 전달받은 핸드폰 번호 차단을 수행합니다.", tags = {"차단"})
     @ApiResponse(responseCode = "200", description = "핸드폰 차단 성공")
     public ResponseEntity<CommonResponse<UserBlockResponses>> blockPhoneNumbers(@AuthenticationPrincipal Long userId) {
         List<Block> blocks = blockService.findBlocksByUserId(userId);
