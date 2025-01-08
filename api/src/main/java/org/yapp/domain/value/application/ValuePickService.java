@@ -13,6 +13,6 @@ public class ValuePickService {
     private final ValuePickRepository valuePickRepository;
 
     public List<ValuePick> getAllActiveValuePicks() {
-        return valuePickRepository.findAllByIsActiveTrue();
+        return valuePickRepository.findAllActiveOrdered();
     }
 }
