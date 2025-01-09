@@ -1,4 +1,4 @@
-package org.yapp.domain.value.presentation.dto;
+package org.yapp.domain.value.presentation.dto.response;
 
 import org.yapp.domain.value.ValueTalk;
 

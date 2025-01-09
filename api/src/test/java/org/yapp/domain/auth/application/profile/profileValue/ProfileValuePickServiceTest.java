@@ -1,5 +1,8 @@
 package org.yapp.domain.auth.application.profile.profileValue;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,22 +11,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.auth.application.dummy.TestDataService;
 import org.yapp.domain.profile.ProfileValuePick;
-import org.yapp.domain.profile.application.ProfileValueService;
+import org.yapp.domain.profile.application.ProfileValuePickService;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
 import org.yapp.domain.user.User;
 import org.yapp.domain.value.ValuePick;
 import org.yapp.error.exception.ApplicationException;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SpringBootTest
 @Transactional
-class ProfileValueServiceTest {
+class ProfileValuePickServiceTest {
 
     @Autowired
-    private ProfileValueService profileValueService;
+    private ProfileValuePickService profileValuePickService;
 
     @Autowired
     private ProfileValueRepository profileValueRepository;
@@ -47,7 +46,8 @@ class ProfileValueServiceTest {
         Long profileId = savedUser.getProfile().getId();
 
         // when
-        List<ProfileValuePick> createdValues = profileValueService.createAllProfileValues(profileId);
+        List<ProfileValuePick> createdValues = profileValuePickService.createAllProfileValues(
+            profileId);
 
         // then
         assertThat(createdValues).isNotEmpty();
@@ -71,7 +71,7 @@ class ProfileValueServiceTest {
 
         // when & then
         org.junit.jupiter.api.Assertions.assertThrows(ApplicationException.class, () -> {
-            profileValueService.createAllProfileValues(invalidProfileId);
+            profileValuePickService.createAllProfileValues(invalidProfileId);
         });
     }
 }

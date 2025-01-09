@@ -10,8 +10,8 @@ import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileBio;
 import org.yapp.domain.profile.ProfileValuePick;
-import org.yapp.domain.profile.application.dto.ProfileCreateDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
+import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickPair;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
@@ -25,23 +25,30 @@ import org.yapp.error.exception.ApplicationException;
 public class ProfileService {
 
     private final UserService userService;
-    private final ProfileValueService profileValueService;
+    private final ProfileValuePickService profileValuePickService;
     private final ProfileRepository profileRepository;
 
     @Transactional
-    public Profile create(ProfileCreateDto dto) {
-        ProfileBasic profileBasic = ProfileBasic.builder().nickname(dto.nickName())
-            .phoneNumber(dto.phoneNumber()).build();
-        ProfileBio profileBio = ProfileBio.builder().build();
-
-        Profile profile = Profile.builder().profileBasic(profileBasic).profileBio(profileBio)
+    public Profile create(ProfileCreateRequest dto) {
+        ProfileBasic profileBasic = ProfileBasic.builder()
+            .nickname(dto.nickname())
+            .birthdate(dto.birthdate())
+            .height(dto.height())
+            .job(dto.job())
+            .location(dto.location())
+            .smokingStatus(dto.smokingStatus())
+            .religion(dto.religion())
+            .snsActivityLevel(dto.snsActivityLevel())
+            .contacts(dto.contacts())
+            .imageUrl(dto.imageUrl())
             .build();
-        Profile savedProfile = profileRepository.save(profile);
-        List<ProfileValuePick> allProfileValuePicks = profileValueService.createAllProfileValues(
-            savedProfile.getId());
-        savedProfile.updateProfileValues(allProfileValuePicks);
 
-        return savedProfile;
+        Profile profile = Profile.builder().profileBasic(profileBasic)
+            .profileValuePicks()
+            .prorfileTalks()
+            .build();
+
+        return profileRepository.save(profile);
     }
 
     @Transactional
