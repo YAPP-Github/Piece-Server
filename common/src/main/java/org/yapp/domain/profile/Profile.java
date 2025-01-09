@@ -29,9 +29,9 @@ public class Profile {
     @Column(name = "profile_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @OneToOne(mappedBy = "profile")
     private User user;
-
 
     @Embedded
     private ProfileBasic profileBasic;
@@ -54,7 +54,11 @@ public class Profile {
         this.profileBasic = profileBasic;
     }
 
-    public void updateProfileValues(List<ProfileValuePick> profileValuePicks) {
+    public void updateProfileValuePicks(List<ProfileValuePick> profileValuePicks) {
         this.profileValuePicks = profileValuePicks;
+    }
+
+    public void updateProfileValueTalks(List<ProfileValueTalk> profileValueTalks) {
+        this.profileValueTalks = profileValueTalks;
     }
 }

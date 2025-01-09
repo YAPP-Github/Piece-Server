@@ -10,6 +10,7 @@ import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileBio;
 import org.yapp.domain.profile.ProfileValuePick;
+import org.yapp.domain.profile.ProfileValueTalk;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
@@ -26,6 +27,7 @@ public class ProfileService {
 
     private final UserService userService;
     private final ProfileValuePickService profileValuePickService;
+    private final ProfileValueTalkService profileValueTalkService;
     private final ProfileRepository profileRepository;
 
     @Transactional
@@ -44,14 +46,24 @@ public class ProfileService {
             .build();
 
         Profile profile = Profile.builder().profileBasic(profileBasic)
-            .profileValuePicks()
-            .prorfileTalks()
             .build();
 
-        return profileRepository.save(profile);
+        profileRepository.save(profile);
+
+        List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValues(
+            profile.getId(), dto.valuePicks());
+
+        List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
+            profile.getId(), dto.valueTalks()
+        );
+
+        profile.updateProfileValuePicks(allProfileValues);
+        profile.updateProfileValueTalks(allProfileTalks);
+
+        return profile;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Profile getProfileById(long profileId) {
         return profileRepository.findById(profileId)
             .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));

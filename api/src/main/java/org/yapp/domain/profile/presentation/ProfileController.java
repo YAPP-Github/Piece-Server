@@ -39,12 +39,12 @@ public class ProfileController {
     private final UserService userService;
     private final ProfileImageService profileImageService;
 
-    @PutMapping("")
+    @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
     public ResponseEntity<CommonResponse<OauthLoginResponse>> createProfile(
         @AuthenticationPrincipal Long userId,
         @RequestBody @Valid ProfileCreateRequest request) {
-        //TODO : ProfileCreateDto를 바꿔야한다. 차라리 ProfileUpdateDto랑 합치는게 좋을듯
+
         Profile profile = profileService.create(request);
         OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(profile);
         return ResponseEntity.status(HttpStatus.OK)
