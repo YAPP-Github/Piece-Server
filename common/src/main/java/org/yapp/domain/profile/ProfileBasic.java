@@ -1,11 +1,10 @@
 package org.yapp.domain.profile;
 
-import java.util.Date;
-import java.util.Map;
-
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Date;
+import java.util.Map;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,36 +18,35 @@ import org.hibernate.annotations.Type;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class ProfileBasic {
-  @Column(name = "nickname", nullable = false)
-  private String nickname;
 
-  @Column(name = "birthdate")
-  private Date birthdate;
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
 
-  @Column(name = "height")
-  private Integer height;
+    @Column(name = "birthdate")
+    private Date birthdate;
 
-  @Column(name = "job")
-  private String job;
+    @Column(name = "height")
+    private Integer height;
 
-  @Column(name = "location")
-  private String location;
+    @Column(name = "job")
+    private String job;
 
-  @Column(name = "smoking_status")
-  private String smokingStatus;
+    @Column(name = "location")
+    private String location;
 
-  @Column(name = "religion")
-  private String religion;
+    @Column(name = "smoking_status")
+    private String smokingStatus;
 
-  @Column(name = "sns_activity_level")
-  private String snsActivityLevel;
+    @Column(name = "religion")
+    private String religion;
 
-  @Type(JsonType.class)
-  @Column(columnDefinition = "json")
-  private Map<String, String> contacts;
+    @Column(name = "sns_activity_level")
+    private String snsActivityLevel;
 
-  private String phoneNumber;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
+    private Map<String, String> contacts;
 
-  @Column(name = "image_url")
-  private String imageUrl;
+    @Column(name = "image_url")
+    private String imageUrl;
 }
