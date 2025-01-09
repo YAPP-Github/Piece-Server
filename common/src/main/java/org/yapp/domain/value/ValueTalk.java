@@ -31,6 +31,9 @@ public class ValueTalk {
     @Column(nullable = false)
     private String title;
 
+    @Column
+    private String guide;
+
     @Column(nullable = false)
     @ColumnDefault("true")
     private boolean isActive;
