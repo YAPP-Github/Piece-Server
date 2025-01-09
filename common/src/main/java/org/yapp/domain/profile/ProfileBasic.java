@@ -3,7 +3,7 @@ package org.yapp.domain.profile;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class ProfileBasic {
     private String nickname;
 
     @Column(name = "birthdate")
-    private Date birthdate;
+    private LocalDate birthdate;
 
     @Column(name = "height")
     private Integer height;
