@@ -8,27 +8,27 @@ import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileValuePick;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.dao.ProfileValueRepository;
+import org.yapp.domain.profile.presentation.request.ProfileValuePickCreateRequest;
 import org.yapp.domain.value.ValuePick;
-import org.yapp.domain.value.application.ValuePickService;
 import org.yapp.error.dto.ProfileErrorCode;
 import org.yapp.error.exception.ApplicationException;
 
 @Service
 @RequiredArgsConstructor
-public class ProfileValueService {
+public class ProfileValuePickService {
 
     private final ProfileRepository profileRepository;
-    private final ValuePickService valuePickService;
     private final ProfileValueRepository profileValueRepository;
 
     @Transactional
-    public List<ProfileValuePick> createAllProfileValues(Long profileId) {
+    public List<ProfileValuePick> createAllProfileValues(Long profileId,
+        List<ProfileValuePickCreateRequest> createRequests) {
         Profile profile = profileRepository.findById(profileId)
             .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
 
-        List<ValuePick> allValuePicks = valuePickService.getAllActiveValuePicks();
-        List<ProfileValuePick> profileValuePicks = allValuePicks.stream()
-            .map(valuePick -> createProfileValuePick(profile, valuePick, 0))
+        List<ProfileValuePick> profileValuePicks = createRequests.stream()
+            .map(request -> createProfileValuePick(profile,
+                ValuePick.builder().id(request.valuePickId()).build(), request.selectedAnswer()))
             .toList();
 
         profileValueRepository.saveAll(profileValuePicks);

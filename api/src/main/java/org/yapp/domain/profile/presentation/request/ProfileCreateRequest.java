@@ -3,11 +3,9 @@ package org.yapp.domain.profile.presentation.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -44,31 +42,12 @@ public record ProfileCreateRequest(
     String imageUrl,
 
     @NotEmpty(message = "최소 하나 이상의 가치관 Pick을 선택해야 합니다.")
-    List<@Valid ValuePickRequest> valuePicks,
+    List<@Valid ProfileValuePickCreateRequest> valuePicks,
 
     @NotEmpty(message = "최소 하나 이상의 가치관 Talk을 작성해야 합니다.")
-    List<@Valid ValueTalkRequest> valueTalks
+    List<@Valid ProfileValueTalkCreateRequest> valueTalks
 
 ) {
 
-    public record ValuePickRequest(
-        @NotNull(message = "ValuePick ID는 필수입니다.")
-        Long valuePickId,
 
-        @NotNull(message = "선택된 답변은 필수입니다.")
-        @Positive(message = "선택된 답변은 1 이상이어야 합니다.")
-        Integer selectedAnswer
-    ) {
-
-    }
-
-    public record ValueTalkRequest(
-        @NotNull(message = "ValueTalk ID는 필수입니다.")
-        Long valueTalkId,
-
-        @Size(max = 300, message = "답변은 최대 300자까지 작성 가능합니다.")
-        String answer
-    ) {
-
-    }
 }
