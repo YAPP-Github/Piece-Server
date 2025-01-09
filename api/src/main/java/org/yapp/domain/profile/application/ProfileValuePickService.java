@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileValuePick;
 import org.yapp.domain.profile.dao.ProfileRepository;
-import org.yapp.domain.profile.dao.ProfileValueRepository;
+import org.yapp.domain.profile.dao.ProfileValuePickRepository;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickCreateRequest;
 import org.yapp.domain.value.ValuePick;
 import org.yapp.error.dto.ProfileErrorCode;
@@ -18,7 +18,7 @@ import org.yapp.error.exception.ApplicationException;
 public class ProfileValuePickService {
 
     private final ProfileRepository profileRepository;
-    private final ProfileValueRepository profileValueRepository;
+    private final ProfileValuePickRepository profileValueRepository;
 
     @Transactional
     public List<ProfileValuePick> createAllProfileValues(Long profileId,
