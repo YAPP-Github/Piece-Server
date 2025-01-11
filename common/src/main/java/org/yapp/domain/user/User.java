@@ -15,9 +15,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "user_common")
+@Table(name = "user_table")
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

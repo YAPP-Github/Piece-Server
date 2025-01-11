@@ -54,4 +54,8 @@ public class CommonResponse<T> {
   public static CommonResponse<Void> createSuccessWithNoContent() {
     return new CommonResponse<>(SUCCESS_STATUS, null, null);
   }
+
+  public static CommonResponse<Void> createSuccessWithNoContent(String message) {
+    return new CommonResponse<>(SUCCESS_STATUS, null, message);
+  }
 }

@@ -12,7 +12,7 @@ SET introduction = 'Hello, I am John.',
 WHERE profile_id = 1;
 
 -- User 더미 데이터 삽입
-INSERT INTO user_common (user_id, oauth_id, name, profile_id, role)
+INSERT INTO user_table (user_id, oauth_id, name, profile_id, role)
 VALUES (1, 'oauth123', 'John Doe', 1, 'USER');
 
 -- ValueItem 더미 데이터 삽입
@@ -29,8 +29,8 @@ VALUES (1, 1, 1, 2),
 
 INSERT INTO term (version, title, content, required, start_date, is_active)
 VALUES
-    ('1.0', '서비스 이용약관', '서비스 이용에 대한 약관 내용입니다.', true, '2024-01-01 00:00:00', true),
-    ('1.0', '개인정보 처리방침', '개인정보 보호에 대한 약관 내용입니다.', true, '2024-01-01 00:00:00', true),
-    ('1.0', '위치 정보 이용약관', '위치 정보 활용에 대한 약관 내용입니다.', false, '2024-01-01 00:00:00', true),
-    ('1.1', '서비스 이용약관', '서비스 이용약관이 업데이트되었습니다.', true, '2024-06-01 00:00:00', true),
-    ('1.1', '광고 수신 동의', '광고 수신 동의 약관입니다.', false, '2024-06-01 00:00:00', false)
+    ('1.0', '서비스 이용약관', 'https://github.com/YAPP-Github', true, '2024-01-01 00:00:00', true),
+    ('1.0', '개인정보 처리방침', 'https://velog.io/@jeong_hun_hui/MySQL%EC%97%90%EC%84%9C-Explain%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-%EC%8B%A4%ED%96%89-%EA%B3%84%ED%9A%8D-%EB%B6%84%EC%84%9D%ED%95%98%EA%B8%B0', true, '2024-01-01 00:00:00', true),
+    ('1.0', '위치 정보 이용약관', 'https://www.naver.com', false, '2024-01-01 00:00:00', true),
+    ('1.1', '서비스 이용약관', 'https://www.google.com', true, '2024-06-01 00:00:00', true),
+    ('1.1', '광고 수신 동의', 'https://blog.naver.com/dksmt/223694486454', false, '2024-06-01 00:00:00', false)
