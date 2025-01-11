@@ -1,8 +1,5 @@
 package org.yapp.domain.user;
 
-import lombok.AllArgsConstructor;
-import org.yapp.domain.profile.Profile;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,9 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.domain.profile.Profile;
 
 @Table(name = "user_table")
 @Entity
@@ -21,40 +20,39 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class User {
-  @Id
-  @Column(name = "user_id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
-  @Column(name = "oauth_id")
-  private String oauthId;
+    @Id
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(name = "name")
-  private String name;
+    @Column(name = "oauth_id")
+    private String oauthId;
 
-  @Column(name = "phone")
-  private String phoneNumber;
+    @Column(name = "name")
+    private String name;
 
-  @Column(name = "role")
-  private String role = "USER";
+    @Column(name = "phone")
+    private String phoneNumber;
 
-  @OneToOne
-  @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
-  private Profile profile;
+    @Column(name = "role")
+    private String role = "USER";
 
-  public void initializePhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
+    @OneToOne
+    @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
+    private Profile profile;
 
-  public void setProfile(Profile profile) {
-    this.profile = profile;
-  }
+    public void initializePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-  public void updateUserRole(String role) {
-    this.role = role;
-  }
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public void updateUserRole(String role) {
+        this.role = role;
+    }
 }
 
