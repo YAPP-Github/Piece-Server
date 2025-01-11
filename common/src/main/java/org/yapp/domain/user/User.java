@@ -21,6 +21,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
   @Id
   @Column(name = "user_id")
