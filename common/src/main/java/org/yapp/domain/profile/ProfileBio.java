@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Deprecated
 @Embeddable
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

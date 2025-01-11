@@ -1,6 +1,6 @@
 package org.yapp.domain.profile;
 
-import org.yapp.domain.value.ValueItem;
+import org.yapp.domain.value.ValuePick;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,12 +16,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "profile_value")
+@Table(name = "profile_value_pick")
 @Getter
 @NoArgsConstructor
-public class ProfileValue {
+public class ProfileValuePick {
   @Id
-  @Column(name = "profile_value_id")
+  @Column(name = "profile_value_pick_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
@@ -30,16 +30,16 @@ public class ProfileValue {
   private Profile profile;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "value_item_id", nullable = false)
-  private ValueItem valueItem;
+  @JoinColumn(name = "value_pick_id", nullable = false)
+  private ValuePick valuePick;
 
   @Column
   private Integer selectedAnswer;
 
   @Builder
-  public ProfileValue(Profile profile, ValueItem valueItem, Integer selectedAnswer) {
+  public ProfileValuePick(Profile profile, ValuePick valuePick, Integer selectedAnswer) {
     this.profile = profile;
-    this.valueItem = valueItem;
+    this.valuePick = valuePick;
     this.selectedAnswer = selectedAnswer;
   }
 

@@ -1,9 +1,5 @@
 package org.yapp.domain.profile;
 
-import org.yapp.domain.user.User;
-
-import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -14,10 +10,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.domain.user.User;
 
 @Table(name = "profile")
 @Entity
@@ -26,30 +24,41 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Profile {
-  @Id
-  @Column(name = "profile_id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
-  @OneToOne(mappedBy = "profile")
-  private User user;
+    @Id
+    @Column(name = "profile_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Embedded
-  private ProfileBasic profileBasic;
+    @OneToOne(mappedBy = "profile")
+    private User user;
 
-  @Embedded
-  private ProfileBio profileBio;
+    @Embedded
+    private ProfileBasic profileBasic;
 
-  @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ProfileValue> profileValues;
+    @Embedded
+    private ProfileBio profileBio;
 
-  public void updateBio(ProfileBio profileBio) {
-    this.profileBio = profileBio;
-  }
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfileValueTalk> profileValueTalks;
 
-  public void updateBasic(ProfileBasic profileBasic) {
-    this.profileBasic = profileBasic;
-  }
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfileValuePick> profileValuePicks;
 
-  public void updateProfileValues(List<ProfileValue> profileValues) {this.profileValues = profileValues;}
+    @Deprecated
+    public void updateBio(ProfileBio profileBio) {
+        this.profileBio = profileBio;
+    }
+
+    public void updateBasic(ProfileBasic profileBasic) {
+        this.profileBasic = profileBasic;
+    }
+
+    public void updateProfileValuePicks(List<ProfileValuePick> profileValuePicks) {
+        this.profileValuePicks = profileValuePicks;
+    }
+
+    public void updateProfileValueTalks(List<ProfileValueTalk> profileValueTalks) {
+        this.profileValueTalks = profileValueTalks;
+    }
 }
