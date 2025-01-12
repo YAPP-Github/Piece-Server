@@ -21,10 +21,12 @@ import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.application.ProfileService;
+import org.yapp.domain.profile.application.ProfileValuePickService;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
+import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.util.CommonResponse;
@@ -38,6 +40,7 @@ public class ProfileController {
     private final ProfileService profileService;
     private final UserService userService;
     private final ProfileImageService profileImageService;
+    private final ProfileValuePickService profileValuePickService;
 
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
@@ -72,6 +75,19 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile)));
     }
+
+    @GetMapping("/picks")
+    @Operation(summary = "프로필 가치관 Pick 정보 조회", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Pick을 조회합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
+    public ResponseEntity<CommonResponse<ProfileValuePickResponses>> getProfilePick(
+        @AuthenticationPrincipal Long userId) {
+        ProfileValuePickResponses profileValuePickResponses = profileValuePickService.getProfileValuePickResponses(
+            userId);
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(profileValuePickResponses));
+    }
+
 
     @PutMapping("/values")
     @Operation(summary = "프로필 가치관 업데이트", description = "현재 로그인된 사용자의 프로필 가치관을 업데이트합니다.", tags = {
