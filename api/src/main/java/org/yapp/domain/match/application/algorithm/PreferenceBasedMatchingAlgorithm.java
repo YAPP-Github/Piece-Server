@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.yapp.domain.match.application.blocker.Blocker;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileValuePick;
-import org.yapp.domain.profile.dao.ProfileValuePickRepository;
+import org.yapp.domain.profile.application.ProfileValuePickService;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PreferenceBasedMatchingAlgorithm {
   private final List<Blocker> blockers;
-  private final ProfileValuePickRepository profileValuePickRepository;
+  private final ProfileValuePickService profileValuePickService;
 
   /**
    * 가치관 기반으로 매칭을 수행
@@ -29,9 +29,10 @@ public class PreferenceBasedMatchingAlgorithm {
     return List.of();
   }
 
-  private int calculateWeight(Long from, Long to) {
-    List<ProfileValuePick> profileValuePicksOfFrom = profileValuePickRepository.findByProfileIdOrderByValuePickId(from);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickRepository.findByProfileIdOrderByValuePickId(to);
+  private int calculateWeight(Long fromProfileId, Long toProfileId) {
+    List<ProfileValuePick> profileValuePicksOfFrom =
+        profileValuePickService.getAllProfileValuesByProfileId(fromProfileId);
+    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuesByProfileId(toProfileId);
 
     int valueListSize = profileValuePicksOfFrom.size();
     int sumOfWeight = 0;
