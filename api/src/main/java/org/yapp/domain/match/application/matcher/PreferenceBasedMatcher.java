@@ -27,7 +27,7 @@ public class PreferenceBasedMatcher implements CoupleMatcher {
 
     //지역별로 매칭
     for (String locationName : locationNames) {
-      List<Profile> profiles = profileService.getProfilesByLocation(locationName);
+      List<Profile> profiles = profileService.getValidProfilesByLocation(locationName);
       List<Profile> remains = matchingAlgorithm.doMatch(profiles);
       unmatchedProfiles.addAll(remains);
     }

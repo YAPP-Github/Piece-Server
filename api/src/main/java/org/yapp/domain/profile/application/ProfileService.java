@@ -2,6 +2,7 @@ package org.yapp.domain.profile.application;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yapp.domain.auth.presentation.dto.enums.RoleStatus;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileBio;
@@ -70,8 +71,8 @@ public class ProfileService {
   }
 
   @Transactional(readOnly = true)
-  public List<Profile> getProfilesByLocation(String locationName) {
-    return profileRepository.findByProfileBasic_Location(locationName);
+  public List<Profile> getValidProfilesByLocation(String locationName) {
+    return profileRepository.findByProfileBasic_LocationAndUser_Role(locationName, RoleStatus.USER.getStatus());
   }
 
   public boolean isNicknameAvailable(String nickname) {

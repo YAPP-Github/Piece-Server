@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
   boolean existsByProfileBasic_Nickname(String nickname);
-
-  List<Profile> findByProfileBasic_Location(String location);
+  
+  List<Profile> findByProfileBasic_LocationAndUser_Role(String location, String role);
 }
