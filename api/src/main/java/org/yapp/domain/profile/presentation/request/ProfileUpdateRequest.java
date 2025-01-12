@@ -20,7 +20,10 @@ public record ProfileUpdateRequest(@NotBlank(message = "닉네임은 비어있�
 
                                    @NotBlank(message = "위치는 비어있을 수 없습니다.") String location,
 
-                                   String smokingStatus, String religion, String snsActivityLevel,
+                                   String smokingStatus, String snsActivityLevel,
+
+                                   @Min(value = 1, message = "몸무게는 최소 1kg 이상이어야 합니다.")
+                                   Integer weight,
 
                                    @Pattern(regexp = "^\\d{10,11}$",
                                        message = "전화번호는 10자리에서 11자리 숫자여야 합니다.") String phoneNumber,
@@ -46,7 +49,7 @@ public record ProfileUpdateRequest(@NotBlank(message = "닉네임은 비어있�
             .job(job)
             .location(location)
             .smokingStatus(smokingStatus)
-            .religion(religion)
+            .weight(weight)
             .snsActivityLevel(snsActivityLevel)
             .imageUrl(imageUrl)
             .build();

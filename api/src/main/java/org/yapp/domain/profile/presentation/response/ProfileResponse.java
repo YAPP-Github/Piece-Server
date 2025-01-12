@@ -6,7 +6,7 @@ import org.yapp.domain.profile.ProfileBasic;
 
 public record ProfileResponse(Long id, String nickname, String birthdate, int height, String job,
                               String location,
-                              String smokingStatus, String religion, String snsActivityLevel,
+                              String smokingStatus, Integer weight, String snsActivityLevel,
                               String imageUrl,
                               List<ProfileValueTalkResponse> profileTalks,
                               List<ProfileValuePickResponse> profilePicks) {
@@ -22,7 +22,7 @@ public record ProfileResponse(Long id, String nickname, String birthdate, int he
 
         return new ProfileResponse(profile.getId(), basic.getNickname(),
             basic.getBirthdate().toString(), basic.getHeight(),
-            basic.getJob(), basic.getLocation(), basic.getSmokingStatus(), basic.getReligion(),
+            basic.getJob(), basic.getLocation(), basic.getSmokingStatus(), basic.getWeight(),
             basic.getSnsActivityLevel(),
             basic.getImageUrl(), talks, picks);
     }

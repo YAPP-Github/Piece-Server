@@ -1,6 +1,7 @@
 package org.yapp.domain.profile.presentation.request;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Past;
@@ -28,7 +29,8 @@ public record ProfileCreateRequest(
     @Pattern(regexp = "^(흡연|비흡연)$", message = "흡연 여부는 '흡연' 또는 '비흡연'이어야 합니다.")
     String smokingStatus,
 
-    String religion,
+    @Min(value = 1, message = "몸무게는 최소 1kg 이상이어야 합니다.")
+    Integer weight,
 
     @Pattern(regexp = "^(활동|은둔)$", message = "SNS 활동 수준은 '활동', '은둔' 중 하나여야 합니다.")
     String snsActivityLevel,

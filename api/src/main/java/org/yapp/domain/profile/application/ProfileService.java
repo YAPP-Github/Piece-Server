@@ -39,7 +39,7 @@ public class ProfileService {
             .job(dto.job())
             .location(dto.location())
             .smokingStatus(dto.smokingStatus())
-            .religion(dto.religion())
+            .weight(dto.weight())
             .snsActivityLevel(dto.snsActivityLevel())
             .contacts(dto.contacts())
             .imageUrl(dto.imageUrl())
