@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.Map;
 import org.yapp.domain.profile.ProfileBasic;
 
 public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어있을 수 없습니다.") String nickname,
@@ -29,7 +30,9 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
                                             message = "전화번호는 10자리에서 11자리 숫자여야 합니다.") String phoneNumber,
 
                                         @Pattern(regexp = "^https?://.*", message = "이미지 URL은 유효한 형식이어야 합니다.")
-                                        String imageUrl) {
+                                        String imageUrl,
+
+                                        Map<String, String> contacts) {
 
     public ProfileBasic toProfileBasic() {
         return ProfileBasic.builder()
@@ -43,6 +46,7 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
             .weight(weight)
             .snsActivityLevel(snsActivityLevel)
             .imageUrl(imageUrl)
+            .contacts(contacts)
             .build();
     }
 

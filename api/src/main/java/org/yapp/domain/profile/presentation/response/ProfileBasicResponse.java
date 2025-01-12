@@ -1,5 +1,6 @@
 package org.yapp.domain.profile.presentation.response;
 
+import java.util.Map;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.application.util.DateUtils;
@@ -9,7 +10,8 @@ public record ProfileBasicResponse(String nickname, String description, int age,
                                    String job,
                                    String location,
                                    String smokingStatus, Integer weight, String snsActivityLevel,
-                                   String imageUrl) {
+                                   String imageUrl,
+                                   Map<String, String> contacts) {
 
     public static ProfileBasicResponse from(Profile profile) {
 
@@ -21,6 +23,7 @@ public record ProfileBasicResponse(String nickname, String description, int age,
             basic.getBirthdate().toString(), basic.getHeight(),
             basic.getJob(), basic.getLocation(), basic.getSmokingStatus(), basic.getWeight(),
             basic.getSnsActivityLevel(),
-            basic.getImageUrl());
+            basic.getImageUrl(),
+            basic.getContacts());
     }
 }
