@@ -47,7 +47,7 @@ public class ProfileController {
 
         Profile profile = profileService.create(request);
         OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(profile);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.createSuccess(oauthLoginResponse));
     }
 
