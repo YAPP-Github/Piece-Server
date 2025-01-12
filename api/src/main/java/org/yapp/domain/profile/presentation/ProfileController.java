@@ -21,8 +21,8 @@ import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.application.ProfileService;
+import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
-import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
 import org.yapp.domain.user.User;
@@ -61,13 +61,14 @@ public class ProfileController {
             .body(CommonResponse.createSuccess(ProfileBasicResponse.from(user.getProfile())));
     }
 
-    @PutMapping()
-    @Operation(summary = "프로필 업데이트", description = "현재 로그인된 사용자의 프로필을 업데이트합니다.", tags = {"프로필"})
-    @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 업데이트되었습니다.")
+    @PutMapping("/basic")
+    @Operation(summary = "프로필 기본 정보 업데이트", description = "현재 로그인된 사용자의 프로필 기본정보를 업데이트합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필 기본정보가 성공적으로 업데이트되었습니다.")
     public ResponseEntity<CommonResponse<ProfileBasicResponse>> updateProfile(
         @AuthenticationPrincipal Long userId,
-        @RequestBody @Valid ProfileUpdateRequest request) {
-        Profile profile = profileService.updateByUserId(userId, request);
+        @RequestBody @Valid ProfileBasicUpdateRequest request) {
+        Profile profile = profileService.updateProfileBasic(userId, request);
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile)));
     }

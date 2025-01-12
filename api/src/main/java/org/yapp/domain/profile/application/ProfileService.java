@@ -8,12 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
-import org.yapp.domain.profile.ProfileBio;
 import org.yapp.domain.profile.ProfileValuePick;
 import org.yapp.domain.profile.ProfileValueTalk;
 import org.yapp.domain.profile.dao.ProfileRepository;
+import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
-import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickPair;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.user.User;
@@ -71,16 +70,13 @@ public class ProfileService {
     }
 
     @Transactional
-    public Profile updateByUserId(long userId, ProfileUpdateRequest dto) {
+    public Profile updateProfileBasic(long userId, ProfileBasicUpdateRequest dto) {
         User user = this.userService.getUserById(userId);
         Profile profile = getProfileById(user.getProfile().getId());
 
         ProfileBasic profileBasic = dto.toProfileBasic();
-        ProfileBio profileBio = dto.toProfileBio();
 
         profile.updateBasic(profileBasic);
-        profile.updateBio(profileBio);
-
         return profile;
     }
 
