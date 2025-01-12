@@ -3,7 +3,7 @@ package org.yapp.domain.match.application.matcher;
 import org.springframework.stereotype.Component;
 import org.yapp.domain.match.application.algorithm.PreferenceBasedMatchingAlgorithm;
 import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.dao.ProfileRepository;
+import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.enums.Location;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PreferenceBasedMatcher implements CoupleMatcher {
   private final PreferenceBasedMatchingAlgorithm matchingAlgorithm;
-  private final ProfileRepository profileRepository;
+  private final ProfileService profileService;
 
   @Override
   public void match() {
@@ -27,7 +27,7 @@ public class PreferenceBasedMatcher implements CoupleMatcher {
 
     //지역별로 매칭
     for (String locationName : locationNames) {
-      List<Profile> profiles = profileRepository.findByProfileBasic_Location(locationName);
+      List<Profile> profiles = profileService.getProfilesByLocation(locationName);
       List<Profile> remains = matchingAlgorithm.doMatch(profiles);
       unmatchedProfiles.addAll(remains);
     }
