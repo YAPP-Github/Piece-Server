@@ -50,7 +50,7 @@ public class ProfileController {
             .body(CommonResponse.createSuccess(oauthLoginResponse));
     }
 
-    @GetMapping
+    @GetMapping("/basic")
     @Operation(summary = "프로필 기본 정보 조회", description = "현재 로그인된 사용자의 프로필 기본 정보를 조회합니다.", tags = {
         "프로필"})
     @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
