@@ -21,6 +21,9 @@ public class ProfileBasic {
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
+    
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "birthdate")
     private LocalDate birthdate;

@@ -34,6 +34,7 @@ public class ProfileService {
     public Profile create(ProfileCreateRequest dto) {
         ProfileBasic profileBasic = ProfileBasic.builder()
             .nickname(dto.nickname())
+            .description(dto.description())
             .birthdate(dto.birthdate())
             .height(dto.height())
             .job(dto.job())

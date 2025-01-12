@@ -16,14 +16,19 @@ public record ProfileCreateRequest(
     @NotBlank(message = "닉네임은 필수입니다.")
     String nickname,
 
+    @NotBlank(message = "나를 표햔하는 한 마디는 필수입니다.")
+    String description,
+
     @Past(message = "생년월일은 현재 날짜보다 과거여야 합니다.")
     LocalDate birthdate,
 
     @Positive(message = "키는 0보다 커야 합니다.")
     Integer height,
 
+    @NotBlank(message = "직업은 필수입니다.")
     String job,
 
+    @NotBlank(message = "활동 지역은 필수입니다.")
     String location,
 
     @Pattern(regexp = "^(흡연|비흡연)$", message = "흡연 여부는 '흡연' 또는 '비흡연'이어야 합니다.")
