@@ -87,8 +87,7 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileValuePickResponses));
     }
-
-
+    
     @PutMapping("/values")
     @Operation(summary = "프로필 가치관 업데이트", description = "현재 로그인된 사용자의 프로필 가치관을 업데이트합니다.", tags = {
         "ProfileValue"})
