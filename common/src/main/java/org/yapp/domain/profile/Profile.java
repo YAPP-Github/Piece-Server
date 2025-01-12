@@ -26,30 +26,30 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Profile {
-  @Id
-  @Column(name = "profile_id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @Column(name = "profile_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @OneToOne(mappedBy = "profile")
-  private User user;
+    @OneToOne(mappedBy = "profile")
+    private User user;
 
-  @Embedded
-  private ProfileBasic profileBasic;
+    @Embedded
+    private ProfileBasic profileBasic;
 
-  @Embedded
-  private ProfileBio profileBio;
+    @Embedded
+    private ProfileBio profileBio;
 
-  @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ProfileValue> profileValues;
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfileValue> profileValues;
 
-  public void updateBio(ProfileBio profileBio) {
-    this.profileBio = profileBio;
-  }
+    public void updateBio(ProfileBio profileBio) {
+        this.profileBio = profileBio;
+    }
 
-  public void updateBasic(ProfileBasic profileBasic) {
-    this.profileBasic = profileBasic;
-  }
+    public void updateBasic(ProfileBasic profileBasic) {
+        this.profileBasic = profileBasic;
+    }
 
-  public void updateProfileValues(List<ProfileValue> profileValues) {this.profileValues = profileValues;}
+    public void updateProfileValues(List<ProfileValue> profileValues) {this.profileValues = profileValues;}
 }
