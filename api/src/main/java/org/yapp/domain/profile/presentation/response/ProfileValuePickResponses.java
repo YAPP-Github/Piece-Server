@@ -30,10 +30,10 @@ public record ProfileValuePickResponses(List<ProfileValuePickResponse> responses
             profileValuePick != null ? profileValuePick.getSelectedAnswer() : null;
 
         return new ProfileValuePickResponse(
-            valuePick.getId(),
             valuePick.getCategory(),
             valuePick.getQuestion(),
             answerList,
+            profileValuePick != null ? profileValuePick.getId() : null,
             selectedAnswer
         );
     }
