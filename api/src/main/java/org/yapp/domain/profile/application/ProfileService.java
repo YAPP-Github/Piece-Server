@@ -81,23 +81,27 @@ public class ProfileService {
     }
 
     @Transactional
-    public Profile updateProfileValues(long userId, ProfileValuePickUpdateRequest dto) {
+    public Profile updateProfileValuePicks(long userId, ProfileValuePickUpdateRequest dto) {
         User user = this.userService.getUserById(userId);
         Profile profile = getProfileById(user.getProfile().getId());
 
         List<ProfileValuePick> profileValuePicks = profile.getProfileValuePicks();
 
-        Map<Long, Integer> userValueItemAnswerMap = new HashMap<>();
-        for (ProfileValuePickPair profileValuePickPair : dto.profileValuePickPairs()) {
-            final Long valueItemId = profileValuePickPair.valueItemId();
+        Map<Long, Integer> userProfileValuePickIdMaps = new HashMap<>();
+        for (ProfileValuePickPair profileValuePickPair : dto.profileValuePickUpdateRequests()) {
+            final Long profileValuePickId = profileValuePickPair.profileValuePickId();
             final Integer selectedAnswer = profileValuePickPair.selectedAnswer();
 
-            userValueItemAnswerMap.put(valueItemId, selectedAnswer);
+            userProfileValuePickIdMaps.put(profileValuePickId, selectedAnswer);
         }
 
         for (ProfileValuePick profileValuePick : profileValuePicks) {
-            final Long profileValueItemID = profileValuePick.getValuePick().getId();
-            profileValuePick.updatedSelectedAnswer(userValueItemAnswerMap.get(profileValueItemID));
+            Long profileValuePickId = profileValuePick.getId();
+
+            if (userProfileValuePickIdMaps.containsKey(profileValuePickId)) {
+                Integer selectedAnswer = userProfileValuePickIdMaps.get(profileValuePickId);
+                profileValuePick.updatedSelectedAnswer(selectedAnswer);
+            }
         }
 
         return profile;

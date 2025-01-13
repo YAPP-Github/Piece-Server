@@ -1,4 +1,5 @@
 package org.yapp.domain.profile.presentation.request;
 
-public record ProfileValuePickPair(Long valueItemId, Integer selectedAnswer) {
+public record ProfileValuePickPair(Long profileValuePickId, Integer selectedAnswer) {
+
 }

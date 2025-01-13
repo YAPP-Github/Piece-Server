@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -76,7 +77,7 @@ public class ProfileController {
             .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile)));
     }
 
-    @GetMapping("/picks")
+    @GetMapping("/valuePicks")
     @Operation(summary = "프로필 가치관 Pick 정보 조회", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Pick을 조회합니다.", tags = {
         "프로필"})
     @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
@@ -87,7 +88,23 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileValuePickResponses));
     }
-    
+
+    @PatchMapping("/valuePicks")
+    @Operation(summary = "프로필 가치관 Pick 업데이트", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Pick을 업데이트합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필 가치관 Pick을 성공적으로 업데이트하였습니다.")
+    public ResponseEntity<CommonResponse<ProfileValuePickResponses>> updateProfilePick(
+        @AuthenticationPrincipal Long userId,
+        @RequestBody ProfileValuePickUpdateRequest request) {
+
+        profileService.updateProfileValuePicks(userId, request);
+        ProfileValuePickResponses profileValuePickResponses = profileValuePickService.getProfileValuePickResponses(
+            userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(profileValuePickResponses));
+    }
+
     @PutMapping("/values")
     @Operation(summary = "프로필 가치관 업데이트", description = "현재 로그인된 사용자의 프로필 가치관을 업데이트합니다.", tags = {
         "ProfileValue"})
@@ -96,7 +113,7 @@ public class ProfileController {
         @AuthenticationPrincipal Long userId,
         @RequestBody @Valid ProfileValuePickUpdateRequest request
     ) {
-        Profile profile = profileService.updateProfileValues(userId, request);
+        Profile profile = profileService.updateProfileValuePicks(userId, request);
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile)));
     }
