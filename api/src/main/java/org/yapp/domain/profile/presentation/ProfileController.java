@@ -23,11 +23,13 @@ import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.ProfileValuePickService;
+import org.yapp.domain.profile.application.ProfileValueTalkService;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
 import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
+import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.util.CommonResponse;
@@ -42,6 +44,7 @@ public class ProfileController {
     private final UserService userService;
     private final ProfileImageService profileImageService;
     private final ProfileValuePickService profileValuePickService;
+    private final ProfileValueTalkService profileValueTalkService;
 
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
@@ -104,6 +107,21 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileValuePickResponses));
     }
+
+    @GetMapping("/valueTalks")
+    @Operation(summary = "프로필 가치관 Talk 정보 조회", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Talk을 조회합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
+    public ResponseEntity<CommonResponse<ProfileValueTalkResponses>> getProfileTalks(
+        @AuthenticationPrincipal Long userId) {
+
+        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
+            userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(profileValueTalkResponses));
+    }
+
 
     @PostMapping("/check-nickname")
     @Operation(summary = "프로필 닉네임 중복 확인", description = "요청 파라미터로 전달된 닉네임이 중복되는지 확인합니다.", tags = {
