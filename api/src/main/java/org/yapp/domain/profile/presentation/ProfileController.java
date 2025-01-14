@@ -105,19 +105,6 @@ public class ProfileController {
             .body(CommonResponse.createSuccess(profileValuePickResponses));
     }
 
-    @PutMapping("/values")
-    @Operation(summary = "프로필 가치관 업데이트", description = "현재 로그인된 사용자의 프로필 가치관을 업데이트합니다.", tags = {
-        "ProfileValue"})
-    @ApiResponse(responseCode = "200", description = "프로필 가치관이 성공적으로 업데이트되었습니다.")
-    public ResponseEntity<CommonResponse<ProfileBasicResponse>> updateProfileValues(
-        @AuthenticationPrincipal Long userId,
-        @RequestBody @Valid ProfileValuePickUpdateRequest request
-    ) {
-        Profile profile = profileService.updateProfileValuePicks(userId, request);
-        return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile)));
-    }
-
     @PostMapping("/check-nickname")
     @Operation(summary = "프로필 닉네임 중복 확인", description = "요청 파라미터로 전달된 닉네임이 중복되는지 확인합니다.", tags = {
         "프로필"})
