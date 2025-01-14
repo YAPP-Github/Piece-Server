@@ -3,6 +3,7 @@ package org.yapp.domain.profile.application;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,8 @@ import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickPair;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileValueTalkPair;
+import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.error.dto.ProfileErrorCode;
@@ -106,6 +109,37 @@ public class ProfileService {
 
         return profile;
     }
+
+    @Transactional
+    public Profile updateProfileValueTalks(long userId, ProfileValueTalkUpdateRequest dto) {
+        User user = this.userService.getUserById(userId);
+        Profile profile = getProfileById(user.getProfile().getId());
+
+        List<ProfileValueTalk> profileValueTalks = profile.getProfileValueTalks();
+
+        HashMap<Long, ProfileValueTalk> profileValueTalkHashMap = profileValueTalks.stream()
+            .collect(Collectors.toMap(
+                ProfileValueTalk::getId,
+                profileValueTalk -> profileValueTalk,
+                (existing, replacement) -> existing,
+                HashMap::new
+            ));
+
+        for (ProfileValueTalkPair profileValuePickPair : dto.profileValueTalkUpdateRequests()) {
+            final Long profileValueTalkId = profileValuePickPair.profileValueTalkId();
+            final String answer = profileValuePickPair.answer();
+            final String summary = profileValuePickPair.summary();
+
+            ProfileValueTalk profileValueTalk = profileValueTalkHashMap.get(profileValueTalkId);
+            if (profileValueTalk != null) {
+                profileValueTalk.updateAnswer(answer);
+                profileValueTalk.updateSummary(summary);
+            }
+        }
+
+        return profile;
+    }
+
 
     public boolean isNicknameAvailable(String nickname) {
         return !profileRepository.existsByProfileBasic_Nickname(nickname);

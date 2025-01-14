@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +26,7 @@ import org.yapp.domain.profile.application.ProfileValueTalkService;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
 import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
@@ -92,7 +92,7 @@ public class ProfileController {
             .body(CommonResponse.createSuccess(profileValuePickResponses));
     }
 
-    @PatchMapping("/valuePicks")
+    @PutMapping("/valuePicks")
     @Operation(summary = "프로필 가치관 Pick 업데이트", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Pick을 업데이트합니다.", tags = {
         "프로필"})
     @ApiResponse(responseCode = "200", description = "프로필 가치관 Pick을 성공적으로 업데이트하였습니다.")
@@ -115,6 +115,22 @@ public class ProfileController {
     public ResponseEntity<CommonResponse<ProfileValueTalkResponses>> getProfileTalks(
         @AuthenticationPrincipal Long userId) {
 
+        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
+            userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(profileValueTalkResponses));
+    }
+
+    @PutMapping("/valueTalks")
+    @Operation(summary = "프로필 가치관 Talk 업데이트", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Talk 업데이트합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필 가치관 Talk 성공적으로 업데이트하였습니다.")
+    public ResponseEntity<CommonResponse<ProfileValueTalkResponses>> updateProfileTalks(
+        @AuthenticationPrincipal Long userId,
+        @RequestBody ProfileValueTalkUpdateRequest request) {
+
+        profileService.updateProfileValueTalks(userId, request);
         ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
             userId);
 
