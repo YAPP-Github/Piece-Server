@@ -26,7 +26,7 @@ public class ValueTalkController {
         "가치관 톡"})
     @ApiResponse(responseCode = "200", description = "가치관 톡 리스트가 성공적으로 조회되었습니다.")
     public ResponseEntity<CommonResponse<ValueTalkResponses>> getValueTalks() {
-        List<ValueTalk> valueTalks = valueTalkService.getAllValueTalksActive();
+        List<ValueTalk> valueTalks = valueTalkService.getAllActiveValueTalks();
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(ValueTalkResponses.from(valueTalks)));
     }
