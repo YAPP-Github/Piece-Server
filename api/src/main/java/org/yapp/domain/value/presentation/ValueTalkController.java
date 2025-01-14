@@ -22,7 +22,7 @@ public class ValueTalkController {
     private final ValueTalkService valueTalkService;
 
     @GetMapping()
-    @Operation(summary = "가치관 톡 리스트 조회", description = "서비스에 등록된 모든 가치관 톡 질문을 조회합니다.", tags = {
+    @Operation(summary = "가치관 톡 리스트 조회", description = "활성화된 가치관 톡 질문을 조회합니다.", tags = {
         "가치관 톡"})
     @ApiResponse(responseCode = "200", description = "가치관 톡 리스트가 성공적으로 조회되었습니다.")
     public ResponseEntity<CommonResponse<ValueTalkResponses>> getValueTalks() {
