@@ -1,13 +1,13 @@
 package org.yapp.domain.profile.presentation.request;
 
-import org.yapp.domain.profile.ProfileBasic;
-import org.yapp.domain.profile.ProfileBio;
-
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
+import org.yapp.domain.profile.ProfileBasic;
+import org.yapp.domain.profile.ProfileBio;
 
 public record ProfileUpdateRequest(@NotBlank(message = "닉네임은 비어있을 수 없습니다.") String nickname,
 
@@ -33,23 +33,23 @@ public record ProfileUpdateRequest(@NotBlank(message = "닉네임은 비어있�
 
                                    @Size(max = 500, message = "관심사는 500자를 초과할 수 없습니다.") String interest) {
 
-  public ProfileBio toProfileBio() {
-    return ProfileBio.builder().introduction(introduction).goal(goal).interest(interest).build();
-  }
+    public ProfileBio toProfileBio() {
+        return ProfileBio.builder().introduction(introduction).goal(goal).interest(interest)
+            .build();
+    }
 
-  public ProfileBasic toProfileBasic() {
-    return ProfileBasic.builder()
-                       .nickname(nickname)
-                       .birthdate(java.sql.Date.valueOf(birthdate))
-                       .height(height)
-                       .job(job)
-                       .location(location)
-                       .smokingStatus(smokingStatus)
-                       .religion(religion)
-                       .snsActivityLevel(snsActivityLevel)
-                       .phoneNumber(phoneNumber)
-                       .imageUrl(imageUrl)
-                       .build();
-  }
+    public ProfileBasic toProfileBasic() {
+        return ProfileBasic.builder()
+            .nickname(nickname)
+            .birthdate(LocalDate.parse(birthdate))
+            .height(height)
+            .job(job)
+            .location(location)
+            .smokingStatus(smokingStatus)
+            .religion(religion)
+            .snsActivityLevel(snsActivityLevel)
+            .imageUrl(imageUrl)
+            .build();
+    }
 
 }

@@ -1,9 +1,5 @@
 package org.yapp.domain.profile;
 
-import org.yapp.domain.user.User;
-
-import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -14,10 +10,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.domain.user.User;
 
 @Table(name = "profile")
 @Entity
@@ -26,6 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Profile {
+
     @Id
     @Column(name = "profile_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +40,12 @@ public class Profile {
     private ProfileBio profileBio;
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProfileValue> profileValues;
+    private List<ProfileValueTalk> profileValueTalks;
 
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfileValuePick> profileValuePicks;
+
+    @Deprecated
     public void updateBio(ProfileBio profileBio) {
         this.profileBio = profileBio;
     }
@@ -51,5 +54,11 @@ public class Profile {
         this.profileBasic = profileBasic;
     }
 
-    public void updateProfileValues(List<ProfileValue> profileValues) {this.profileValues = profileValues;}
+    public void updateProfileValuePicks(List<ProfileValuePick> profileValuePicks) {
+        this.profileValuePicks = profileValuePicks;
+    }
+
+    public void updateProfileValueTalks(List<ProfileValueTalk> profileValueTalks) {
+        this.profileValueTalks = profileValueTalks;
+    }
 }

@@ -1,24 +1,29 @@
 package org.yapp.domain.profile.presentation.response;
 
+import java.util.List;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
-import org.yapp.domain.profile.ProfileBio;
 
-import java.util.List;
+public record ProfileResponse(Long id, String nickname, String birthdate, int height, String job,
+                              String location,
+                              String smokingStatus, String religion, String snsActivityLevel,
+                              String imageUrl,
+                              List<ProfileValueTalkResponse> profileTalks,
+                              List<ProfileValuePickResponse> profilePicks) {
 
-public record ProfileResponse(Long id, String nickname, String birthdate, int height, String job, String location,
-                              String smokingStatus, String religion, String snsActivityLevel, String phoneNumber,
-                              String imageUrl, String introduction, String goal, String interest,
-                              List<ProfileValueResponse> profileValues) {
+    public static ProfileResponse from(Profile profile) {
+        ProfileBasic basic = profile.getProfileBasic();
 
-  public static ProfileResponse from(Profile profile) {
-    ProfileBasic basic = profile.getProfileBasic();
-    ProfileBio bio = profile.getProfileBio();
+        List<ProfileValuePickResponse> picks = profile.getProfileValuePicks().stream().map(
+            ProfileValuePickResponse::new).toList();
 
-    List<ProfileValueResponse> values = profile.getProfileValues().stream().map(ProfileValueResponse::new).toList();
+        List<ProfileValueTalkResponse> talks = profile.getProfileValueTalks().stream().map(
+            ProfileValueTalkResponse::new).toList();
 
-    return new ProfileResponse(profile.getId(), basic.getNickname(), basic.getBirthdate().toString(), basic.getHeight(),
-        basic.getJob(), basic.getLocation(), basic.getSmokingStatus(), basic.getReligion(), basic.getSnsActivityLevel(),
-        basic.getPhoneNumber(), basic.getImageUrl(), bio.getIntroduction(), bio.getGoal(), bio.getInterest(), values);
-  }
+        return new ProfileResponse(profile.getId(), basic.getNickname(),
+            basic.getBirthdate().toString(), basic.getHeight(),
+            basic.getJob(), basic.getLocation(), basic.getSmokingStatus(), basic.getReligion(),
+            basic.getSnsActivityLevel(),
+            basic.getImageUrl(), talks, picks);
+    }
 }

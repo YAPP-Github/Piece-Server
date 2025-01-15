@@ -1,5 +1,7 @@
 package org.yapp.domain.user;
 
+import org.yapp.domain.profile.Profile;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,47 +14,46 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yapp.domain.profile.Profile;
 
 @Table(name = "user_table")
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
-    @Id
-    @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @Column(name = "user_id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "oauth_id")
-    private String oauthId;
+  @Column(name = "oauth_id")
+  private String oauthId;
 
-    @Column(name = "name")
-    private String name;
+  @Column(name = "name")
+  private String name;
 
-    @Column(name = "phone")
-    private String phoneNumber;
+  @Column(name = "phone")
+  private String phoneNumber;
 
-    @Column(name = "role")
-    private String role = "USER";
+  @Column(name = "role")
+  private String role;
 
-    @OneToOne
-    @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
-    private Profile profile;
+  @OneToOne
+  @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
+  private Profile profile;
 
-    public void initializePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+  public void initializePhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
+  public void setProfile(Profile profile) {
+    this.profile = profile;
+  }
 
-    public void updateUserRole(String role) {
-        this.role = role;
-    }
+  public void updateUserRole(String role) {
+    this.role = role;
+  }
 }
 
