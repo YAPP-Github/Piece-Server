@@ -66,5 +66,5 @@ jobs:
           script: |
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-            sudo docker run -d -p 8080:8080 --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
+            sudo docker run -d -p 8080:8080 --add-host=localhost:host-gateway ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
             sudo docker image prune -f
