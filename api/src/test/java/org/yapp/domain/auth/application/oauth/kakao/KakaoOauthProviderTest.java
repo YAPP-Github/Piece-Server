@@ -2,13 +2,16 @@ package org.yapp.domain.auth.application.oauth.kakao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.yapp.domain.auth.application.oauth.OauthClient;
 import org.yapp.domain.auth.domain.enums.OauthType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 class KakaoOauthProviderTest {
   @Mock
   private KakaoOauthClient kakaoOauthClient;
@@ -26,6 +29,6 @@ class KakaoOauthProviderTest {
   @Test
   @DisplayName("getOauthType 메서드가 OauthType.KAKAO를 반환한다")
   void testGetOauthType() {
-    assertThat(kakaoOauthProvider.getOauthType()).isEqualTo(OauthType.GOOGLE);
+    assertThat(kakaoOauthProvider.getOauthType()).isEqualTo(OauthType.KAKAO);
   }
 }
