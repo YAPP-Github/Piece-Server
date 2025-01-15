@@ -25,6 +25,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - uses: samin/mysql-action@v1
+        with:
+          mysql version: '8.0'
+          mysql database: 'dating-service-db'
+          mysql root password: ${{ secrets.DB_PASSWORD }}
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
