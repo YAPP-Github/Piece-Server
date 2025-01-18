@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yapp.domain.auth.presentation.dto.enums.RoleStatus;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.ProfileValuePick;
@@ -53,7 +54,7 @@ public class ProfileService {
 
         profileRepository.save(profile);
 
-        List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValues(
+        List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
             profile.getId(), dto.valuePicks());
 
         List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
@@ -70,6 +71,12 @@ public class ProfileService {
     public Profile getProfileById(long profileId) {
         return profileRepository.findById(profileId)
             .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Profile> getValidProfilesByLocation(String locationName) {
+        return profileRepository.findByProfileBasic_LocationAndUser_Role(locationName,
+            RoleStatus.USER.getStatus());
     }
 
     @Transactional

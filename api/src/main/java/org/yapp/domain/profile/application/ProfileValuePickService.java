@@ -30,7 +30,7 @@ public class ProfileValuePickService {
 
 
     @Transactional
-    public List<ProfileValuePick> createAllProfileValues(Long profileId,
+    public List<ProfileValuePick> createAllProfileValuePicks(Long profileId,
         List<ProfileValuePickCreateRequest> createRequests) {
         Profile profile = profileRepository.findById(profileId)
             .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
@@ -51,6 +51,11 @@ public class ProfileValuePickService {
             .valuePick(valuePick)
             .selectedAnswer(answer)
             .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProfileValuePick> getAllProfileValuePicksByProfileId(Long profileId) {
+        return profileValuePickRepository.findByProfileIdOrderByValuePickId(profileId);
     }
 
     @Transactional(readOnly = true)
