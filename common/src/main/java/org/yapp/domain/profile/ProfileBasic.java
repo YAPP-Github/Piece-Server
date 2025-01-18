@@ -21,6 +21,9 @@ public class ProfileBasic {
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
+    
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "birthdate")
     private LocalDate birthdate;
@@ -37,8 +40,8 @@ public class ProfileBasic {
     @Column(name = "smoking_status")
     private String smokingStatus;
 
-    @Column(name = "religion")
-    private String religion;
+    @Column(name = "weight")
+    private Integer weight;
 
     @Column(name = "sns_activity_level")
     private String snsActivityLevel;

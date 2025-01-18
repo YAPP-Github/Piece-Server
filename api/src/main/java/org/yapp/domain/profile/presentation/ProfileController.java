@@ -21,10 +21,15 @@ import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.application.ProfileService;
+import org.yapp.domain.profile.application.ProfileValuePickService;
+import org.yapp.domain.profile.application.ProfileValueTalkService;
+import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
-import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
-import org.yapp.domain.profile.presentation.response.ProfileResponse;
+import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
+import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
+import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
+import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.util.CommonResponse;
@@ -38,52 +43,101 @@ public class ProfileController {
     private final ProfileService profileService;
     private final UserService userService;
     private final ProfileImageService profileImageService;
+    private final ProfileValuePickService profileValuePickService;
+    private final ProfileValueTalkService profileValueTalkService;
 
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
     public ResponseEntity<CommonResponse<OauthLoginResponse>> createProfile(
-        @AuthenticationPrincipal Long userId,
         @RequestBody @Valid ProfileCreateRequest request) {
 
         Profile profile = profileService.create(request);
         OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(profile);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.createSuccess(oauthLoginResponse));
     }
 
-    @GetMapping
-    @Operation(summary = "프로필 조회", description = "현재 로그인된 사용자의 프로필을 조회합니다.", tags = {"프로필"})
+    @GetMapping("/basic")
+    @Operation(summary = "프로필 기본 정보 조회", description = "현재 로그인된 사용자의 프로필 기본 정보를 조회합니다.", tags = {
+        "프로필"})
     @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
-    public ResponseEntity<CommonResponse<ProfileResponse>> updateProfile(
+    public ResponseEntity<CommonResponse<ProfileBasicResponse>> getProfileBasic(
         @AuthenticationPrincipal Long userId) {
         User user = userService.getUserById(userId);
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(ProfileResponse.from(user.getProfile())));
+            .body(CommonResponse.createSuccess(ProfileBasicResponse.from(user.getProfile())));
     }
 
-    @PutMapping()
-    @Operation(summary = "프로필 업데이트", description = "현재 로그인된 사용자의 프로필을 업데이트합니다.", tags = {"프로필"})
-    @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 업데이트되었습니다.")
-    public ResponseEntity<CommonResponse<ProfileResponse>> updateProfile(
+    @PutMapping("/basic")
+    @Operation(summary = "프로필 기본 정보 업데이트", description = "현재 로그인된 사용자의 프로필 기본정보를 업데이트합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필 기본정보가 성공적으로 업데이트되었습니다.")
+    public ResponseEntity<CommonResponse<ProfileBasicResponse>> updateProfile(
         @AuthenticationPrincipal Long userId,
-        @RequestBody @Valid ProfileUpdateRequest request) {
-        Profile profile = profileService.updateByUserId(userId, request);
+        @RequestBody @Valid ProfileBasicUpdateRequest request) {
+        Profile profile = profileService.updateProfileBasic(userId, request);
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(ProfileResponse.from(profile)));
+            .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile)));
     }
 
-    @PutMapping("/values")
-    @Operation(summary = "프로필 가치관 업데이트", description = "현재 로그인된 사용자의 프로필 가치관을 업데이트합니다.", tags = {
-        "ProfileValue"})
-    @ApiResponse(responseCode = "200", description = "프로필 가치관이 성공적으로 업데이트되었습니다.")
-    public ResponseEntity<CommonResponse<ProfileResponse>> updateProfileValues(
-        @AuthenticationPrincipal Long userId,
-        @RequestBody @Valid ProfileValuePickUpdateRequest request
-    ) {
-        Profile profile = profileService.updateProfileValues(userId, request);
+    @GetMapping("/valuePicks")
+    @Operation(summary = "프로필 가치관 Pick 정보 조회", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Pick을 조회합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
+    public ResponseEntity<CommonResponse<ProfileValuePickResponses>> getProfilePick(
+        @AuthenticationPrincipal Long userId) {
+        ProfileValuePickResponses profileValuePickResponses = profileValuePickService.getProfileValuePickResponses(
+            userId);
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(ProfileResponse.from(profile)));
+            .body(CommonResponse.createSuccess(profileValuePickResponses));
     }
+
+    @PutMapping("/valuePicks")
+    @Operation(summary = "프로필 가치관 Pick 업데이트", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Pick을 업데이트합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필 가치관 Pick을 성공적으로 업데이트하였습니다.")
+    public ResponseEntity<CommonResponse<ProfileValuePickResponses>> updateProfilePick(
+        @AuthenticationPrincipal Long userId,
+        @RequestBody ProfileValuePickUpdateRequest request) {
+
+        profileService.updateProfileValuePicks(userId, request);
+        ProfileValuePickResponses profileValuePickResponses = profileValuePickService.getProfileValuePickResponses(
+            userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(profileValuePickResponses));
+    }
+
+    @GetMapping("/valueTalks")
+    @Operation(summary = "프로필 가치관 Talk 정보 조회", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Talk을 조회합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
+    public ResponseEntity<CommonResponse<ProfileValueTalkResponses>> getProfileTalks(
+        @AuthenticationPrincipal Long userId) {
+
+        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
+            userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(profileValueTalkResponses));
+    }
+
+    @PutMapping("/valueTalks")
+    @Operation(summary = "프로필 가치관 Talk 업데이트", description = "현재 로그인된 사용자가 입력한 프로필 가치관 Talk 업데이트합니다.", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필 가치관 Talk 성공적으로 업데이트하였습니다.")
+    public ResponseEntity<CommonResponse<ProfileValueTalkResponses>> updateProfileTalks(
+        @AuthenticationPrincipal Long userId,
+        @RequestBody ProfileValueTalkUpdateRequest request) {
+
+        profileService.updateProfileValueTalks(userId, request);
+        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
+            userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(profileValueTalkResponses));
+    }
+
 
     @PostMapping("/check-nickname")
     @Operation(summary = "프로필 닉네임 중복 확인", description = "요청 파라미터로 전달된 닉네임이 중복되는지 확인합니다.", tags = {
