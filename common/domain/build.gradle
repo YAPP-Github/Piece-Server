@@ -10,12 +10,11 @@ repositories {
 }
 
 dependencies {
-    implementation project(':common:domain')
-    implementation project(':common:format')
-    implementation project(':common:exception')
-    
+    implementation('io.hypersistence:hypersistence-utils-hibernate-62:3.7.0')
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
 }
 
 test {
