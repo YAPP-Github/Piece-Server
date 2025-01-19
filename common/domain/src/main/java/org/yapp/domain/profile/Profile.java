@@ -38,7 +38,7 @@ public class Profile extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ProfileStatus status = ProfileStatus.INCOMPLETE;
+    private ProfileStatus profileStatus = ProfileStatus.INCOMPLETE;
 
     @Embedded
     private ProfileBasic profileBasic;
