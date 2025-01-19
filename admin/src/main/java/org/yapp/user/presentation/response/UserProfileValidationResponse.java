@@ -7,7 +7,7 @@ import org.yapp.domain.user.User;
 
 @Builder
 public record UserProfileValidationResponse(Long userId, String description,
-                                            String nickName,
+                                            String nickname,
                                             String name, LocalDate birthdate, String phoneNumber,
                                             LocalDate joinDate,
                                             String profileStatus, boolean reasonImage,
@@ -20,7 +20,7 @@ public record UserProfileValidationResponse(Long userId, String description,
         return UserProfileValidationResponse.builder()
             .userId(user.getId())
             .description(profile != null ? profile.getProfileBasic().getDescription() : null)
-            .nickName(profile != null ? profile.getProfileBasic().getNickname() : null)
+            .nickname(profile != null ? profile.getProfileBasic().getNickname() : null)
             .name(user.getName())
             .birthdate(profile != null ? profile.getProfileBasic().getBirthdate() : null)
             .phoneNumber(user.getPhoneNumber() != null ? user.getPhoneNumber() : null)
