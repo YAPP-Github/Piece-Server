@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.domain.BaseEntity;
 import org.yapp.domain.user.User;
 
 @Table(name = "profile")
@@ -23,7 +24,7 @@ import org.yapp.domain.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Profile {
+public class Profile extends BaseEntity {
 
     @Id
     @Column(name = "profile_id")
