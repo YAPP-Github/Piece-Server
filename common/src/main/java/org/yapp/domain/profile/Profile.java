@@ -4,6 +4,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +35,10 @@ public class Profile extends BaseEntity {
 
     @OneToOne(mappedBy = "profile")
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private ProfileStatus status = ProfileStatus.INCOMPLETE;
 
     @Embedded
     private ProfileBasic profileBasic;
