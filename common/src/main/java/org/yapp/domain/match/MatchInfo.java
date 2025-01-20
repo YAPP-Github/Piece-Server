@@ -12,9 +12,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class MatchInfo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +44,14 @@ public class MatchInfo {
 
   @Column(name = "user_2_accept")
   private Boolean user2Accepted;
+
+  public MatchInfo(LocalDate date, User user1, User user2) {
+    this.date = date;
+    this.user1 = user1;
+    this.user2 = user2;
+  }
+
+  public static MatchInfo createMatchInfo(User user1, User user2) {
+    return new MatchInfo(LocalDate.now(), user1, user2);
+  }
 }
