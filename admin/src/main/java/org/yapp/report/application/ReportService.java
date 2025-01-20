@@ -1,12 +1,16 @@
 package org.yapp.report.application;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.yapp.domain.report.Report;
 import org.yapp.report.application.dto.ReportedUserWithReasonDto;
 import org.yapp.report.dao.ReportRepository;
+import org.yapp.report.presentation.response.ReportDetailResponse;
 import org.yapp.report.presentation.response.ReportUserResponse;
 import org.yapp.util.PageResponse;
 
@@ -41,6 +45,34 @@ public class ReportService {
             reportUserResponsePage.getTotalElements(),
             reportUserResponsePage.isFirst(),
             reportUserResponsePage.isLast()
+        );
+    }
+
+    public PageResponse<ReportDetailResponse> getReportsByReportedUserId(Long reportedUserId,
+        int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        int order = 1;
+        Page<Report> reportPage = reportRepository.findAllByReportedUserIdOrderByCreatedAt(
+            reportedUserId, pageable);
+        List<ReportDetailResponse> content = new ArrayList<>();
+
+        for (Report report : reportPage.getContent()) {
+            content.add(new ReportDetailResponse(
+                order++,
+                report.getReason(),
+                report.getCreatedAt().toLocalDate()
+            ));
+        }
+
+        return new PageResponse<>(
+            content,
+            reportPage.getNumber(),
+            reportPage.getSize(),
+            reportPage.getTotalPages(),
+            reportPage.getTotalElements(),
+            reportPage.isFirst(),
+            reportPage.isLast()
         );
     }
 }

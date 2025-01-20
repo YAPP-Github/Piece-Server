@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.yapp.domain.BaseEntity;
 import org.yapp.domain.user.User;
@@ -17,6 +18,7 @@ import org.yapp.domain.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class Report extends BaseEntity {
 
     @Id

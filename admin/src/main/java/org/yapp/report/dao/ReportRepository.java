@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.yapp.domain.report.Report;
 import org.yapp.report.application.dto.ReportedUserWithReasonDto;
@@ -22,4 +23,11 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
         "HAVING COUNT(r) >= 1 " +
         "ORDER BY MAX(r.createdAt) DESC")
     Page<ReportedUserWithReasonDto> findReportedUsersWithLatestReason(Pageable pageable);
+
+
+    @Query("SELECT r FROM Report r " +
+        "WHERE r.reportedUser.id = :reportedUserId " +
+        "ORDER BY r.createdAt ASC")
+    Page<Report> findAllByReportedUserIdOrderByCreatedAt(
+        @Param("reportedUserId") Long reportedUserId, Pageable pageable);
 }
