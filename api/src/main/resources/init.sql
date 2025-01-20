@@ -71,6 +71,12 @@ VALUES (11, 3, 2, '부적절한 언어 사용 2222', NOW(), NOW());
 INSERT INTO report (report_id, reporter_user_id, reported_user_id, reason, created_at, updated_at)
 VALUES (12, 1, 2, '부적절한 언어 사용 3333', NOW(), NOW());
 
+INSERT INTO user_block (user_block_id, blocking_user_id, blocked_user_id, created_at, updated_at)
+VALUES (1, 1, 2, NOW(), NOW()),
+       (2, 2, 3, NOW(), NOW()),
+       (3, 3, 4, NOW(), NOW()),
+       (4, 4, 1, NOW(), NOW()),
+       (5, 1, 3, NOW(), NOW());
 
 -- ValueItem 더미 데이터 삽입
 INSERT INTO value_pick (value_pick_id, category, question, answers, is_active)
