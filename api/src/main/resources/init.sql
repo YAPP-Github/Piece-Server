@@ -1,23 +1,76 @@
 -- ProfileBasic 더미 데이터 삽입
-INSERT INTO profile (nickname, birthdate, height, job, location, smoking_status,
-                     religion,
-                     sns_activity_level, phone_number,
-                     image_url, contacts, profile_status)
-VALUES ('JohnDoe', '1990-01-01', 180, 'Engineer', 'Seoul', 'Non-smoker', 'None', 'Medium',
-        '010-1234-5678',
-        'https://example.com/johndoe.jpg', '{
-    "email": "nomad8@naver.com"
-  }');
+INSERT INTO profile (profile_id, profile_status, nickname, description, birthdate, height, job,
+                     location, smoking_status, weight, sns_activity_level, contacts, image_url,
+                     created_at, updated_at)
+VALUES (1, 'APPROVED', 'johndoe', '소프트웨어 개발자', '1990-05-10', 180, '엔지니어', '서울', '비흡연자', 75, '활동적',
+        '{
+          "email": "john.doe@example.com"
+        }', 'https://example.com/john.jpg', NOW(), NOW()),
+       (2, 'APPROVED', 'janesmith', '마케팅 매니저', '1992-08-15', 165, '마케터', '인천', '비흡연자', 55, '보통', '{
+         "email": "jane.smith@example.com"
+       }', 'https://example.com/jane.jpg', NOW(), NOW()),
+       (3, 'APPROVED', 'robbrown', '그래픽 디자이너', '1988-03-22', 175, '디자이너', '부산', '흡연자', 70, '낮음', '{
+         "email": "robert.brown@example.com"
+       }', 'https://example.com/robert.jpg', NOW(), NOW()),
+       (4, 'APPROVED', 'emilydavis', 'HR 전문가', '1995-09-10', 170, 'HR', '대구', '비흡연자', 60, '활동적', '{
+         "email": "emily.davis@example.com"
+       }', 'https://example.com/emily.jpg', NOW(), NOW()),
+       (5, 'APPROVED', 'mikejohnson', '데이터 과학자', '1993-12-01', 185, '과학자', '서울', '비흡연자', 80,
+        '매우 활동적', '{
+         "email": "michael.johnson@example.com"
+       }', 'https://example.com/mike.jpg', NOW(), NOW()),
+       (6, 'APPROVED', 'sarahwilson', '학교 교사', '1985-04-17', 160, '교사', '광주', '비흡연자', 50, '보통', '{
+         "email": "sarah.wilson@example.com"
+       }', 'https://example.com/sarah.jpg', NOW(), NOW()),
+       (7, 'APPROVED', 'davidmartinez', '프로젝트 매니저', '1991-11-11', 172, '매니저', '수원', '비흡연자', 68,
+        '활동적', '{
+         "email": "david.martinez@example.com"
+       }', 'https://example.com/david.jpg', NOW(), NOW()),
+       (8, 'APPROVED', 'laurawhite', '비즈니스 분석가', '1987-06-25', 167, '분석가', '대전', '비흡연자', 58, '낮음',
+        '{
+          "email": "laura.white@example.com"
+        }', 'https://example.com/laura.jpg', NOW(), NOW()),
+       (9, 'APPROVED', 'jamesanderson', '기업가', '1990-01-19', 178, '기업가', '서울', '흡연자', 72, '매우 활동적',
+        '{
+          "email": "james.anderson@example.com"
+        }', 'https://example.com/james.jpg', NOW(), NOW()),
+       (10, 'APPROVED', 'oliviataylor', '제품 디자이너', '1994-07-30', 162, '디자이너', '울산', '비흡연자', 54,
+        '보통', '{
+         "email": "olivia.taylor@example.com"
+       }', 'https://example.com/olivia.jpg', NOW(), NOW());
 
 
--- User 더미 데이터 삽입
-INSERT INTO user_table (oauth_id, name, phone, role, profile_id, created_at, updated_at)
-VALUES ('oauth12345', 'Alice', '010-1234-5678', 'ADMIN', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('oauth67890', 'Bob', '010-5678-1234', 'USER', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('oauth13579', 'Charlie', '010-1111-2222', 'USER', NULL, CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP),
-       ('oauth24680', 'David', '010-3333-4444', 'USER', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('oauth11223', 'Eve', '010-5555-6666', 'USER', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO user_table (user_id, oauth_id, name, phone, role, profile_id, created_at, updated_at)
+VALUES (1, 'oauth_1', '홍길동', '010-1234-5678', 'USER', 1, NOW(), NOW()),
+       (2, 'oauth_2', '김철수', '010-2345-6789', 'USER', 2, NOW(), NOW()),
+       (3, 'oauth_3', '이영희', '010-3456-7890', 'USER', 3, NOW(), NOW()),
+       (4, 'oauth_4', '박민수', '010-4567-8901', 'USER', 4, NOW(), NOW()),
+       (5, 'oauth_5', '최지우', '010-5678-9012', 'USER', 5, NOW(), NOW()),
+       (6, 'oauth_6', '강하늘', '010-6789-0123', 'USER', 6, NOW(), NOW()),
+       (7, 'oauth_7', '오세훈', '010-7890-1234', 'USER', 7, NOW(), NOW()),
+       (8, 'oauth_8', '장미란', '010-8901-2345', 'USER', 8, NOW(), NOW()),
+       (9, 'oauth_9', '정다은', '010-9012-3456', 'USER', 9, NOW(), NOW()),
+       (10, 'oauth_10', '김유진', '010-0123-4567', 'USER', 10, NOW(), NOW());
+
+INSERT INTO report (report_id, reporter_user_id, reported_user_id, reason, created_at, updated_at)
+VALUES (1, 1, 2, '부적절한 언어 사용', NOW(), NOW()),
+       (2, 3, 4, '스팸 메시지 전송', NOW(), NOW()),
+       (3, 5, 6, '허위 정보 제공', NOW(), NOW()),
+       (4, 7, 8, '욕설 및 비방', NOW(), NOW()),
+       (5, 9, 10, '기타 사유', NOW(), NOW()),
+       (6, 2, 1, '사기 의심', NOW(), NOW()),
+       (7, 4, 3, '허위 정보 제공', NOW(), NOW()),
+       (8, 6, 5, '욕설 및 비방', NOW(), NOW()),
+       (9, 8, 7, '부적절한 언어 사용', NOW(), NOW()),
+       (10, 10, 9, '스팸 메시지 전송', NOW(), NOW());
+
+INSERT INTO report (report_id, reporter_user_id, reported_user_id, reason, created_at, updated_at)
+VALUES (11, 3, 2, '부적절한 언어 사용 2222', NOW(), NOW());
+
+
+INSERT INTO report (report_id, reporter_user_id, reported_user_id, reason, created_at, updated_at)
+VALUES (12, 1, 2, '부적절한 언어 사용 3333', NOW(), NOW());
+
 
 -- ValueItem 더미 데이터 삽입
 INSERT INTO value_pick (value_pick_id, category, question, answers, is_active)
@@ -39,7 +92,7 @@ VALUES ('꿈과 목표', '어떤 일을 하며 무엇을 목표로 살아가나�
 
 INSERT INTO profile_value_pick (profile_value_pick_id, profile_id, value_pick_id, selected_answer)
 VALUES (1, 1, 1, 2),
-       (2, 1, 2, 3);
+       (2, 1, 2, 1);
 
 INSERT INTO profile_value_talk (profile_value_talk_id, profile_id, value_talk_id, answer)
 VALUES (1, 1, 1, '문장입니다 1'),
