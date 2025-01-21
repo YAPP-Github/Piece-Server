@@ -1,6 +1,7 @@
 package org.yapp.domain.match.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.match.application.MatchService;
+import org.yapp.domain.match.presentation.dto.response.ContactResponse;
 import org.yapp.domain.match.presentation.dto.response.ImageUrlResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchInfoResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchProfileBasicResponse;
@@ -77,5 +79,12 @@ public class MatchController {
   public ResponseEntity<CommonResponse<Void>> acceptMatch() {
     matchService.acceptMatch();
     return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccessWithNoContent());
+  }
+
+  @GetMapping("/contacts")
+  public ResponseEntity<CommonResponse<ContactResponse>> getContacts() {
+    Map<String, String> contacts = matchService.getContacts();
+    ContactResponse contactResponse = new ContactResponse(contacts);
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(contactResponse));
   }
 }
