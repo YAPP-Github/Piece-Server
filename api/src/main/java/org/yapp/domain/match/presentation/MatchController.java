@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.match.application.MatchService;
@@ -69,5 +70,12 @@ public class MatchController {
     ImageUrlResponse imageUrlResponse = new ImageUrlResponse(matchedUserImageUrl);
     return ResponseEntity.status(HttpStatus.OK)
         .body(CommonResponse.createSuccess(imageUrlResponse));
+  }
+
+  @PostMapping("/accept")
+  @Operation(summary = "매칭 수락하기", description = "매칭을 수락합니다.", tags = {"매칭"})
+  public ResponseEntity<CommonResponse<Void>> acceptMatch() {
+    matchService.acceptMatch();
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccessWithNoContent());
   }
 }
