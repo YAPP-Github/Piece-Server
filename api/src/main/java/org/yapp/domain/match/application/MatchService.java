@@ -246,4 +246,15 @@ public class MatchService {
     MatchInfo matchInfo = getMatchInfo(userId);
     matchInfo.acceptPiece(userId);
   }
+
+  @Transactional(readOnly = true)
+  public Map<String, String> getContacts() {
+    Long userId = authenticationService.getUserId();
+    MatchInfo matchInfo = getMatchInfo(userId);
+    if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
+      throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
+    }
+    User matchedUser = getMatchedUser(userId, matchInfo);
+    return matchedUser.getProfile().getProfileBasic().getContacts();
+  }
 }
