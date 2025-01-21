@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ContactResponse {
 
-  private Map<Integer, String> contacts;
+  private Map<String, String> contacts;
 }
