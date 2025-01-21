@@ -239,4 +239,11 @@ public class MatchService {
     }
     return matchedValues;
   }
+
+  @Transactional
+  public void acceptMatch() {
+    Long userId = authenticationService.getUserId();
+    MatchInfo matchInfo = getMatchInfo(userId);
+    matchInfo.acceptPiece(userId);
+  }
 }
