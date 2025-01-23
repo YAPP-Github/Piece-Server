@@ -44,6 +44,7 @@ public class AdminProfileService {
             .build());
 
         profile.updateProfileStatus(ProfileStatus.REJECTED);
+        profile.getUser().updateUserRole(RoleStatus.PENDING.getStatus());
     }
 
     private void passProfile(Profile profile) {
