@@ -1,4 +1,4 @@
-package org.yapp.domain.auth.presentation.dto.enums;
+package org.yapp.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
