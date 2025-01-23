@@ -13,7 +13,8 @@ dependencies {
     implementation project(':common:domain')
     implementation project(':common:format')
     implementation project(':common:exception')
-    
+    implementation project(':common:auth')
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
