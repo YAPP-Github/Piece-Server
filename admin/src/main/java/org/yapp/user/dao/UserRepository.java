@@ -9,4 +9,6 @@ import org.yapp.domain.user.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findById(Long userId);
+
+    Optional<User> findByOauthId(String oauthId);
 }
