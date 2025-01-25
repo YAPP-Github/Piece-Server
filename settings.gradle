@@ -8,4 +8,6 @@ include 'common:exception'
 findProject(':common:exception')?.name = 'exception'
 include 'common:format'
 findProject(':common:format')?.name = 'format'
+include 'common:auth'
+findProject(':common:auth')?.name = 'auth'
 
