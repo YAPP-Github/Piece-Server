@@ -1,8 +1,7 @@
-package org.yapp.domain.profile;
+package org.yapp.domain.report;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,18 +19,21 @@ import org.yapp.domain.user.User;
 @AllArgsConstructor
 @Builder
 @Getter
-public class ProfileRejectHistory extends BaseEntity {
+public class Report extends BaseEntity {
 
     @Id
-    @Column(name = "profile_reject_history_id")
+    @Column(name = "report_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "reporter_user_id", nullable = false)
+    private User reporter;
 
-    boolean reasonImage;
+    @ManyToOne
+    @JoinColumn(name = "reported_user_id", nullable = false)
+    private User reportedUser;
 
-    boolean reasonDescription;
+    @Column(length = 500)
+    private String reason;
 }

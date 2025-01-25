@@ -68,4 +68,8 @@ public class Profile extends BaseEntity {
     public void updateProfileValueTalks(List<ProfileValueTalk> profileValueTalks) {
         this.profileValueTalks = profileValueTalks;
     }
+
+    public void updateProfileStatus(ProfileStatus profileStatus) {
+        this.profileStatus = profileStatus;
+    }
 }

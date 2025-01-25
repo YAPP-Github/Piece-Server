@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.yapp.domain.auth.application.jwt.JwtUtil;
 import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
-import org.yapp.domain.auth.presentation.dto.enums.RoleStatus;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
+import org.yapp.domain.user.RoleStatus;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.dao.UserRepository;
 
