@@ -11,15 +11,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.yapp.jwt.JwtFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,6 +37,7 @@ public class SecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .hasAnyRole("ADMIN"))
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 
@@ -47,6 +52,6 @@ public class SecurityConfig {
     }
 
     private RequestMatcher getMatcherForAnyone() {
-        return RequestMatchers.anyOf(antMatcher("/admin/v1/login/**"));
+        return RequestMatchers.anyOf(antMatcher("/admin/v1/auth/login/**"));
     }
 }

@@ -36,6 +36,11 @@ public class UserService {
             .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
     }
 
+    public User getUserByOauthId(String oauthId) {
+        return userRepository.findByOauthId(oauthId)
+            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+    }
+
     public PageResponse<UserProfileValidationResponse> getUserProfilesWithPagination(int page,
         int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
