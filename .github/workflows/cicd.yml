@@ -42,7 +42,9 @@ jobs:
 
       # gradle build
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
 
       # docker build & push to develop
       - name: Docker build & push to dev
