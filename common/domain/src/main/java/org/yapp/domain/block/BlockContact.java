@@ -31,7 +31,7 @@ import org.yapp.domain.user.User;
         @Index(name = "idx_phone_number", columnList = "phoneNumber"),
     }
 )
-public class Block extends BaseEntity {
+public class BlockContact extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
