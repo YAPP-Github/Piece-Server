@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface BlockRepository extends JpaRepository<Block, Long> {
-    List<Block> findBlocksByUserId(Long userId);
+  boolean existsByUserIdAndPhoneNumber(Long userId, String phoneNumber);
+
+  List<Block> findBlocksByUserId(Long userId);
 }

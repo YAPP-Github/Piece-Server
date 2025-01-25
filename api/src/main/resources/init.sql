@@ -1,20 +1,12 @@
 -- ProfileBasic 더미 데이터 삽입
 INSERT INTO profile (profile_id, nickname, birthdate, height, job, location, smoking_status,
                      religion,
-                     sns_activity_level, phone_number,
+                     sns_activity_level,
                      image_url, contacts)
 VALUES (1, 'JohnDoe', '1990-01-01', 180, 'Engineer', 'Seoul', 'Non-smoker', 'None', 'Medium',
-        '010-1234-5678',
         'https://example.com/johndoe.jpg', '{
     "email": "nomad8@naver.com"
   }');
-
--- ProfileBio 더미 데이터 삽입
-UPDATE profile
-SET introduction = 'Hello, I am John.',
-    goal         = 'Achieve success.',
-    interest     = 'Coding'
-WHERE profile_id = 1;
 
 -- User 더미 데이터 삽입
 INSERT INTO user_table (user_id, oauth_id, name, profile_id, role)
