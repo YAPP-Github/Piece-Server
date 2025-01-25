@@ -9,10 +9,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.yapp.domain.user.User;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class MatchInfo {
 
   @Id
