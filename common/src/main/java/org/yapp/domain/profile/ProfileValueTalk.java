@@ -41,4 +41,12 @@ public class ProfileValueTalk {
 
     @Column(length = 300)
     private String answer;
+
+    public void updateAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public void updateSummary(String summary) {
+        this.summary = summary;
+    }
 }
