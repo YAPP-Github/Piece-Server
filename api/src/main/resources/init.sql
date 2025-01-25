@@ -1,10 +1,9 @@
 -- ProfileBasic 더미 데이터 삽입
 INSERT INTO profile (nickname, birthdate, height, job, location, smoking_status,
                      religion,
-                     sns_activity_level, phone_number,
+                     sns_activity_level,
                      image_url, contacts, profile_status)
 VALUES ('JohnDoe', '1990-01-01', 180, 'Engineer', 'Seoul', 'Non-smoker', 'None', 'Medium',
-        '010-1234-5678',
         'https://example.com/johndoe.jpg', '{
     "email": "nomad8@naver.com"
   }');

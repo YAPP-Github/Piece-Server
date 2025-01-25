@@ -50,8 +50,8 @@ class OauthServiceTest {
     User user = User.builder().oauthId(oauthId).build();
     ReflectionTestUtils.setField(user, "id", 1L);
     when(userRepository.save(any(User.class))).thenReturn(user);
-    when(jwtUtil.createJwt("access_token", 1L, oauthId, "member", 600000L)).thenReturn("access_token");
-    when(jwtUtil.createJwt("refresh_token", 1L, oauthId, "member", 864000000L)).thenReturn("refresh_token");
+    when(jwtUtil.createJwt("access_token", 1L, oauthId, "NONE", 600000L)).thenReturn("access_token");
+    when(jwtUtil.createJwt("refresh_token", 1L, oauthId, "NONE", 864000000L)).thenReturn("refresh_token");
 
     // When
     OauthLoginResponse response = oauthService.login(request);
@@ -89,6 +89,7 @@ class OauthServiceTest {
     when(oauthProvider.getOAuthProviderUserId(token)).thenReturn("123456");
     User existingUser = User.builder().oauthId(oauthId).build();
     ReflectionTestUtils.setField(existingUser, "id", 1L);
+    ReflectionTestUtils.setField(existingUser, "role", "member");
     when(userRepository.findByOauthId(oauthId)).thenReturn(Optional.of(existingUser));
     when(jwtUtil.createJwt("access_token", 1L, oauthId, "member", 600000L)).thenReturn("access_token");
     when(jwtUtil.createJwt("refresh_token", 1L, oauthId, "member", 864000000L)).thenReturn("refresh_token");
