@@ -61,4 +61,12 @@ public class MatchInfo {
       user2PieceChecked = true;
     }
   }
+
+  public void acceptPiece(Long userId) {
+    if (user1.getId().equals(userId)) {
+      user1Accepted = true;
+    } else {
+      user2Accepted = true;
+    }
+  }
 }

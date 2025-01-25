@@ -1,14 +1,19 @@
 package org.yapp.domain.match.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.yapp.domain.block.application.DirectBlockService;
 import org.yapp.domain.match.application.MatchService;
+import org.yapp.domain.match.presentation.dto.response.ContactResponse;
 import org.yapp.domain.match.presentation.dto.response.ImageUrlResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchInfoResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchProfileBasicResponse;
@@ -22,6 +27,7 @@ import org.yapp.util.CommonResponse;
 public class MatchController {
 
   private final MatchService matchService;
+  private final DirectBlockService directBlockService;
 
   @GetMapping("/infos")
   @Operation(summary = "매칭 정보 조회", description = "이번 매칭의 정보를 조회합니다.", tags = {"매칭"})
@@ -69,5 +75,28 @@ public class MatchController {
     ImageUrlResponse imageUrlResponse = new ImageUrlResponse(matchedUserImageUrl);
     return ResponseEntity.status(HttpStatus.OK)
         .body(CommonResponse.createSuccess(imageUrlResponse));
+  }
+
+  @PostMapping("/accept")
+  @Operation(summary = "매칭 수락하기", description = "매칭을 수락합니다.", tags = {"매칭"})
+  public ResponseEntity<CommonResponse<Void>> acceptMatch() {
+    matchService.acceptMatch();
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccessWithNoContent());
+  }
+
+  @GetMapping("/contacts")
+  @Operation(summary = "매칭 상대 연락처 조회", description = "매칭 상대의 연락처를 조회합니다", tags = {"매칭"})
+  public ResponseEntity<CommonResponse<ContactResponse>> getContacts() {
+    Map<String, String> contacts = matchService.getContacts();
+    ContactResponse contactResponse = new ContactResponse(contacts);
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(contactResponse));
+  }
+
+  @PostMapping("/blocks/users/{userId}")
+  @Operation(summary = "매칭 상대 차단", description = "매칭 상대를 차단합니다", tags = {"매칭"})
+  public ResponseEntity<CommonResponse<Void>> blockUsers(
+      @PathVariable(name = "userId") Long userId) {
+    directBlockService.blockUser(userId);
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccessWithNoContent());
   }
 }
