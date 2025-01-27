@@ -84,8 +84,8 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
 
   private int calculateWeight(Long fromProfileId, Long toProfileId) {
     List<ProfileValuePick> profileValuePicksOfFrom =
-        profileValuePickService.getAllProfileValuesByProfileId(fromProfileId);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuesByProfileId(
+        profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
+    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
         toProfileId);
 
     int valueListSize = profileValuePicksOfFrom.size();
