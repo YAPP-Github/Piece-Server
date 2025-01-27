@@ -8,5 +8,7 @@ import org.yapp.domain.block.BlockContact;
 @Repository
 public interface BlockContactRepository extends JpaRepository<BlockContact, Long> {
 
-    List<BlockContact> findBlocksByUserId(Long userId);
+  List<BlockContact> findBlocksByUserId(Long userId);
+
+  boolean existsByUser_IdAndPhoneNumber(Long userId, String phoneNumber);
 }

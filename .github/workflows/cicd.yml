@@ -42,7 +42,9 @@ jobs:
 
       # gradle build
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
 
       # docker build & push to develop
       - name: Docker build & push to dev
@@ -66,5 +68,5 @@ jobs:
           script: |
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-            sudo docker run -d -p 8080:8080 --add-host=localhost:host-gateway ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
+            sudo docker run -d -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
             sudo docker image prune -f
