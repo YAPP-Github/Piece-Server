@@ -7,8 +7,6 @@ import org.yapp.domain.report.dao.ReportRepository;
 import org.yapp.domain.report.dto.request.UserReportRequest;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
-import org.yapp.error.dto.ReportErrorCode;
-import org.yapp.error.exception.ApplicationException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +25,8 @@ public class ReportService {
   public Report reportUser(Long reporterId, UserReportRequest userReportRequest) {
     User reporter = userService.getUserById(reporterId);
     User reportedUser = userService.getUserById(userReportRequest.getReportedUserId());
-    if (isUserReportedAlready(reporter, reportedUser)) {
-      throw new ApplicationException(ReportErrorCode.ALREADY_REPORTED);
-    }
     Report report = Report.builder().reporter(reporter).reportedUser(reportedUser)
         .reason(userReportRequest.getReason()).build();
     return reportRepository.save(report);
-  }
-
-  private boolean isUserReportedAlready(User reporter, User reportedUser) {
-    return reportRepository.existsReportByReporterAndReportedUser(reporter, reportedUser);
   }
 }
