@@ -184,8 +184,8 @@ public class MatchService {
   private List<MatchValuePickInnerResponse> getMatchValuePickInnerResponses(Long fromProfileId,
       Long toProfileId) {
     List<ProfileValuePick> profileValuePicksOfFrom =
-        profileValuePickService.getAllProfileValuesByProfileId(fromProfileId);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuesByProfileId(
+        profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
+    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
         toProfileId);
 
     List<MatchValuePickInnerResponse> talkInnerResponses = new ArrayList<>();
@@ -220,8 +220,8 @@ public class MatchService {
 
   private List<String> getMatchedValues(Long fromProfileId, Long toProfileId) {
     List<ProfileValuePick> profileValuePicksOfFrom =
-        profileValuePickService.getAllProfileValuesByProfileId(fromProfileId);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuesByProfileId(
+        profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
+    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
         toProfileId);
 
     int valueListSize = profileValuePicksOfFrom.size();

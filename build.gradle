@@ -84,9 +84,11 @@ subprojects {
 
     test {
         reports {
-            junitXml.outputLocation.set(file("${rootDir}/build/reports/test-results/xml")) // XML 출력 경로 설정
+            junitXml.outputLocation.set(file("${rootDir}/build/reports/test-results/xml"))
+            // XML 출력 경로 설정
             html.required.set(true) // HTML 보고서 활성화
-            html.outputLocation.set(file("${rootDir}/build/reports/test-results/html")) // HTML 출력 경로 설정
+            html.outputLocation.set(file("${rootDir}/build/reports/test-results/html"))
+            // HTML 출력 경로 설정
         }
     }
 
