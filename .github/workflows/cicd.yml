@@ -29,10 +29,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # secret yml 파일 생성
+      # secret yml 파일 생성 - dev
       - name: make application-secret.yml
         if: |
-          contains(github.ref, 'main') ||
           contains(github.ref, 'develope')
         run: |
           cd ./api/src/main/resources
@@ -40,8 +39,9 @@ jobs:
           echo "${{ secrets.YML }}" > ./application-secret.yml
         shell: bash
 
-      # gradle build
+      # gradle build - dev
       - name: Build with Gradle
+        if: contains(github.ref, 'develope')
         run: |
           chmod u+x ./gradlew
           ./gradlew build -x test
@@ -69,4 +69,131 @@ jobs:
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
             sudo docker run -d -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
+            sudo docker image prune -f
+
+      # secret yml 파일 생성 - admin
+      - name: make application-secret.yml
+        if: |
+          contains(github.ref, 'develope')
+        run: |
+          cd ./admin/src/main/resources
+          touch ./application-secret.yml 
+          echo "${{ secrets.ADMIN_YML }}" > ./application-secret.yml
+        shell: bash
+
+      # gradle build - admin
+      - name: Build with Gradle
+        if: contains(github.ref, 'develope')
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
+
+      # docker build & push to admin
+      - name: Docker build & push to admin
+        if: contains(github.ref, 'develope')
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile-admin -t ${{ secrets.DOCKER_USERNAME }}/docker-admin .
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-admin
+
+      ## deploy to admin
+      - name: Deploy to admin
+        uses: appleboy/ssh-action@master
+        id: deploy-admin
+        if: contains(github.ref, 'develope')
+        with:
+          host: ${{ secrets.HOST_DEV }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            sudo docker ps
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-admin
+            sudo docker run -d -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-admin
+            sudo docker image prune -f
+
+
+      # secret yml 생성 - prod
+      - name: make application-secret.yml
+        if: |
+          contains(github.ref, 'main')
+        run: |
+          cd ./api/src/main/resources
+          touch ./application-secret.yml
+          echo "${{ secrets.PROD_YML }}" > ./application-secret.yml
+        shell: bash
+
+      # gradle build
+      - name: Build with Gradle
+        if: contains(github.ref, 'main')
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
+
+      # docker build & push to prod
+      - name: Docker build & push to prod
+        if: contains(github.ref, 'main')
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile-prod -t ${{ secrets.DOCKER_USERNAME }}/docker-prod .
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-prod
+
+      ## deploy to prod
+      - name: Deploy to prod
+        uses: appleboy/ssh-action@master
+        id: deploy-prod
+        if: contains(github.ref, 'main')
+        with:
+          host: ${{ secrets.HOST_PROD }}
+          username: ${{ secrets.USERNAME_PROD }}
+          password: ${{ secrets.PASSWORD_PROD }}
+          port: 22
+          key: ${{ secrets.PRIVATE_KEY_PROD }}
+          script: |
+            sudo docker ps
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-prod
+            sudo docker run -d -p 80:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-prod
+            sudo docker image prune -f
+
+      # secret yml 생성 - prod-admin
+      - name: make application-secret.yml
+        if: |
+          contains(github.ref, 'main')
+        run: |
+          cd ./admin/src/main/resources
+          touch ./application-secret.yml
+          echo "${{ secrets.PROD_ADMIN_YML }}" > ./application-secret.yml
+        shell: bash
+
+      # gradle build
+      - name: Build with Gradle
+        if: contains(github.ref, 'main')
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
+
+      # docker build & push to prod-admin
+      - name: Docker build & push to prod-admin
+        if: contains(github.ref, 'main')
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile-admin -t ${{ secrets.DOCKER_USERNAME }}/docker-prod-admin .
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-prod-admin
+
+      ## deploy to prod-admin
+      - name: Deploy to prod-admin
+        uses: appleboy/ssh-action@master
+        id: deploy-prod-admin
+        if: contains(github.ref, 'main')
+        with:
+          host: ${{ secrets.HOST_PROD_ADMIN }}
+          username: ${{ secrets.USERNAME_PROD_ADMIN }}
+          password: ${{ secrets.PASSWORD_PROD_ADMIN }}
+          port: 22
+          key: ${{ secrets.PRIVATE_KEY_PROD_ADMIN }}
+          script: |
+            sudo docker ps
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-prod-admin
+            sudo docker run -d -p 80:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-prod-admin
             sudo docker image prune -f
