@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum MatchErrorCode implements ErrorCode {
     NOTFOUND_MATCH(HttpStatus.NOT_FOUND, "Match not found"),
-    ;
+    MATCH_NOT_ACCEPTED(HttpStatus.BAD_REQUEST, "Match not accepted");
 
     private final HttpStatus httpStatus;
     private final String message;

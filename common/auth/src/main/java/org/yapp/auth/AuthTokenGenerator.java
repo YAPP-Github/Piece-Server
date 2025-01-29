@@ -11,10 +11,10 @@ public class AuthTokenGenerator {
 
     private final JwtUtil jwtUtil;
 
-    @Value("${jwt.accessToken.expiration}")
+    @Value("${spring.jwt.accessToken.expiration}")
     private Long accessTokenExpiration;
 
-    @Value("${jwt.refreshToken.expiration}")
+    @Value("${spring.jwt.refreshToken.expiration}")
     private Long refreshTokenExpiration;
 
 
@@ -22,7 +22,7 @@ public class AuthTokenGenerator {
         String accessToken = jwtUtil.createJwt("access_token", userId, oauthId, role,
             accessTokenExpiration);
 
-        String refreshToken = jwtUtil.createJwt("refesh_token", userId, oauthId, role,
+        String refreshToken = jwtUtil.createJwt("refresh_token", userId, oauthId, role,
             refreshTokenExpiration);
 
         return new AuthToken(accessToken, refreshToken);
