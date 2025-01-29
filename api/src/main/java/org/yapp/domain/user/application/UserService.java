@@ -3,7 +3,7 @@ package org.yapp.domain.user.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yapp.application.AuthenticationService;
+import org.yapp.auth.AuthenticationService;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.profile.Profile;
 import org.yapp.domain.user.RoleStatus;
