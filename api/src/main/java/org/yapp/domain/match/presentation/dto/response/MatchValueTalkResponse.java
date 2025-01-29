@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class MatchValueTalkResponse {
 
   private Long matchId;
-  private String shortIntroduction;
+  private String shortIntroduce;
   private String nickname;
   private List<MatchValueTalkInnerResponse> valueTalks;
 }
