@@ -10,8 +10,13 @@ repositories {
 }
 
 dependencies {
-    implementation project(':common')
     implementation project(':common:domain')
+    implementation project(':common:format')
+    implementation project(':common:exception')
+    implementation project(':common:auth')
+    implementation project(':infra:s3')
+
+    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0');
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 

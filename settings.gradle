@@ -10,4 +10,7 @@ include 'common:format'
 findProject(':common:format')?.name = 'format'
 include 'common:auth'
 findProject(':common:auth')?.name = 'auth'
+include 'infra'
+include 'infra:s3'
+findProject(':infra:s3')?.name = 's3'
 
