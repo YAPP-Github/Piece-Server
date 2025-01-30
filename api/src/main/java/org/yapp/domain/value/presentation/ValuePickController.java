@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.value.ValuePick;
 import org.yapp.domain.value.application.ValuePickService;
 import org.yapp.domain.value.presentation.dto.response.ValuePickResponses;
-import org.yapp.util.CommonResponse;
+import org.yapp.format.CommonResponse;
 
 @RequestMapping("/api/valuePicks")
 @RestController

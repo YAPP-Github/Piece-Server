@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.yapp.format.CommonResponse;
+import org.yapp.format.PageResponse;
 import org.yapp.profile.application.AdminProfileService;
 import org.yapp.user.application.UserService;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
-import org.yapp.util.CommonResponse;
-import org.yapp.util.PageResponse;
 
 @RestController()
 @RequiredArgsConstructor

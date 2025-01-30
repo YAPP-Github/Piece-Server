@@ -11,7 +11,7 @@ import org.yapp.block.dao.UserBlockRepository;
 import org.yapp.block.presentation.response.UserBlockResponse;
 import org.yapp.domain.block.UserBlock;
 import org.yapp.domain.user.User;
-import org.yapp.util.PageResponse;
+import org.yapp.format.PageResponse;
 
 @Service
 @RequiredArgsConstructor

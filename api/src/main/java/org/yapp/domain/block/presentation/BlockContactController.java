@@ -17,7 +17,7 @@ import org.yapp.domain.block.application.BlockContactService;
 import org.yapp.domain.block.application.dto.BlockContactCreateDto;
 import org.yapp.domain.block.presentation.dto.request.BlockPhoneNumbersRequest;
 import org.yapp.domain.block.presentation.dto.response.UserBlockContactResponses;
-import org.yapp.util.CommonResponse;
+import org.yapp.format.CommonResponse;
 
 @RestController
 @RequiredArgsConstructor

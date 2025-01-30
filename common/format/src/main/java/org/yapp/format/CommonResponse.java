@@ -1,4 +1,4 @@
-package org.yapp.util;
+package org.yapp.format;
 
 import java.util.HashMap;
 import java.util.List;

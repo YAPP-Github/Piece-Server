@@ -16,12 +16,12 @@ import org.yapp.domain.user.User;
 import org.yapp.error.dto.ProfileErrorCode;
 import org.yapp.error.dto.UserErrorCode;
 import org.yapp.error.exception.ApplicationException;
+import org.yapp.format.PageResponse;
 import org.yapp.profile.dao.ProfileRejectHistoryRepository;
 import org.yapp.profile.dao.ProfileValueTalkRepository;
 import org.yapp.user.dao.UserRepository;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
-import org.yapp.util.PageResponse;
 
 @Service
 @RequiredArgsConstructor

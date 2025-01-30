@@ -32,7 +32,7 @@ import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
-import org.yapp.util.CommonResponse;
+import org.yapp.format.CommonResponse;
 
 @Slf4j
 @RestController

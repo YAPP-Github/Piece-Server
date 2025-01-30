@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.yapp.format.CommonResponse;
+import org.yapp.format.PageResponse;
 import org.yapp.report.application.ReportService;
 import org.yapp.report.presentation.response.ReportDetailResponse;
 import org.yapp.report.presentation.response.ReportUserResponse;
-import org.yapp.util.CommonResponse;
-import org.yapp.util.PageResponse;
 
 @RestController()
 @RequiredArgsConstructor

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.value.ValueTalk;
 import org.yapp.domain.value.application.ValueTalkService;
 import org.yapp.domain.value.presentation.dto.response.ValueTalkResponses;
-import org.yapp.util.CommonResponse;
+import org.yapp.format.CommonResponse;
 
 @RequestMapping("/api/valueTalks")
 @RestController
