@@ -10,10 +10,10 @@ repositories {
 }
 
 dependencies {
-    implementation project(':common:domain')
-    implementation project(':common:format')
-    implementation project(':common:exception')
-    implementation project(':common:auth')
+    implementation project(':core:domain')
+    implementation project(':core:format')
+    implementation project(':core:exception')
+    implementation project(':core:auth')
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
