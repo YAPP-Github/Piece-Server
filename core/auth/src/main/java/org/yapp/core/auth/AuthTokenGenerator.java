@@ -1,9 +1,9 @@
-package org.yapp.auth;
+package org.yapp.core.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.yapp.jwt.JwtUtil;
+import org.yapp.core.auth.jwt.JwtUtil;
 
 @Component
 @RequiredArgsConstructor

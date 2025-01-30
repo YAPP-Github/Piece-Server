@@ -16,7 +16,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.yapp.jwt.JwtFilter;
+import org.yapp.core.auth.jwt.JwtFilter;
 
 @Configuration
 @EnableWebSecurity

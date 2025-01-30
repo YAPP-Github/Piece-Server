@@ -1,4 +1,4 @@
-package org.yapp.jwt;
+package org.yapp.core.auth.jwt;
 
 import io.jsonwebtoken.Jwts;
 import java.nio.charset.StandardCharsets;

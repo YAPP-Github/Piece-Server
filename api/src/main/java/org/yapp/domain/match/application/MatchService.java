@@ -10,7 +10,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yapp.auth.AuthenticationService;
+import org.yapp.core.auth.AuthenticationService;
 import org.yapp.domain.match.MatchInfo;
 import org.yapp.domain.match.dao.MatchInfoRepository;
 import org.yapp.domain.match.enums.MatchStatus;

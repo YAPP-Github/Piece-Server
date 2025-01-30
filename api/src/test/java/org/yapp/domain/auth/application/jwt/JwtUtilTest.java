@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.yapp.jwt.JwtUtil;
+import org.yapp.core.auth.jwt.JwtUtil;
 
 @ExtendWith(MockitoExtension.class)
 class JwtUtilTest {

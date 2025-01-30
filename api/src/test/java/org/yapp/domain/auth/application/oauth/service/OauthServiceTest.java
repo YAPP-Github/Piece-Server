@@ -13,13 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.user.User;
 import org.yapp.domain.user.dao.UserRepository;
-import org.yapp.jwt.JwtUtil;
 
 @ExtendWith(MockitoExtension.class)
 class OauthServiceTest {

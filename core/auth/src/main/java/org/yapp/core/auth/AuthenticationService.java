@@ -1,4 +1,4 @@
-package org.yapp.auth;
+package org.yapp.core.auth;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

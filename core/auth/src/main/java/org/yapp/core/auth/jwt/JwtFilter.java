@@ -1,4 +1,4 @@
-package org.yapp.jwt;
+package org.yapp.core.auth.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
