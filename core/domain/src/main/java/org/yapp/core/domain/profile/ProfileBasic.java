@@ -48,7 +48,7 @@ public class ProfileBasic {
 
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
-    private Map<String, String> contacts;
+    private Map<ContactType, String> contacts;
 
     @Column(name = "image_url")
     private String imageUrl;

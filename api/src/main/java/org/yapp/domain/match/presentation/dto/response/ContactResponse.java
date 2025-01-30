@@ -4,11 +4,12 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.core.domain.profile.ContactType;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class ContactResponse {
 
-  private Map<String, String> contacts;
+    private Map<ContactType, String> contacts;
 }

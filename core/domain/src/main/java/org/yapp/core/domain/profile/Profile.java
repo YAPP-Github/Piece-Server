@@ -43,19 +43,11 @@ public class Profile extends BaseEntity {
     @Embedded
     private ProfileBasic profileBasic;
 
-    @Embedded
-    private ProfileBio profileBio;
-
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileValueTalk> profileValueTalks;
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileValuePick> profileValuePicks;
-
-    @Deprecated
-    public void updateBio(ProfileBio profileBio) {
-        this.profileBio = profileBio;
-    }
 
     public void updateBasic(ProfileBasic profileBasic) {
         this.profileBasic = profileBasic;
