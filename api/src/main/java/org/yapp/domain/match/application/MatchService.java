@@ -26,8 +26,8 @@ import org.yapp.domain.match.presentation.dto.response.MatchValueTalkInnerRespon
 import org.yapp.domain.match.presentation.dto.response.MatchValueTalkResponse;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 import org.yapp.domain.user.application.UserService;
-import org.yapp.error.dto.MatchErrorCode;
-import org.yapp.error.exception.ApplicationException;
+import org.yapp.exception.ApplicationException;
+import org.yapp.exception.error.code.MatchErrorCode;
 
 @Service
 @RequiredArgsConstructor

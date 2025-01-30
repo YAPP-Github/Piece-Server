@@ -14,8 +14,8 @@ import org.yapp.domain.profile.presentation.request.ProfileValueTalkCreateReques
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.domain.value.application.ValueTalkService;
-import org.yapp.error.dto.ProfileErrorCode;
-import org.yapp.error.exception.ApplicationException;
+import org.yapp.exception.ApplicationException;
+import org.yapp.exception.error.code.ProfileErrorCode;
 
 @Service
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package org.yapp.error.dto;
+package org.yapp.exception.error.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,8 @@ public enum SecurityErrorCode implements ErrorCode {
 
     // Authorization Errors
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access is denied."),
-    ROLE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "User does not have the required role to access this resource."),
+    ROLE_NOT_ALLOWED(HttpStatus.FORBIDDEN,
+        "User does not have the required role to access this resource."),
     ;
 
     private final HttpStatus httpStatus;

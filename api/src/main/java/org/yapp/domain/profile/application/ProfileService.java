@@ -21,8 +21,8 @@ import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateReques
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest.ProfileValueTalkPair;
 import org.yapp.domain.user.application.UserService;
-import org.yapp.error.dto.ProfileErrorCode;
-import org.yapp.error.exception.ApplicationException;
+import org.yapp.exception.ApplicationException;
+import org.yapp.exception.error.code.ProfileErrorCode;
 
 @Service
 @RequiredArgsConstructor

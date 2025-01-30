@@ -8,8 +8,8 @@ import org.yapp.core.domain.profile.ProfileRejectHistory;
 import org.yapp.core.domain.profile.ProfileStatus;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
-import org.yapp.error.dto.ProfileErrorCode;
-import org.yapp.error.exception.ApplicationException;
+import org.yapp.exception.ApplicationException;
+import org.yapp.exception.error.code.ProfileErrorCode;
 import org.yapp.profile.dao.ProfileRejectHistoryRepository;
 import org.yapp.user.application.UserService;
 

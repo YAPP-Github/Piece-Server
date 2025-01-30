@@ -1,4 +1,4 @@
-package org.yapp.error.dto;
+package org.yapp.exception.error.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum CommonErrorCode implements ErrorCode{
+public enum CommonErrorCode implements ErrorCode {
     // 400 BAD_REQUEST
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "Invalid parameter included"),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Authentication required"),

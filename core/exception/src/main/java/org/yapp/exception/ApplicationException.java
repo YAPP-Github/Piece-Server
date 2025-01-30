@@ -1,8 +1,8 @@
-package org.yapp.error.exception;
+package org.yapp.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.yapp.error.dto.ErrorCode;
+import org.yapp.exception.error.code.ErrorCode;
 
 @Getter
 @RequiredArgsConstructor

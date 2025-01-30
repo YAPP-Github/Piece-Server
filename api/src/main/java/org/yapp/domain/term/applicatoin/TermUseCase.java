@@ -11,8 +11,8 @@ import org.yapp.domain.term.applicatoin.dto.SignupTermsDto;
 import org.yapp.domain.term.dao.TermAgreementRepository;
 import org.yapp.domain.term.dao.TermRepository;
 import org.yapp.domain.user.application.UserService;
-import org.yapp.error.dto.TermErrorCode;
-import org.yapp.error.exception.ApplicationException;
+import org.yapp.exception.ApplicationException;
+import org.yapp.exception.error.code.TermErrorCode;
 
 @Service
 @RequiredArgsConstructor

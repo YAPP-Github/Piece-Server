@@ -2,8 +2,8 @@ package org.yapp.domain.auth.application.authorization;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.yapp.error.code.auth.SmsAuthErrorCode;
-import org.yapp.error.exception.ApplicationException;
+import org.yapp.exception.ApplicationException;
+import org.yapp.exception.error.code.SmsAuthErrorCode;
 import org.yapp.global.application.SmsSenderService;
 import org.yapp.infra.redis.application.RedisService;
 

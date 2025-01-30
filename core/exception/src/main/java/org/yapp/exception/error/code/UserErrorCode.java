@@ -1,4 +1,4 @@
-package org.yapp.error.dto;
+package org.yapp.exception.error.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

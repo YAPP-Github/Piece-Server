@@ -1,9 +1,8 @@
-package org.yapp.error.code.auth;
+package org.yapp.exception.error.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.yapp.error.dto.ErrorCode;
 
 @Getter
 @RequiredArgsConstructor

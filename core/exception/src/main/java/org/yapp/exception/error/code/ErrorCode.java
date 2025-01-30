@@ -1,9 +1,12 @@
-package org.yapp.error.dto;
+package org.yapp.exception.error.code;
 
 import org.springframework.http.HttpStatus;
 
 public interface ErrorCode {
+
     String name();
+
     HttpStatus getHttpStatus();
+
     String getMessage();
 }
