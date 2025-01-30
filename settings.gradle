@@ -15,4 +15,6 @@ include 'infra:s3'
 findProject(':infra:s3')?.name = 's3'
 include 'infra:redis'
 findProject(':infra:redis')?.name = 'redis'
+include 'infra:sms'
+findProject(':infra:sms')?.name = 'sms'
 
