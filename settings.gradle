@@ -13,4 +13,6 @@ findProject(':common:auth')?.name = 'auth'
 include 'infra'
 include 'infra:s3'
 findProject(':infra:s3')?.name = 's3'
+include 'infra:redis'
+findProject(':infra:redis')?.name = 'redis'
 

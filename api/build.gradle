@@ -15,6 +15,7 @@ dependencies {
     implementation project(':common:exception')
     implementation project(':common:auth')
     implementation project(':infra:s3')
+    implementation project(':infra:redis')
 
     implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0');
     testImplementation platform('org.junit:junit-bom:5.10.0')

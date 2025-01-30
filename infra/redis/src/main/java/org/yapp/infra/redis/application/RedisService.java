@@ -1,4 +1,4 @@
-package org.yapp.global.application;
+package org.yapp.infra.redis.application;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
