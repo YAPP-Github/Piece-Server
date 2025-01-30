@@ -1,4 +1,4 @@
-package org.yapp.exception.error.code;
+package org.yapp.core.exception.error.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,10 +6,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum UserErrorCode implements ErrorCode {
-    INACTIVE_USER(HttpStatus.FORBIDDEN, "User is inactive"),
-    NOTFOUND_USER(HttpStatus.NOT_FOUND, "User not found"),
+public enum AuthErrorCode implements ErrorCode {
+    OAUTH_ERROR(HttpStatus.FORBIDDEN, "Oauth Error"),
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없습니다."),
     ;
+
 
     private final HttpStatus httpStatus;
     private final String message;

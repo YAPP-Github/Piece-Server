@@ -14,8 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.yapp.exception.ApplicationException;
-import org.yapp.exception.error.code.AuthErrorCode;
+import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.AuthErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 class GoogleOauthClientTest {

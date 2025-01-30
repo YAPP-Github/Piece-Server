@@ -8,14 +8,14 @@ import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileValueTalk;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.domain.value.ValueTalk;
+import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.ProfileErrorCode;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.dao.ProfileValueTalkRepository;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkCreateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.domain.value.application.ValueTalkService;
-import org.yapp.exception.ApplicationException;
-import org.yapp.exception.error.code.ProfileErrorCode;
 
 @Service
 @RequiredArgsConstructor

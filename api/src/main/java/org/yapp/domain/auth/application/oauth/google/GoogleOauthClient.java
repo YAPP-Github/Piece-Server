@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.AuthErrorCode;
 import org.yapp.domain.auth.application.oauth.OauthClient;
-import org.yapp.exception.ApplicationException;
-import org.yapp.exception.error.code.AuthErrorCode;
 
 @Component
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package org.yapp.exception.error.code;
+package org.yapp.core.exception.error.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

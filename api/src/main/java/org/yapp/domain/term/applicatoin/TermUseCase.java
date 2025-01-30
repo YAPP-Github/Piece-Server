@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.term.TermAgreement;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.TermErrorCode;
 import org.yapp.domain.term.applicatoin.dto.SignupTermsDto;
 import org.yapp.domain.term.dao.TermAgreementRepository;
 import org.yapp.domain.term.dao.TermRepository;
 import org.yapp.domain.user.application.UserService;
-import org.yapp.exception.ApplicationException;
-import org.yapp.exception.error.code.TermErrorCode;
 
 @Service
 @RequiredArgsConstructor

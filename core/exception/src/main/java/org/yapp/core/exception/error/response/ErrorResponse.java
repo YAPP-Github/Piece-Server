@@ -1,4 +1,4 @@
-package org.yapp.exception.error.response;
+package org.yapp.core.exception.error.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.yapp.exception;
+package org.yapp.core.exception;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.yapp.exception.error.code.CommonErrorCode;
-import org.yapp.exception.error.code.ErrorCode;
-import org.yapp.exception.error.response.ErrorResponse;
+import org.yapp.core.exception.error.code.CommonErrorCode;
+import org.yapp.core.exception.error.code.ErrorCode;
+import org.yapp.core.exception.error.response.ErrorResponse;
 
 
 @RestControllerAdvice
