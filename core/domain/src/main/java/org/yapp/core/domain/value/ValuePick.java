@@ -1,4 +1,4 @@
-package org.yapp.domain.value;
+package org.yapp.core.domain.value;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;

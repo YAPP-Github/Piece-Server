@@ -1,11 +1,11 @@
-package org.yapp.domain.term;
+package org.yapp.core.domain.value;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,29 +13,28 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
+@Table(name = "value_talk")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Term {
+public class ValueTalk {
 
     @Id
+    @Column(name = "value_talk_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "term_id")
-    private long id;
+    private Long id;
 
-    private String version;
+    @Column
+    private String category;
 
+    @Column(nullable = false)
     private String title;
 
-    private String content;
+    @Column
+    private String guide;
 
     @Column(nullable = false)
-    private boolean required;
-
-    @Column(nullable = false)
-    private LocalDateTime startDate;
-
-    @ColumnDefault(value = "true")
+    @ColumnDefault("true")
     private boolean isActive;
 }

@@ -1,4 +1,4 @@
-package org.yapp.domain.profile;
+package org.yapp.core.domain.profile;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -15,12 +15,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ProfileBio {
-  @Column(name = "introduction", length = 500)
-  private String introduction;
 
-  @Column(name = "goal", length = 500)
-  private String goal;
+    @Column(name = "introduction", length = 500)
+    private String introduction;
 
-  @Column(name = "interest", length = 500)
-  private String interest;
+    @Column(name = "goal", length = 500)
+    private String goal;
+
+    @Column(name = "interest", length = 500)
+    private String interest;
 }

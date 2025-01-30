@@ -1,4 +1,4 @@
-package org.yapp.domain.user;
+package org.yapp.core.domain.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yapp.domain.BaseEntity;
-import org.yapp.domain.profile.Profile;
+import org.yapp.core.domain.BaseEntity;
+import org.yapp.core.domain.profile.Profile;
 
 @Table(name = "user_table")
 @Entity

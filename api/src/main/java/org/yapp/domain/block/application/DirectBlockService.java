@@ -3,7 +3,7 @@ package org.yapp.domain.block.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yapp.core.auth.AuthenticationService;
-import org.yapp.domain.block.DirectBlock;
+import org.yapp.core.domain.block.DirectBlock;
 import org.yapp.domain.block.dao.DirectBlockRepository;
 
 @Service

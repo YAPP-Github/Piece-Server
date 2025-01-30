@@ -1,12 +1,11 @@
-
 package org.yapp.domain.match.application.algorithm;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.profile.ProfileValuePick;
 import org.yapp.domain.match.application.blocker.Blocker;
-import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.ProfileValuePick;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 
 @Component

@@ -2,8 +2,8 @@ package org.yapp.domain.profile.presentation.response;
 
 import java.util.List;
 import java.util.Map;
-import org.yapp.domain.profile.ProfileValuePick;
-import org.yapp.domain.value.ValuePick;
+import org.yapp.core.domain.profile.ProfileValuePick;
+import org.yapp.core.domain.value.ValuePick;
 import org.yapp.domain.value.presentation.dto.response.ValuePickAnswerResponse;
 
 public record ProfileValuePickResponses(List<ProfileValuePickResponse> responses) {

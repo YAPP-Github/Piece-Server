@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yapp.domain.block.BlockContact;
+import org.yapp.core.domain.block.BlockContact;
 import org.yapp.domain.block.application.BlockContactService;
 import org.yapp.domain.block.application.dto.BlockContactCreateDto;
 import org.yapp.domain.block.presentation.dto.request.BlockPhoneNumbersRequest;

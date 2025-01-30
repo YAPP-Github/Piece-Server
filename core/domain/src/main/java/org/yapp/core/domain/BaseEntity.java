@@ -1,4 +1,4 @@
-package org.yapp.domain;
+package org.yapp.core.domain;
 
 
 import jakarta.persistence.Column;

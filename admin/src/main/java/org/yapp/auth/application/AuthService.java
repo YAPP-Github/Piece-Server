@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.yapp.auth.application.dto.LoginDto;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
-import org.yapp.domain.user.User;
+import org.yapp.core.domain.user.User;
 import org.yapp.error.code.auth.AuthErrorCode;
 import org.yapp.error.exception.ApplicationException;
 import org.yapp.user.application.UserService;

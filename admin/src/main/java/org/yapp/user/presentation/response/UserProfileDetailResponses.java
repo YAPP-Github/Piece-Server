@@ -1,7 +1,7 @@
 package org.yapp.user.presentation.response;
 
 import java.util.List;
-import org.yapp.domain.profile.ProfileValueTalk;
+import org.yapp.core.domain.profile.ProfileValueTalk;
 
 public record UserProfileDetailResponses(String nickname, String imageUrl,
                                          List<UserProfileDetailResponse> responses) {

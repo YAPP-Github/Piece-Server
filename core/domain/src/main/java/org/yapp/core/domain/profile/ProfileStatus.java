@@ -1,4 +1,4 @@
-package org.yapp.domain.profile;
+package org.yapp.core.domain.profile;
 
 public enum ProfileStatus {
 

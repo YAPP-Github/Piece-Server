@@ -1,5 +1,4 @@
-package org.yapp.domain.block;
-
+package org.yapp.core.domain.report;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,26 +11,29 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yapp.domain.BaseEntity;
-import org.yapp.domain.user.User;
+import org.yapp.core.domain.BaseEntity;
+import org.yapp.core.domain.user.User;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserBlock extends BaseEntity {
+public class Report extends BaseEntity {
 
     @Id
+    @Column(name = "report_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_block_id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "blocking_user_id", nullable = false)
-    private User BlockingUser;
+    @JoinColumn(name = "reporter_user_id", nullable = false)
+    private User reporter;
 
     @ManyToOne
-    @JoinColumn(name = "blocked_user_id", nullable = false)
-    private User BlockedUser;
+    @JoinColumn(name = "reported_user_id", nullable = false)
+    private User reportedUser;
+
+    @Column(length = 500)
+    private String reason;
 }

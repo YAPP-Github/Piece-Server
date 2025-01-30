@@ -1,4 +1,4 @@
-package org.yapp.domain.user;
+package org.yapp.core.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;

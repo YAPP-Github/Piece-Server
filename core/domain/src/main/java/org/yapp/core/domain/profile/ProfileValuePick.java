@@ -1,4 +1,4 @@
-package org.yapp.domain.profile;
+package org.yapp.core.domain.profile;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yapp.domain.value.ValuePick;
+import org.yapp.core.domain.value.ValuePick;
 
 @Entity
 @Table(name = "profile_value_pick")
@@ -44,9 +44,9 @@ public class ProfileValuePick {
     }
 
     public void updatedSelectedAnswer(Integer newSelectedAnswer) {
-      if (newSelectedAnswer == null || newSelectedAnswer <= 0) {
-        throw new IllegalArgumentException("선택된 항목은 1 이상이어야 합니다.");
-      }
+        if (newSelectedAnswer == null || newSelectedAnswer <= 0) {
+            throw new IllegalArgumentException("선택된 항목은 1 이상이어야 합니다.");
+        }
 
         this.selectedAnswer = newSelectedAnswer;
     }

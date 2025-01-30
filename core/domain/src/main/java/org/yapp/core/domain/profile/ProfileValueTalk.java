@@ -1,4 +1,4 @@
-package org.yapp.domain.profile;
+package org.yapp.core.domain.profile;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yapp.domain.value.ValueTalk;
+import org.yapp.core.domain.value.ValueTalk;
 
 @Entity
 @Table(name = "profile_value_talk")

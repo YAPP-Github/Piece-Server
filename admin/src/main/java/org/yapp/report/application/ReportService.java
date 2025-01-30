@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.yapp.domain.report.Report;
+import org.yapp.core.domain.report.Report;
 import org.yapp.format.PageResponse;
 import org.yapp.report.application.dto.ReportedUserWithReasonDto;
 import org.yapp.report.dao.ReportRepository;

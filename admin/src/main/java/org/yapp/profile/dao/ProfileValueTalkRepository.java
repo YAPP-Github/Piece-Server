@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.yapp.domain.profile.ProfileValueTalk;
+import org.yapp.core.domain.profile.ProfileValueTalk;
 
 @Repository
 public interface ProfileValueTalkRepository extends JpaRepository<ProfileValueTalk, Long> {

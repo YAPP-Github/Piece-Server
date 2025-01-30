@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yapp.domain.value.ValuePick;
+import org.yapp.core.domain.value.ValuePick;
 import org.yapp.domain.value.application.ValuePickService;
 import org.yapp.domain.value.presentation.dto.response.ValuePickResponses;
 import org.yapp.format.CommonResponse;

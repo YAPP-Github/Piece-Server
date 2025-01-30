@@ -1,4 +1,4 @@
-package org.yapp.domain.profile;
+package org.yapp.core.domain.profile;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
@@ -21,7 +21,7 @@ public class ProfileBasic {
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
-    
+
     @Column(name = "description")
     private String description;
 

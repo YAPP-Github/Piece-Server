@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.yapp.domain.value.ValueTalk;
+import org.yapp.core.domain.value.ValueTalk;
 import org.yapp.domain.value.application.ValueTalkService;
 import org.yapp.domain.value.presentation.dto.response.ValueTalkResponses;
 import org.yapp.format.CommonResponse;

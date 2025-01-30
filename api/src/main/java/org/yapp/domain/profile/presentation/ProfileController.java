@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.user.User;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
-import org.yapp.domain.profile.Profile;
 import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.ProfileValuePickService;
@@ -30,7 +31,6 @@ import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateReques
 import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
 import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
-import org.yapp.domain.user.User;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.format.CommonResponse;
 
