@@ -22,7 +22,11 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
 
                                         @NotBlank(message = "위치는 비어있을 수 없습니다.") String location,
 
-                                        String smokingStatus, String snsActivityLevel,
+                                        @NotBlank(message = "흡연 정보는 비어있을 수 없습니다")
+                                        String smokingStatus,
+
+                                        @NotBlank(message = "SNS 활동 정보는 비어있을 수 없습니다.")
+                                        String snsActivityLevel,
 
                                         @Min(value = 1, message = "몸무게는 최소 1kg 이상이어야 합니다.")
                                         Integer weight,
