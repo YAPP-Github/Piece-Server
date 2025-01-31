@@ -9,19 +9,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.ProfileRejectHistory;
-import org.yapp.domain.profile.ProfileValueTalk;
-import org.yapp.domain.user.User;
-import org.yapp.error.dto.ProfileErrorCode;
-import org.yapp.error.dto.UserErrorCode;
-import org.yapp.error.exception.ApplicationException;
+import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.profile.ProfileRejectHistory;
+import org.yapp.core.domain.profile.ProfileValueTalk;
+import org.yapp.core.domain.user.User;
+import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.ProfileErrorCode;
+import org.yapp.core.exception.error.code.UserErrorCode;
+import org.yapp.format.PageResponse;
 import org.yapp.profile.dao.ProfileRejectHistoryRepository;
 import org.yapp.profile.dao.ProfileValueTalkRepository;
 import org.yapp.user.dao.UserRepository;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
-import org.yapp.util.PageResponse;
 
 @Service
 @RequiredArgsConstructor

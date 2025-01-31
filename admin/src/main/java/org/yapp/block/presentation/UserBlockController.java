@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.block.application.UserBlockService;
 import org.yapp.block.presentation.response.UserBlockResponse;
-import org.yapp.util.CommonResponse;
-import org.yapp.util.PageResponse;
+import org.yapp.format.CommonResponse;
+import org.yapp.format.PageResponse;
 
 @RestController()
 @RequiredArgsConstructor

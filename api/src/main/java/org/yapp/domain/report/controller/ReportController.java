@@ -12,22 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.report.application.ReportService;
 import org.yapp.domain.report.dto.request.UserReportRequest;
-import org.yapp.util.CommonResponse;
+import org.yapp.format.CommonResponse;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reports")
 public class ReportController {
 
-  public final ReportService reportService;
+    public final ReportService reportService;
 
-  @PostMapping()
-  @Operation(summary = "유저 신고", description = "유저를 신고합니다.", tags = {
-      "신고"})
-  @ApiResponse(responseCode = "200", description = "유저를 성공적으로 신고하였습니다.")
-  public ResponseEntity<CommonResponse<Void>> reportUser(@AuthenticationPrincipal Long userId,
-      @RequestBody @Valid UserReportRequest request) {
-    reportService.reportUser(userId, request);
-    return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
-  }
+    @PostMapping()
+    @Operation(summary = "유저 신고", description = "유저를 신고합니다.", tags = {
+        "신고"})
+    @ApiResponse(responseCode = "200", description = "유저를 성공적으로 신고하였습니다.")
+    public ResponseEntity<CommonResponse<Void>> reportUser(@AuthenticationPrincipal Long userId,
+        @RequestBody @Valid UserReportRequest request) {
+        reportService.reportUser(userId, request);
+        return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
+    }
 }

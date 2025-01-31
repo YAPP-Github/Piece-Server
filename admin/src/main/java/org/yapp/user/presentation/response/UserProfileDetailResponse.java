@@ -1,6 +1,6 @@
 package org.yapp.user.presentation.response;
 
-import org.yapp.domain.profile.ProfileValueTalk;
+import org.yapp.core.domain.profile.ProfileValueTalk;
 
 public record UserProfileDetailResponse(
     String category,

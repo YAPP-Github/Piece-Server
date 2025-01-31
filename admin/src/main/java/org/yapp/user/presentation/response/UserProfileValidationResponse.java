@@ -2,8 +2,8 @@ package org.yapp.user.presentation.response;
 
 import java.time.LocalDate;
 import lombok.Builder;
-import org.yapp.domain.profile.Profile;
-import org.yapp.domain.user.User;
+import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.user.User;
 
 @Builder
 public record UserProfileValidationResponse(Long userId, String description,

@@ -1,7 +1,7 @@
 package org.yapp.domain.value.presentation.dto.response;
 
 import java.util.List;
-import org.yapp.domain.value.ValuePick;
+import org.yapp.core.domain.value.ValuePick;
 
 public record ValuePickResponses(List<ValuePickResponse> responses) {
 

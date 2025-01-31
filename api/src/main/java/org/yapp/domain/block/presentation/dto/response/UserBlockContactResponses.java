@@ -1,7 +1,7 @@
 package org.yapp.domain.block.presentation.dto.response;
 
 import java.util.List;
-import org.yapp.domain.block.BlockContact;
+import org.yapp.core.domain.block.BlockContact;
 
 public record UserBlockContactResponses(Long userId,
                                         List<BlockContactResponse> blockContactResponses) {

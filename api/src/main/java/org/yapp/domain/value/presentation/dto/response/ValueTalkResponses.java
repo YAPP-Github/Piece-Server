@@ -1,7 +1,7 @@
 package org.yapp.domain.value.presentation.dto.response;
 
 import java.util.List;
-import org.yapp.domain.value.ValueTalk;
+import org.yapp.core.domain.value.ValueTalk;
 
 public record ValueTalkResponses(List<ValueTalkResponse> responses) {
 
