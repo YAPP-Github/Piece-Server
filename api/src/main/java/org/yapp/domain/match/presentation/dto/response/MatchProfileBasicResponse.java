@@ -13,7 +13,7 @@ import org.yapp.domain.profile.Profile;
 public class MatchProfileBasicResponse {
 
   private Long matchId;
-  private String shortIntroduce;
+  private String description;
   private String nickname;
   private String age;
   private String birthYear;

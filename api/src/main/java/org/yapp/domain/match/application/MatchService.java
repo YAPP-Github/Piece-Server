@@ -95,11 +95,11 @@ public class MatchService {
     List<String> matchedValues = getMatchedValues(user.getProfile().getId(),
         matchedUser.getProfile().getId());
 
-    //TODO : 왜 deprecated 된 ProfileBio에만 introduce가 있는지 논의가 필요
     MatchInfoResponse response = MatchInfoResponse.builder()
         .matchId(matchInfo.getId())
         .matchStatus(getMatchStatus(userId, matchInfo))
-        .shortIntroduce("") // Deprecated 된 BIO 에서 넣어야하는지?
+        .description(matchedUser.getProfile().getProfileBasic()
+            .getDescription())
         .nickname(matchedUser.getProfile().getProfileBasic().getNickname())
         .birthYear(
             String.valueOf(matchedUser.getProfile().getProfileBasic().getBirthdate().getYear()))
