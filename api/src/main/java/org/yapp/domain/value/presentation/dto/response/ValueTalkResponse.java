@@ -1,6 +1,6 @@
 package org.yapp.domain.value.presentation.dto.response;
 
-import org.yapp.domain.value.ValueTalk;
+import org.yapp.core.domain.value.ValueTalk;
 
 public record ValueTalkResponse(Long id, String category, String title, String guide) {
 

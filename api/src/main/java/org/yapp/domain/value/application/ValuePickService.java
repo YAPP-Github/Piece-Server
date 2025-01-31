@@ -3,7 +3,7 @@ package org.yapp.domain.value.application;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.yapp.domain.value.ValuePick;
+import org.yapp.core.domain.value.ValuePick;
 import org.yapp.domain.value.dao.ValuePickRepository;
 
 @Service

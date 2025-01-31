@@ -1,8 +1,8 @@
 package org.yapp.domain.profile.presentation.response;
 
 import java.util.Map;
-import org.yapp.domain.profile.Profile;
-import org.yapp.domain.profile.ProfileBasic;
+import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.application.util.DateUtils;
 
 public record ProfileBasicResponse(String nickname, String description, int age, String birthdate,

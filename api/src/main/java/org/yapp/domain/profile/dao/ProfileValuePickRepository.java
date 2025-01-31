@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.yapp.domain.profile.ProfileValuePick;
+import org.yapp.core.domain.profile.ProfileValuePick;
 
 @Repository
 public interface ProfileValuePickRepository extends JpaRepository<ProfileValuePick, Long> {

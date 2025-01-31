@@ -9,9 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.yapp.block.dao.UserBlockRepository;
 import org.yapp.block.presentation.response.UserBlockResponse;
-import org.yapp.domain.block.UserBlock;
-import org.yapp.domain.user.User;
-import org.yapp.util.PageResponse;
+import org.yapp.core.domain.block.UserBlock;
+import org.yapp.core.domain.user.User;
+import org.yapp.format.PageResponse;
 
 @Service
 @RequiredArgsConstructor

@@ -5,7 +5,7 @@ import java.time.Period;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yapp.domain.profile.Profile;
+import org.yapp.core.domain.profile.Profile;
 
 @NoArgsConstructor
 @Getter
