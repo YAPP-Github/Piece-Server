@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import org.yapp.core.domain.profile.ContactType;
 
 public record ProfileCreateRequest(
 
@@ -40,7 +41,7 @@ public record ProfileCreateRequest(
     @Pattern(regexp = "^(활동|은둔)$", message = "SNS 활동 수준은 '활동', '은둔' 중 하나여야 합니다.")
     String snsActivityLevel,
 
-    Map<String, String> contacts,
+    Map<ContactType, String> contacts,
 
     @Pattern(regexp = "\\d{10,11}", message = "유효한 핸드폰 번호를 입력해야 합니다.")
     String phoneNumber,
