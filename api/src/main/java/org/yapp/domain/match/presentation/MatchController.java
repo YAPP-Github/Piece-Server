@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.yapp.core.domain.profile.ContactType;
 import org.yapp.domain.block.application.DirectBlockService;
 import org.yapp.domain.match.application.MatchService;
 import org.yapp.domain.match.presentation.dto.response.ContactResponse;
@@ -90,7 +91,7 @@ public class MatchController {
     @GetMapping("/contacts")
     @Operation(summary = "매칭 상대 연락처 조회", description = "매칭 상대의 연락처를 조회합니다", tags = {"매칭"})
     public ResponseEntity<CommonResponse<ContactResponse>> getContacts() {
-        Map<String, String> contacts = matchService.getContacts();
+        Map<ContactType, String> contacts = matchService.getContacts();
         ContactResponse contactResponse = new ContactResponse(contacts);
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(contactResponse));

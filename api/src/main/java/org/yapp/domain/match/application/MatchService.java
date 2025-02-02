@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthenticationService;
 import org.yapp.core.domain.match.MatchInfo;
 import org.yapp.core.domain.match.enums.MatchStatus;
+import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.profile.ProfileValuePick;
@@ -253,13 +254,13 @@ public class MatchService {
   }
 
   @Transactional(readOnly = true)
-  public Map<String, String> getContacts() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-    if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
-      throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
-    }
-    User matchedUser = getMatchedUser(userId, matchInfo);
-    return matchedUser.getProfile().getProfileBasic().getContacts();
+  public Map<ContactType, String> getContacts() {
+      Long userId = authenticationService.getUserId();
+      MatchInfo matchInfo = getMatchInfo(userId);
+      if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
+          throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
+      }
+      User matchedUser = getMatchedUser(userId, matchInfo);
+      return matchedUser.getProfile().getProfileBasic().getContacts();
   }
 }
