@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.profile.ProfileBasic;
 
 @NoArgsConstructor
 @Getter
@@ -24,17 +25,18 @@ public class MatchProfileBasicResponse {
   private String smokingStatus;
 
   public static MatchProfileBasicResponse fromProfile(Long matchId, Profile profile) {
-    String nickname = profile.getProfileBasic().getNickname();
-    LocalDate birthDate = profile.getProfileBasic().getBirthdate();
+    ProfileBasic profileBasic = profile.getProfileBasic();
+    String nickname = profileBasic.getNickname();
+    LocalDate birthDate = profileBasic.getBirthdate();
     LocalDate now = LocalDate.now();
     Integer age = Period.between(birthDate, now).getYears();
     String birthYearFormatted = String.valueOf(birthDate.getYear()).substring(2);
-    String location = profile.getProfileBasic().getLocation();
-    String description = profile.getProfileBasic().getDescription();
-    Integer height = profile.getProfileBasic().getHeight();
-    Integer weight = profile.getProfileBasic().getWeight();
-    String job = profile.getProfileBasic().getJob();
-    String smokingStatus = profile.getProfileBasic().getSmokingStatus();
+    String location = profileBasic.getLocation();
+    String description = profileBasic.getDescription();
+    Integer height = profileBasic.getHeight();
+    Integer weight = profileBasic.getWeight();
+    String job = profileBasic.getJob();
+    String smokingStatus = profileBasic.getSmokingStatus();
     return new MatchProfileBasicResponse(matchId, description, nickname, age, birthYearFormatted
         , height, weight, location, job, smokingStatus);
   }
