@@ -17,4 +17,6 @@ include 'infra:redis'
 findProject(':infra:redis')?.name = 'redis'
 include 'infra:sms'
 findProject(':infra:sms')?.name = 'sms'
+include 'infra:notification-fcm'
+findProject(':infra:notification-fcm')?.name = 'notification-fcm'
 
