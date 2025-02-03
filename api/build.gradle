@@ -14,6 +14,8 @@ dependencies {
     implementation project(':core:format')
     implementation project(':core:exception')
     implementation project(':core:auth')
+    implementation project(':core:sse')
+
     implementation project(':infra:s3')
     implementation project(':infra:redis')
     implementation project(':infra:sms')
