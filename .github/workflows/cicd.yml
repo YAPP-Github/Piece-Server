@@ -36,7 +36,7 @@ jobs:
         run: |
           cd ./api/src/main/resources
           touch ./application-secret.yml 
-          echo "${{ secrets.YML }}" > ./application-secret.yml
+          echo "${{ secrets.API_DEV_YML }}" > ./application-secret.yml
         shell: bash
 
       # gradle build - dev
