@@ -15,7 +15,8 @@ import org.yapp.infra.s3.application.S3Service;
 public class ProfileImageService {
 
     private final S3Service s3Service;
-    private static final List<String> ALLOWED_MIME_TYPES = List.of("image/jpeg", "image/png");
+    private static final List<String> ALLOWED_MIME_TYPES = List.of("image/jpeg",
+        "image/png", "image/webp");
 
     public String uploadProfileImage(MultipartFile file) throws IOException {
         String uniqueFileName =
