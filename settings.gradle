@@ -19,4 +19,5 @@ include 'infra:sms'
 findProject(':infra:sms')?.name = 'sms'
 include 'infra:ai'
 findProject(':infra:ai')?.name = 'ai'
-
+include 'core:sse'
+findProject(':core:sse')?.name = 'sse'
