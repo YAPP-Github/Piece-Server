@@ -1,21 +1,19 @@
 package org.yapp.domain.auth.application.oauth.service;
 
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
 import org.yapp.core.auth.jwt.JwtUtil;
+import org.yapp.core.auth.token.RefreshTokenService;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
 import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
-import org.yapp.domain.auth.application.token.RefreshTokenService;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.user.dao.UserRepository;
-
-import java.util.Optional;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +27,8 @@ public class OauthService {
 
   public OauthLoginResponse login(OauthLoginRequest request) {
     OauthProvider oauthProvider = oauthProviderResolver.find(request.getProviderName());
-    String oauthId = request.getProviderName() + oauthProvider.getOAuthProviderUserId(request.getToken());
+    String oauthId =
+        request.getProviderName() + oauthProvider.getOAuthProviderUserId(request.getToken());
 
     //이미 가입된 유저인지 확인하고 가입되어 있지 않으면 회원가입 처리
     Optional<User> userOptional = userRepository.findByOauthId(oauthId);

@@ -1,4 +1,4 @@
-package org.yapp.domain.auth.application.token;
+package org.yapp.core.auth.token;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -6,13 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
+import org.yapp.core.auth.dao.RefreshTokenRepository;
+import org.yapp.core.auth.dto.RefreshedTokens;
 import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.core.domain.auth.RefreshToken;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.SecurityErrorCode;
-import org.yapp.domain.auth.dao.RefreshTokenRepository;
-import org.yapp.domain.auth.presentation.dto.request.RefreshTokenRequest;
-import org.yapp.domain.auth.presentation.dto.response.RefreshedTokensResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -28,17 +27,17 @@ public class RefreshTokenService {
   }
 
   @Transactional
-  public RefreshedTokensResponse getUserRefreshTokenResponse(Long userId,
-      RefreshTokenRequest refreshTokenRequest) {
+  public RefreshedTokens getUserRefreshedTokens(Long userId,
+      String refreshToken) {
     String expectedRefreshToken = getUserRefreshToken(userId).getToken();
-    validateRefreshToken(refreshTokenRequest.getRefreshToken(), expectedRefreshToken);
+    validateRefreshToken(refreshToken, expectedRefreshToken);
 
-    String oauthId = jwtUtil.getOauthId(refreshTokenRequest.getRefreshToken());
-    String role = jwtUtil.getRole(refreshTokenRequest.getRefreshToken());
+    String oauthId = jwtUtil.getOauthId(refreshToken);
+    String role = jwtUtil.getRole(refreshToken);
     AuthToken token = authTokenGenerator.generate(userId, oauthId, role);
     saveRefreshToken(userId, token.refreshToken());
 
-    return new RefreshedTokensResponse(token.accessToken(), token.refreshToken());
+    return new RefreshedTokens(token.accessToken(), token.refreshToken());
   }
 
   @Transactional

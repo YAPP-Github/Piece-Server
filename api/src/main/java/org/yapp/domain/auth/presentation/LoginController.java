@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.yapp.core.auth.dto.RefreshedTokens;
+import org.yapp.core.auth.token.RefreshTokenService;
+import org.yapp.core.auth.token.TokenHealthCheckService;
 import org.yapp.domain.auth.application.oauth.service.OauthService;
-import org.yapp.domain.auth.application.token.RefreshTokenService;
-import org.yapp.domain.auth.application.token.TokenHealthCheckService;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.request.RefreshTokenRequest;
 import org.yapp.domain.auth.presentation.dto.request.TokenHealthCheckRequest;
@@ -53,9 +54,11 @@ public class LoginController {
   public ResponseEntity<CommonResponse<RefreshedTokensResponse>> refreshToken(
       @RequestBody RefreshTokenRequest request,
       @AuthenticationPrincipal Long userId) {
-    RefreshedTokensResponse userRefreshedTokensResponse = refreshTokenService.getUserRefreshTokenResponse(
-        userId, request);
-    return ResponseEntity.ok(CommonResponse.createSuccess(userRefreshedTokensResponse));
+    RefreshedTokens refreshedTokens = refreshTokenService.getUserRefreshedTokens(
+        userId, request.getRefreshToken());
+    RefreshedTokensResponse response = new RefreshedTokensResponse(
+        refreshedTokens.accessToken(), refreshedTokens.refreshToken());
+    return ResponseEntity.ok(CommonResponse.createSuccess(response));
   }
 
   @GetMapping("/token/health-check")

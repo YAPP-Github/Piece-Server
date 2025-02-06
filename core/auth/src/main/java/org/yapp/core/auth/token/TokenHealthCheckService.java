@@ -1,4 +1,4 @@
-package org.yapp.domain.auth.application.token;
+package org.yapp.core.auth.token;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
