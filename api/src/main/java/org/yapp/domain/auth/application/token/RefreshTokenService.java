@@ -12,7 +12,7 @@ import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.SecurityErrorCode;
 import org.yapp.domain.auth.dao.RefreshTokenRepository;
 import org.yapp.domain.auth.presentation.dto.request.RefreshTokenRequest;
-import org.yapp.domain.auth.presentation.dto.response.RefreshTokenResponse;
+import org.yapp.domain.auth.presentation.dto.response.RefreshedTokensResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class RefreshTokenService {
   }
 
   @Transactional
-  public RefreshTokenResponse getUserRefreshTokenResponse(Long userId,
+  public RefreshedTokensResponse getUserRefreshTokenResponse(Long userId,
       RefreshTokenRequest refreshTokenRequest) {
     String expectedRefreshToken = getUserRefreshToken(userId).getToken();
     validateRefreshToken(refreshTokenRequest.getRefreshToken(), expectedRefreshToken);
@@ -38,7 +38,7 @@ public class RefreshTokenService {
     AuthToken token = authTokenGenerator.generate(userId, oauthId, role);
     saveRefreshToken(userId, token.refreshToken());
 
-    return new RefreshTokenResponse(token.accessToken(), token.refreshToken());
+    return new RefreshedTokensResponse(token.accessToken(), token.refreshToken());
   }
 
   @Transactional

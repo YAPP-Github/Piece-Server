@@ -1,5 +1,7 @@
 package org.yapp.domain.auth.presentation;
 
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,11 +18,8 @@ import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.request.RefreshTokenRequest;
 import org.yapp.domain.auth.presentation.dto.request.TokenHealthCheckRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
-import org.yapp.domain.auth.presentation.dto.response.RefreshTokenResponse;
+import org.yapp.domain.auth.presentation.dto.response.RefreshedTokensResponse;
 import org.yapp.format.CommonResponse;
-
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/api/login")
@@ -43,22 +42,26 @@ public class LoginController {
 
   @PostMapping("/oauth")
   @Operation(summary = "Oauth 로그인", description = "Oauth 로그인을 하고 토큰들을 발급합니다.", tags = {"로그인"})
-  public ResponseEntity<CommonResponse<OauthLoginResponse>> oauthLogin(@RequestBody OauthLoginRequest request) {
+  public ResponseEntity<CommonResponse<OauthLoginResponse>> oauthLogin(
+      @RequestBody OauthLoginRequest request) {
     OauthLoginResponse response = oauthService.login(request);
     return ResponseEntity.ok(CommonResponse.createSuccess(response));
   }
 
   @PatchMapping("/token/refresh")
   @Operation(summary = "토큰 리프레시", description = "accessToken과 refreshToken을 갱신합니다.", tags = {"로그인"})
-  public ResponseEntity<CommonResponse<RefreshTokenResponse>> refreshToken(@RequestBody RefreshTokenRequest request,
+  public ResponseEntity<CommonResponse<RefreshedTokensResponse>> refreshToken(
+      @RequestBody RefreshTokenRequest request,
       @AuthenticationPrincipal Long userId) {
-    RefreshTokenResponse userRefreshTokenResponse = refreshTokenService.getUserRefreshTokenResponse(userId, request);
-    return ResponseEntity.ok(CommonResponse.createSuccess(userRefreshTokenResponse));
+    RefreshedTokensResponse userRefreshedTokensResponse = refreshTokenService.getUserRefreshTokenResponse(
+        userId, request);
+    return ResponseEntity.ok(CommonResponse.createSuccess(userRefreshedTokensResponse));
   }
 
   @GetMapping("/token/health-check")
   @Operation(summary = "토큰 헬스체크", description = "토큰 헬스체크.", tags = {"로그인"})
-  public ResponseEntity<CommonResponse<Void>> tokenHealthCheck(@RequestBody TokenHealthCheckRequest request) {
+  public ResponseEntity<CommonResponse<Void>> tokenHealthCheck(
+      @RequestBody TokenHealthCheckRequest request) {
     tokenHealthCheckService.healthCheck(request.getToken());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
