@@ -39,9 +39,9 @@ public class BlockContactController {
     }
 
     @GetMapping("")
-    @Operation(summary = "핸드폰 번호 차단", description = "핸드폰 번호 리스트를 전달받고, 전달받은 핸드폰 번호 차단을 수행합니다.", tags = {
+    @Operation(summary = "핸드폰 번호 차단", description = "차단된 핸드폰 번호 리스트를 조회합니다.", tags = {
         "차단"})
-    @ApiResponse(responseCode = "200", description = "핸드폰 차단 성공")
+    @ApiResponse(responseCode = "200", description = "차단 핸드폰 번호 조회")
     public ResponseEntity<CommonResponse<UserBlockContactResponses>> blockPhoneNumbers(
         @AuthenticationPrincipal Long userId) {
         List<BlockContact> blockContacts = blockContactService.findBlocksByUserId(userId);
