@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.yapp.core.exception.ApplicationException;
-import org.yapp.core.exception.error.code.FcmErrorCode;
+import org.yapp.core.exception.error.code.NotificationErrorCode;
 
 @Slf4j
 @Configuration
@@ -28,7 +28,7 @@ public class FcmConfig {
         FirebaseApp.initializeApp(options);
       }
     } catch (Exception e) {
-      throw new ApplicationException(FcmErrorCode.FCM_INIT_ERROR);
+      throw new ApplicationException(NotificationErrorCode.FCM_INIT_ERROR);
     }
   }
 }

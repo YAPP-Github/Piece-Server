@@ -8,7 +8,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yapp.core.exception.ApplicationException;
-import org.yapp.core.exception.error.code.FcmErrorCode;
+import org.yapp.core.exception.error.code.NotificationErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class FcmSendService {
           .setToken(token)
           .build());
     } catch (FirebaseMessagingException e) {
-      throw new ApplicationException(FcmErrorCode.FCM_SEND_ERROR);
+      throw new ApplicationException(NotificationErrorCode.FCM_SEND_ERROR);
     }
   }
 
@@ -38,7 +38,7 @@ public class FcmSendService {
           .setTopic(topic)
           .build());
     } catch (FirebaseMessagingException e) {
-      throw new ApplicationException(FcmErrorCode.FCM_SEND_ERROR);
+      throw new ApplicationException(NotificationErrorCode.FCM_SEND_ERROR);
     }
   }
 
@@ -49,7 +49,7 @@ public class FcmSendService {
           .putAllData(data)
           .build());
     } catch (FirebaseMessagingException e) {
-      throw new ApplicationException(FcmErrorCode.FCM_SEND_ERROR);
+      throw new ApplicationException(NotificationErrorCode.FCM_SEND_ERROR);
     }
   }
 
@@ -60,7 +60,7 @@ public class FcmSendService {
           .putAllData(data)
           .build());
     } catch (FirebaseMessagingException e) {
-      throw new ApplicationException(FcmErrorCode.FCM_SEND_ERROR);
+      throw new ApplicationException(NotificationErrorCode.FCM_SEND_ERROR);
     }
   }
 
@@ -76,7 +76,7 @@ public class FcmSendService {
           .putAllData(data)
           .build());
     } catch (FirebaseMessagingException e) {
-      throw new ApplicationException(FcmErrorCode.FCM_SEND_ERROR);
+      throw new ApplicationException(NotificationErrorCode.FCM_SEND_ERROR);
     }
   }
 
@@ -92,7 +92,7 @@ public class FcmSendService {
           .putAllData(data)
           .build());
     } catch (FirebaseMessagingException e) {
-      throw new ApplicationException(FcmErrorCode.FCM_SEND_ERROR);
+      throw new ApplicationException(NotificationErrorCode.FCM_SEND_ERROR);
     }
   }
 }
