@@ -21,4 +21,5 @@ include 'infra:fcm'
 findProject(':infra:fcm')?.name = 'fcm'
 include 'core:notification'
 findProject(':core:notification')?.name = 'notification'
-
+include 'core:sse'
+findProject(':core:sse')?.name = 'sse'
