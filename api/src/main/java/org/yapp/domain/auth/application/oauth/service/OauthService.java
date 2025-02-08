@@ -79,7 +79,7 @@ public class OauthService {
         User user = userOptional.get();
 
         String accessToken = jwtUtil.createJwt("access_token", userId, user.getOauthId(),
-            user.getRole(), 600000L);
+            user.getRole(), 1111600000L);
         String refreshToken = jwtUtil.createJwt("refresh_token", userId, user.getOauthId(),
             user.getRole(), 864000000L);
 
