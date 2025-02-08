@@ -36,7 +36,7 @@ jobs:
         run: |
           cd ./api/src/main/resources
           touch ./application-secret.yml 
-          echo "${{ secrets.YML }}" > ./application-secret.yml
+          echo "${{ secrets.API_DEV_YML }}" > ./application-secret.yml
         shell: bash
 
       # gradle build - dev
@@ -66,9 +66,10 @@ jobs:
           port: 22
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            sudo docker ps
+            sudo docker stop api-dev-spring || true
+            sudo docker rm api-dev-spring || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
-            sudo docker run -d -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
+            sudo docker run -d --name api-dev-spring -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-test-dev
             sudo docker image prune -f
 
       # secret yml 파일 생성 - admin
@@ -108,9 +109,10 @@ jobs:
           port: 22
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            sudo docker ps
+            sudo docker stop admin-dev-spring || true
+            sudo docker rm admin-dev-spring || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-admin
-            sudo docker run -d -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-admin
+            sudo docker run -d --name admin-dev-spring -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-admin
             sudo docker image prune -f
 
 
@@ -151,9 +153,10 @@ jobs:
           port: 22
           key: ${{ secrets.PRIVATE_KEY_PROD }}
           script: |
-            sudo docker ps
+            sudo docker stop api-prod-spring || true
+            sudo docker rm api-prod-spring || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-prod
-            sudo docker run -d -p 80:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-prod
+            sudo docker run -d --name api-prod-spring -p 80:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/docker-prod
             sudo docker image prune -f
 
       # secret yml 생성 - prod-admin
