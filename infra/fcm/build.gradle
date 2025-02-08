@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.yapp'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation project(':core:exception')
+    implementation 'com.google.firebase:firebase-admin:9.4.3'          // Google Firebase Admin
+}
+
+test {
+    useJUnitPlatform()
+}
