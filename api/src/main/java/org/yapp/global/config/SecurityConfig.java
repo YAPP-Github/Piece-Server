@@ -32,12 +32,13 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(
                 configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(registry -> registry.requestMatchers(getMatcherForUserAndAdmin())
+            .authorizeHttpRequests(registry -> registry
+                .requestMatchers(getMatcherForUserAndAdmin())
                 .hasAnyRole("USER", "ADMIN")
                 .requestMatchers(getMatcherForAnyone())
                 .permitAll()
                 .anyRequest()
-                .hasAnyRole("ADMIN"))
+                .authenticated())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }

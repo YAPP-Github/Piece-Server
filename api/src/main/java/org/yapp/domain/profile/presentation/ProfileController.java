@@ -1,12 +1,14 @@
 package org.yapp.domain.profile.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -148,10 +150,11 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(isAvailable));
     }
 
-    @PostMapping("/images")
-    @Operation(summary = "프로필 이미지 등록", description = "업로드한 이미지지를 버킷에 등록합니다.", tags = {"프로필 이미지"})
+    @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로필 이미지 등록", description = "업로드한 이미지를 버킷에 등록합니다.", tags = {"프로필 이미지"})
     @ApiResponse(responseCode = "200", description = "이미지가 버킷에 저장되었습니다.")
     public ResponseEntity<CommonResponse<String>> uploadProfileImage(
+        @Parameter(description = "업로드할 프로필 이미지 파일 form-data 바이너리 파일 (JPEG, PNG, WEBP 지원)", required = true)
         @RequestParam("file") MultipartFile file) throws IOException {
         String profileImageUrl = profileImageService.uploadProfileImage(file);
         return ResponseEntity.status(HttpStatus.OK)

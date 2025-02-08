@@ -1,7 +1,6 @@
 package org.yapp.domain.match.presentation.dto.response;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MatchInfoResponse {
+
   private Long matchId;
   private String matchStatus;
-  private String shortIntroduce;
+  private String description;
   private String nickname;
   private String birthYear;
   private String location;
@@ -20,11 +20,12 @@ public class MatchInfoResponse {
   private List<String> matchedValueList;
 
   @Builder
-  public MatchInfoResponse(Long matchId, String matchStatus, String shortIntroduce, String nickname, String birthYear,
+  public MatchInfoResponse(Long matchId, String matchStatus, String description, String nickname,
+      String birthYear,
       String location, String job, Integer matchedValueCount, List<String> matchedValueList) {
     this.matchId = matchId;
     this.matchStatus = matchStatus;
-    this.shortIntroduce = shortIntroduce;
+    this.description = description;
     this.nickname = nickname;
     this.birthYear = birthYear;
     this.location = location;

@@ -42,7 +42,7 @@ public class BlockContactService {
         blockContactRepository.saveAll(newBlockContacts);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     public List<BlockContact> findBlocksByUserId(Long userId) {
         return blockContactRepository.findBlocksByUserId(userId);
     }
