@@ -13,7 +13,7 @@ public class FcmClient implements NotificationClient {
 
   @Override
   public boolean match(String clientName) {
-    return NotificationClientName.APM_CLIENT.getClientName().equals(clientName);
+    return NotificationClientName.FCM_CLIENT.getClientName().equals(clientName);
   }
 
   @Override
