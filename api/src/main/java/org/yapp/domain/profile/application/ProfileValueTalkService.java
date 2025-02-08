@@ -10,6 +10,7 @@ import org.yapp.core.domain.user.User;
 import org.yapp.core.domain.value.ValueTalk;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
+import org.yapp.core.exception.error.code.ProfileValueTalkErrorCode;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.dao.ProfileValueTalkRepository;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkCreateRequest;
@@ -58,5 +59,17 @@ public class ProfileValueTalkService {
             user.getProfile().getId());
 
         return ProfileValueTalkResponses.from(activeProfileValueTalks);
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileValueTalk getProfileValueTalk(Long id) {
+        return profileValueTalkRepository.findById(id).orElseThrow(
+            () -> new ApplicationException(ProfileValueTalkErrorCode.NOTFOUND_PROFILE_VALUE_TALK)
+        );
+    }
+
+    @Transactional
+    public void updateSummary(Long profileValueTalkId, String summary) {
+        getProfileValueTalk(profileValueTalkId).updateSummary(summary);
     }
 }
