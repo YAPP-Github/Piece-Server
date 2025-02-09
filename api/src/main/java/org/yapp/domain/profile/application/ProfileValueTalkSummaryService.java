@@ -45,7 +45,7 @@ public class ProfileValueTalkSummaryService {
 
     private static final String TEXT_CONDITION = " (제약조건: 글자수 최대 20자, 특수문자 제외)";
 
-    @Transactional()
+    @Transactional(readOnly = true)
     public void summaryProfileValueTalks(Long userId) {
         User user = userService.getUserById(userId);
         Profile profile = user.getProfile();
