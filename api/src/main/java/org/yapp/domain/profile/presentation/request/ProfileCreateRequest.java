@@ -48,9 +48,6 @@ public record ProfileCreateRequest(
     @ValidContactType
     Map<String, String> contacts,
 
-    @Pattern(regexp = "\\d{10,11}", message = "유효한 핸드폰 번호를 입력해야 합니다.")
-    String phoneNumber,
-
     @Pattern(regexp = "^https?://.*", message = "이미지 URL은 유효한 형식이어야 합니다.")
     String imageUrl,
 
