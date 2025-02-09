@@ -10,11 +10,11 @@ repositories {
 }
 
 dependencies {
-    implementation project(':core:exception')
-    implementation project(':core:domain')
-
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation project(':core:exception')
+    implementation 'com.google.firebase:firebase-admin:9.4.3'          // Google Firebase Admin
 }
 
 test {
