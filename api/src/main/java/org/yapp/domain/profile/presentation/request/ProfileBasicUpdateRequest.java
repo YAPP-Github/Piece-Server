@@ -1,5 +1,6 @@
 package org.yapp.domain.profile.presentation.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -39,6 +40,10 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
                                         @Pattern(regexp = "^https?://.*", message = "이미지 URL은 유효한 형식이어야 합니다.")
                                         String imageUrl,
 
+                                        @Schema(description =
+                                            "연락처 정보 (키: ContactType, 값: 연락처 정보) - 사용 가능한 키: " +
+                                                "[KAKAO_TALK_ID(필수), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택)]",
+                                            example = "{\"KAKAO_TALK_ID\": \"john_kakao\", \"PHONE_NUMBER\": \"01098765432\"}")
                                         @ValidContactType
                                         Map<String, String> contacts) {
 
