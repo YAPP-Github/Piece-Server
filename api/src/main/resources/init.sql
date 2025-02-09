@@ -4,40 +4,75 @@ INSERT INTO profile (profile_id, profile_status, nickname, description, birthdat
                      created_at, updated_at)
 VALUES (1, 'APPROVED', 'johndoe', '소프트웨어 개발자', '1990-05-10', 180, '엔지니어', '서울', '비흡연자', 75, '활동적',
         '{
-          "email": "john.doe@example.com"
-        }', 'https://example.com/john.jpg', NOW(), NOW()),
-       (2, 'APPROVED', 'janesmith', '마케팅 매니저', '1992-08-15', 165, '마케터', '인천', '비흡연자', 55, '보통', '{
-         "email": "jane.smith@example.com"
-       }', 'https://example.com/jane.jpg', NOW(), NOW()),
-       (3, 'APPROVED', 'robbrown', '그래픽 디자이너', '1988-03-22', 175, '디자이너', '부산', '흡연자', 70, '낮음', '{
-         "email": "robert.brown@example.com"
-       }', 'https://example.com/robert.jpg', NOW(), NOW()),
-       (4, 'APPROVED', 'emilydavis', 'HR 전문가', '1995-09-10', 170, 'HR', '대구', '비흡연자', 60, '활동적', '{
-         "email": "emily.davis@example.com"
-       }', 'https://example.com/emily.jpg', NOW(), NOW()),
+          "PHONE_NUMBER": "010-1234-5678",
+          "KAKAO_TALK_ID": "johndoe123"
+        }',
+        'https://example.com/john.jpg', NOW(), NOW()),
+
+       (2, 'APPROVED', 'janesmith', '마케팅 매니저', '1992-08-15', 165, '마케터', '인천', '비흡연자', 55, '보통',
+        '{
+          "PHONE_NUMBER": "010-2345-6789",
+          "INSTAGRAM_ID": "@janesmith"
+        }',
+        'https://example.com/jane.jpg', NOW(), NOW()),
+
+       (3, 'APPROVED', 'robbrown', '그래픽 디자이너', '1988-03-22', 175, '디자이너', '부산', '흡연자', 70, '낮음',
+        '{
+          "PHONE_NUMBER": "010-3456-7890",
+          "OPEN_CHAT_URL": "https://open.kakao.com/o/robdesign"
+        }',
+        'https://example.com/robert.jpg', NOW(), NOW()),
+
+       (4, 'APPROVED', 'emilydavis', 'HR 전문가', '1995-09-10', 170, 'HR', '대구', '비흡연자', 60, '활동적',
+        '{
+          "PHONE_NUMBER": "010-4567-8901",
+          "INSTAGRAM_ID": "@emilyd"
+        }',
+        'https://example.com/emily.jpg', NOW(), NOW()),
+
        (5, 'APPROVED', 'mikejohnson', '데이터 과학자', '1993-12-01', 185, '과학자', '서울', '비흡연자', 80,
         '매우 활동적', '{
-         "email": "michael.johnson@example.com"
-       }', 'https://example.com/mike.jpg', NOW(), NOW()),
-       (6, 'APPROVED', 'sarahwilson', '학교 교사', '1985-04-17', 160, '교사', '광주', '비흡연자', 50, '보통', '{
-         "email": "sarah.wilson@example.com"
-       }', 'https://example.com/sarah.jpg', NOW(), NOW()),
+         "PHONE_NUMBER": "010-5678-9012",
+         "KAKAO_TALK_ID": "mikejohn123",
+         "INSTAGRAM_ID": "@mike.data"
+       }',
+        'https://example.com/mike.jpg', NOW(), NOW()),
+
+       (6, 'APPROVED', 'sarahwilson', '학교 교사', '1985-04-17', 160, '교사', '광주', '비흡연자', 50, '보통',
+        '{
+          "PHONE_NUMBER": "010-6789-0123",
+          "OPEN_CHAT_URL": "https://open.kakao.com/o/sarahteach"
+        }',
+        'https://example.com/sarah.jpg', NOW(), NOW()),
+
        (7, 'APPROVED', 'davidmartinez', '프로젝트 매니저', '1991-11-11', 172, '매니저', '수원', '비흡연자', 68,
         '활동적', '{
-         "email": "david.martinez@example.com"
-       }', 'https://example.com/david.jpg', NOW(), NOW()),
+         "PHONE_NUMBER": "010-7890-1234",
+         "INSTAGRAM_ID": "@davidpm"
+       }',
+        'https://example.com/david.jpg', NOW(), NOW()),
+
        (8, 'APPROVED', 'laurawhite', '비즈니스 분석가', '1987-06-25', 167, '분석가', '대전', '비흡연자', 58, '낮음',
         '{
-          "email": "laura.white@example.com"
-        }', 'https://example.com/laura.jpg', NOW(), NOW()),
+          "PHONE_NUMBER": "010-8901-2345",
+          "KAKAO_TALK_ID": "lauraw123",
+          "OPEN_CHAT_URL": "https://open.kakao.com/o/laurabiz"
+        }',
+        'https://example.com/laura.jpg', NOW(), NOW()),
+
        (9, 'APPROVED', 'jamesanderson', '기업가', '1990-01-19', 178, '기업가', '서울', '흡연자', 72, '매우 활동적',
         '{
-          "email": "james.anderson@example.com"
-        }', 'https://example.com/james.jpg', NOW(), NOW()),
+          "PHONE_NUMBER": "010-9012-3456",
+          "INSTAGRAM_ID": "@jamesbiz"
+        }',
+        'https://example.com/james.jpg', NOW(), NOW()),
+
        (10, 'APPROVED', 'oliviataylor', '제품 디자이너', '1994-07-30', 162, '디자이너', '울산', '비흡연자', 54,
         '보통', '{
-         "email": "olivia.taylor@example.com"
-       }', 'https://example.com/olivia.jpg', NOW(), NOW());
+         "PHONE_NUMBER": "010-0123-4567",
+         "OPEN_CHAT_URL": "https://open.kakao.com/o/oliviadesign"
+       }',
+        'https://example.com/olivia.jpg', NOW(), NOW());
 
 
 INSERT INTO user_table (user_id, oauth_id, name, phone, role, profile_id, created_at, updated_at)
@@ -89,12 +124,30 @@ VALUES (1, '음주', '연인과 함께 술을 마시는 것을 좋아하나요?'
        (4, '연락 방식', '연락할 때 어떤 방법을 더 좋아하나요?',
         '{"1": "전화보다는 문자나 카톡이 더 좋아요", "2": "문자나 카톡보다는 전화가 더 좋아요"}', true);
 
-INSERT INTO value_talk (category, title, is_active)
-VALUES ('꿈과 목표', '어떤 일을 하며 무엇을 목표로 살아가나요? 인생에서 이루고 싶은 꿈은 무엇인가요?', true),
+INSERT INTO value_talk (category, title, is_active, guides)
+VALUES ('꿈과 목표', '어떤 일을 하며 무엇을 목표로 살아가나요? 인생에서 이루고 싶은 꿈은 무엇인가요?', true, '[
+  "당신의 직업은 무엇인가요?",
+  "앞으로 하고 싶은 일에 대해 이야기해주세요",
+  "어떤 일을 할 때 가장 큰 성취감을 느끼나요?",
+  "당신의 버킷리스트를 알려주세요",
+  "당신이 꿈꾸는 삶은 어떤 모습인가요?"
+]'),
 
-       ('관심사와 취향', '무엇을 할 때 가장 행복한가요? 요즘 어떠한 것에 관심을 두고 있나요?', true),
+       ('관심사와 취향', '무엇을 할 때 가장 행복한가요? 요즘 어떠한 것에 관심을 두고 있나요?', true, '[
+         "당신의 삶을 즐겁게 만드는 것들은 무엇인가요?",
+         "일상에서 소소한 행복을 느끼는 순간을 적어보세요",
+         "최근에 몰입했던 취미가 있다면 소개해 주세요",
+         "최근 마음이 따뜻해졌던 순간을 들려주세요",
+         "요즘 마음을 사로잡은 콘텐츠를 공유해 보세요"
+       ]'),
 
-       ('연애관', '어떠한 사람과 어떠한 연애를 하고 싶은지 들려주세요', true);
+       ('연애관', '어떠한 사람과 어떠한 연애를 하고 싶은지 들려주세요', true, '[
+         "함께 하고 싶은 데이트 스타일은 무엇인가요?",
+         "이상적인 관계의 모습을 적어 보세요",
+         "연인과 함께 만들고 싶은 추억이 있나요?",
+         "연애에서 가장 중요시하는 가치는 무엇인가요?",
+         "연인 관계를 통해 어떤 가치를 얻고 싶나요?"
+       ]');
 
 INSERT INTO profile_value_pick (profile_value_pick_id, profile_id, value_pick_id, selected_answer)
 VALUES (1, 1, 1, 2),
