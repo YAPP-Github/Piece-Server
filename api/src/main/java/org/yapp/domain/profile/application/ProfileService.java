@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.profile.ProfileValuePick;
@@ -45,7 +46,10 @@ public class ProfileService {
             .smokingStatus(dto.smokingStatus())
             .weight(dto.weight())
             .snsActivityLevel(dto.snsActivityLevel())
-            .contacts(dto.contacts())
+            .contacts(dto.contacts().entrySet().stream().collect(Collectors.toMap(
+                entry -> ContactType.valueOf(entry.getKey()),
+                Map.Entry::getValue
+            )))
             .imageUrl(dto.imageUrl())
             .build();
 

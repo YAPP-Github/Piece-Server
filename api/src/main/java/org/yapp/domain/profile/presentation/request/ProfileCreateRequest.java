@@ -1,5 +1,6 @@
 package org.yapp.domain.profile.presentation.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +11,7 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import org.yapp.core.domain.profile.ContactType;
+import org.yapp.domain.profile.presentation.validation.ValidContactType;
 
 public record ProfileCreateRequest(
 
@@ -41,10 +42,11 @@ public record ProfileCreateRequest(
     @Pattern(regexp = "^(활동|은둔)$", message = "SNS 활동 수준은 '활동', '은둔' 중 하나여야 합니다.")
     String snsActivityLevel,
 
-    Map<ContactType, String> contacts,
-
-    @Pattern(regexp = "\\d{10,11}", message = "유효한 핸드폰 번호를 입력해야 합니다.")
-    String phoneNumber,
+    @Schema(description = "연락처 정보 (키: ContactType, 값: 연락처 정보) - 사용 가능한 키: " +
+        "[KAKAO_TALK_ID(필수), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택)]",
+        example = "{\"KAKAO_TALK_ID\": \"john_kakao\", \"PHONE_NUMBER\": \"01098765432\"}")
+    @ValidContactType
+    Map<String, String> contacts,
 
     @Pattern(regexp = "^https?://.*", message = "이미지 URL은 유효한 형식이어야 합니다.")
     String imageUrl,

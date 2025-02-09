@@ -1,6 +1,7 @@
 package org.yapp.domain.match.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,12 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.yapp.core.domain.profile.ContactType;
 import org.yapp.domain.block.application.DirectBlockService;
 import org.yapp.domain.match.application.MatchService;
-import org.yapp.domain.match.presentation.dto.response.ContactResponse;
 import org.yapp.domain.match.presentation.dto.response.ImageUrlResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchInfoResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchProfileBasicResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchValuePickResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchValueTalkResponse;
+import org.yapp.domain.profile.presentation.response.ContactResponse;
+import org.yapp.domain.profile.presentation.response.ContactResponses;
 import org.yapp.format.CommonResponse;
 
 @RestController
@@ -90,11 +92,12 @@ public class MatchController {
 
     @GetMapping("/contacts")
     @Operation(summary = "매칭 상대 연락처 조회", description = "매칭 상대의 연락처를 조회합니다", tags = {"매칭"})
-    public ResponseEntity<CommonResponse<ContactResponse>> getContacts() {
+    public ResponseEntity<CommonResponse<ContactResponses>> getContacts() {
         Map<ContactType, String> contacts = matchService.getContacts();
-        ContactResponse contactResponse = new ContactResponse(contacts);
+        List<ContactResponse> contactsList = ContactResponses.convert(contacts);
+        ContactResponses contactResponses = new ContactResponses(contactsList);
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(contactResponse));
+            .body(CommonResponse.createSuccess(contactResponses));
     }
 
     @PostMapping("/blocks/users/{userId}")
