@@ -34,6 +34,9 @@ public class ValueTalk {
     @Column(nullable = false)
     private String title;
 
+    @Column
+    private String placeholder;
+
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
     private List<String> guides;
