@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ImageUrlResponse {
 
-  private String url;
+    private String imageUrl;
 }
