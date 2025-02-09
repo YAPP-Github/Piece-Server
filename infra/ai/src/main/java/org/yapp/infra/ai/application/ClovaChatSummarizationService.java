@@ -44,7 +44,6 @@ public class ClovaChatSummarizationService implements SummarizationService {
 
     public Mono<String> summarize(String systemPrompt, String text) {
         return webClient.post()
-            .uri(apiUrl)
             .header("Authorization", AUTHORIZATION_PREFIX + apiKey)
             .header("X-NCP-CLOVASTUDIO-REQUEST-ID", requestId)
             .header("Content-Type", "application/json")
