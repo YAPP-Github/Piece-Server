@@ -17,8 +17,6 @@ public class ClovaChatSummarizationService implements SummarizationService {
 
     private final WebClient webClient;
 
-    private final String apiUrl;
-
     private final String apiKey;
 
     private final String requestId;
@@ -33,7 +31,6 @@ public class ClovaChatSummarizationService implements SummarizationService {
         @Value("${ncp.clova-studio.api-key}") String apiKey,
         @Value("${ncp.clova-studio.request-id}") String requestId
     ) {
-        this.apiUrl = apiUrl;
         this.apiKey = apiKey;
         this.requestId = requestId;
         this.webClient = webClientBuilder
@@ -79,7 +76,8 @@ public class ClovaChatSummarizationService implements SummarizationService {
                         .asText();
                 }
             } catch (Exception ignored) {
-
+                log.warn("JSON 파싱 중 오류 발생: {}, 데이터: {}", ignored.getMessage(), jsonChunk);
+                return "요약에 실패했어요.";
             }
         }
 
