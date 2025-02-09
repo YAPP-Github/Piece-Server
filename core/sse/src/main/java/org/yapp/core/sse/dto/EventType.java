@@ -3,5 +3,5 @@ package org.yapp.core.sse.dto;
 public enum EventType {
     HEARTBEAT,
     NOTIFICATION,
-    MESSAGE,
+    PROFILE_TALK_SUMMARY_MESSAGE,
 }

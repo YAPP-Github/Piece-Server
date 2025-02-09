@@ -26,6 +26,7 @@ import org.yapp.domain.profile.application.ProfileImageService;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 import org.yapp.domain.profile.application.ProfileValueTalkService;
+import org.yapp.domain.profile.application.ProfileValueTalkSummaryService;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
@@ -47,6 +48,7 @@ public class ProfileController {
     private final ProfileImageService profileImageService;
     private final ProfileValuePickService profileValuePickService;
     private final ProfileValueTalkService profileValueTalkService;
+    private final ProfileValueTalkSummaryService profileValueTalkSummaryService;
 
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
@@ -133,6 +135,8 @@ public class ProfileController {
         @RequestBody ProfileValueTalkUpdateRequest request) {
 
         profileService.updateProfileValueTalks(userId, request);
+        profileValueTalkSummaryService.summaryProfileValueTalks(userId);
+
         ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
             userId);
 
