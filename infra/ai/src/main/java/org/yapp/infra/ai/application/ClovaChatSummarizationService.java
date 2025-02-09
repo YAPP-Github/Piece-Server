@@ -17,20 +17,25 @@ public class ClovaChatSummarizationService implements SummarizationService {
 
     private final WebClient webClient;
 
-    @Value("${ncp.clova-studio.endpoint}")
-    private String apiUrl;
+    private final String apiUrl;
 
-    @Value("${ncp.clova-studio.api-key}")
-    private String apiKey;
+    private final String apiKey;
 
-    @Value("${ncp.clova-studio.request-id}")
-    private String requestId;
+    private final String requestId;
 
     private final String AUTHORIZATION_PREFIX = "Bearer ";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public ClovaChatSummarizationService(WebClient.Builder webClientBuilder) {
+    public ClovaChatSummarizationService(
+        WebClient.Builder webClientBuilder,
+        @Value("${ncp.clova-studio.endpoint}") String apiUrl,
+        @Value("${ncp.clova-studio.api-key}") String apiKey,
+        @Value("${ncp.clova-studio.request-id}") String requestId
+    ) {
+        this.apiUrl = apiUrl;
+        this.apiKey = apiKey;
+        this.requestId = requestId;
         this.webClient = webClientBuilder
             .baseUrl(apiUrl)
             .defaultHeader(HttpHeaders.CONTENT_TYPE)
