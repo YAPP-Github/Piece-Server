@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.ProfileBasic;
+import org.yapp.domain.profile.presentation.validation.ValidContactType;
 
 public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어있을 수 없습니다.") String nickname,
 
@@ -37,9 +39,11 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
                                         @Pattern(regexp = "^https?://.*", message = "이미지 URL은 유효한 형식이어야 합니다.")
                                         String imageUrl,
 
-                                        Map<ContactType, String> contacts) {
+                                        @ValidContactType
+                                        Map<String, String> contacts) {
 
     public ProfileBasic toProfileBasic() {
+
         return ProfileBasic.builder()
             .nickname(nickname)
             .description(description)
@@ -51,7 +55,12 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
             .weight(weight)
             .snsActivityLevel(snsActivityLevel)
             .imageUrl(imageUrl)
-            .contacts(contacts)
+            .contacts(contacts.entrySet().stream()
+                .collect(Collectors.toMap(
+                    entry -> ContactType.valueOf(entry.getKey()),
+                    Map.Entry::getValue
+                ))
+            )
             .build();
     }
 
