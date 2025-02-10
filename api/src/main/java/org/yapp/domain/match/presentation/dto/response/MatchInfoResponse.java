@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class MatchInfoResponse {
 
   private Long matchId;
+  private Long matchedUserId;
   private String matchStatus;
   private String description;
   private String nickname;
@@ -20,10 +21,12 @@ public class MatchInfoResponse {
   private List<String> matchedValueList;
 
   @Builder
-  public MatchInfoResponse(Long matchId, String matchStatus, String description, String nickname,
+  public MatchInfoResponse(Long matchId, Long matchedUserId, String matchStatus, String description,
+      String nickname,
       String birthYear,
       String location, String job, Integer matchedValueCount, List<String> matchedValueList) {
     this.matchId = matchId;
+    this.matchedUserId = matchedUserId;
     this.matchStatus = matchStatus;
     this.description = description;
     this.nickname = nickname;

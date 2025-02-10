@@ -103,6 +103,7 @@ public class MatchService {
 
     return MatchInfoResponse.builder()
         .matchId(matchInfo.getId())
+        .matchedUserId(matchedUser.getId())
         .matchStatus(getMatchStatus(userId, matchInfo))
         .description(profileBasic
             .getDescription())
