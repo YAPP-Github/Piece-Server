@@ -53,10 +53,14 @@ public class ProfileController {
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
     public ResponseEntity<CommonResponse<OauthLoginResponse>> createProfile(
-        @RequestBody @Valid ProfileCreateRequest request) {
+        @RequestBody @Valid ProfileCreateRequest request,
+        @AuthenticationPrincipal Long userId) {
 
         Profile profile = profileService.create(request);
-        OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(profile);
+        profileValueTalkSummaryService.summaryProfileValueTalksSync(profile);
+        OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(userId,
+            profile);
+
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.createSuccess(oauthLoginResponse));
     }
@@ -135,7 +139,7 @@ public class ProfileController {
         @RequestBody ProfileValueTalkUpdateRequest request) {
 
         profileService.updateProfileValueTalks(userId, request);
-        profileValueTalkSummaryService.summaryProfileValueTalks(userId);
+        profileValueTalkSummaryService.summaryProfileValueTalksAsync(userId);
 
         ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
             userId);
