@@ -12,7 +12,7 @@ public class MatchValuePickInnerResponse {
 
   private String category;
   private String question;
-  private Boolean sameWithMe;
+  private Boolean isSameWithMe;
   private Map<Integer, Object> answer;
   private Integer answerNumber;
 }
