@@ -31,12 +31,13 @@ public class ProfileValueTalkSummaryService {
     private static final String SYSTEM_PROMPT = """
             사용자가 작성한 자기소개 또는 가치관 관련 글을 요약해, 상대방이 매력을 느낄 수 있도록 자연스럽고 긍정적인 문장으로 정리해 주세요.
             친근하면서도 진솔한 느낌을 살려 주세요.
+            자신의 가치관을 잘 전달하게 작성해주세요.
             너무 일반적인 표현(예: "좋은 사람을 만나고 싶어요")은 피하고, 개성을 드러낼 수 있도록 해 주세요.
             문장은 짧고 명확하게 작성해 주세요.
             최대 50자로 요약해 주세요.
         """;
 
-    private static final String TEXT_CONDITION = " (제약조건: 글자수 최대 20자, 특수문자 제외)";
+    private static final String TEXT_CONDITION = " (제약조건: 글자수 최대 50자, 특수문자 금지)";
 
     @Transactional(readOnly = true)
     public void summaryProfileValueTalksAsync(Long userId) {
