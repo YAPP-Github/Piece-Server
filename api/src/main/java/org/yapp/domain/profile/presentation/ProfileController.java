@@ -31,6 +31,7 @@ import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
+import org.yapp.domain.profile.presentation.response.ProfileBasicPreviewResponse;
 import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
 import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
@@ -70,6 +71,19 @@ public class ProfileController {
         User user = userService.getUserById(userId);
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(ProfileBasicResponse.from(user.getProfile())));
+    }
+
+    @GetMapping("/basic/preview")
+    @Operation(summary = "프로필 기본 정보 미리보기", description = "현재 로그인된 사용자의 프로필 기본 정보를 미리보기 합니다", tags = {
+        "프로필"})
+    @ApiResponse(responseCode = "200", description = "프로필 미리보기가 성공했습니다.")
+    public ResponseEntity<CommonResponse<ProfileBasicPreviewResponse>> getProfileBasicPreview(
+        @AuthenticationPrincipal Long userId) {
+        User user = userService.getUserById(userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(
+                ProfileBasicPreviewResponse.fromProfile(user.getProfile())));
     }
 
     @PutMapping("/basic")

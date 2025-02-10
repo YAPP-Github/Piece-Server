@@ -7,27 +7,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.yapp.block.dao.UserBlockRepository;
+import org.yapp.block.dao.DirectBlockRepository;
 import org.yapp.block.presentation.response.UserBlockResponse;
-import org.yapp.core.domain.block.UserBlock;
+import org.yapp.core.domain.block.DirectBlock;
 import org.yapp.core.domain.user.User;
 import org.yapp.format.PageResponse;
+import org.yapp.user.application.UserService;
 
 @Service
 @RequiredArgsConstructor
 public class UserBlockService {
 
-    private final UserBlockRepository userBlockRepository;
+    private final DirectBlockRepository directBlockRepository;
+    private final UserService userService;
 
     public PageResponse<UserBlockResponse> getUserBlockPageResponse(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<UserBlock> userBlockPage = userBlockRepository.findAll(pageable);
+        Page<DirectBlock> userBlockPage = directBlockRepository.findAll(pageable);
 
         List<UserBlockResponse> content = userBlockPage.getContent().stream()
             .map(userBlock -> {
-                User blockingUser = userBlock.getBlockingUser();
-                User blockedUser = userBlock.getBlockedUser();
+
+                User blockingUser = userService.getUserById(userBlock.getBlockingUserId());
+                User blockedUser = userService.getUserById(userBlock.getBlockedUserId());
 
                 return new UserBlockResponse(
                     blockedUser.getId(),

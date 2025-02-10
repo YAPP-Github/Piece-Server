@@ -8,12 +8,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.core.domain.BaseEntity;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Table(name = "direct_block")
-public class DirectBlock {
+public class DirectBlock extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
