@@ -14,5 +14,5 @@ public class MatchValuePickInnerResponse {
   private String question;
   private Boolean isSameWithMe;
   private Map<Integer, Object> answer;
-  private Integer answerNumber;
+  private Integer selectedAnswer;
 }
