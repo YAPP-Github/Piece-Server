@@ -44,6 +44,21 @@ public class SettingService {
         SettingErrorCode.NOT_FOUND_SETTING));
   }
 
+  public boolean isUserNotificationEnabled(Long userId) {
+    Setting userSetting = getUserSetting(userId);
+    return userSetting.isNotification();
+  }
+
+  public boolean isMatchNotificationEnabled(Long userId) {
+    Setting userSetting = getUserSetting(userId);
+    return userSetting.isNotification() && userSetting.isMatchNotification();
+  }
+
+  public boolean isAcquaintanceBlockEnabled(Long userId) {
+    Setting userSetting = getUserSetting(userId);
+    return userSetting.isAcquaintanceBlock();
+  }
+
   public SettingInfoResponse getUserSettingInfo(Long userId) {
     Setting userSetting = getUserSetting(userId);
     return new SettingInfoResponse(userSetting.isNotification(), userSetting.isMatchNotification(),
