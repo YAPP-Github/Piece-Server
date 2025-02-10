@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -199,7 +200,10 @@ public class MatchService {
       String category = profileValuePickTo.getValuePick().getCategory();
       String question = profileValuePickTo.getValuePick().getQuestion();
       Integer selectedAnswer = profileValuePickTo.getSelectedAnswer();
-      Map<Integer, Object> answers = profileValuePickTo.getValuePick().getAnswers();
+      Map<Integer, Object> answersMap = profileValuePickTo.getValuePick().getAnswers();
+      List<String> answers = answersMap.entrySet().stream().sorted(Entry.comparingByKey())
+          .map(entry -> entry.getValue().toString())
+          .toList();
       if (profileValuePickTo.getSelectedAnswer()
           .equals(profileValuePickFrom.getSelectedAnswer())) {
         talkInnerResponses.add(
@@ -255,12 +259,12 @@ public class MatchService {
 
   @Transactional(readOnly = true)
   public Map<ContactType, String> getContacts() {
-      Long userId = authenticationService.getUserId();
-      MatchInfo matchInfo = getMatchInfo(userId);
-      if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
-          throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
-      }
-      User matchedUser = getMatchedUser(userId, matchInfo);
-      return matchedUser.getProfile().getProfileBasic().getContacts();
+    Long userId = authenticationService.getUserId();
+    MatchInfo matchInfo = getMatchInfo(userId);
+    if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
+      throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
+    }
+    User matchedUser = getMatchedUser(userId, matchInfo);
+    return matchedUser.getProfile().getProfileBasic().getContacts();
   }
 }

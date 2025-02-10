@@ -1,6 +1,6 @@
 package org.yapp.domain.match.presentation.dto.response;
 
-import java.util.Map;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,6 @@ public class MatchValuePickInnerResponse {
   private String category;
   private String question;
   private Boolean isSameWithMe;
-  private Map<Integer, Object> answer;
+  private List<String> answer;
   private Integer selectedAnswer;
 }
