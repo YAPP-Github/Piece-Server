@@ -21,8 +21,14 @@ public class FluxSsePersonalService implements SsePersonalService {
 
             sink.onDispose(() -> {
                 userSinks.remove(userId);
-                log.info("사용자 {} SSE 연결이 종료되었습니다.", userId);
+                log.info("#onDispose 사용자 {} SSE 연결이 종료되었습니다.", userId);
             });
+
+            sink.onCancel(() -> {
+                this.disconnect(userId);
+                log.info("#onCancel 사용자 {} SSE 연결이 종료되었습니다.", userId);
+            });
+
         }, FluxSink.OverflowStrategy.BUFFER);
     }
 
@@ -42,7 +48,6 @@ public class FluxSsePersonalService implements SsePersonalService {
         if (sink != null) {
             try {
                 sink.complete();
-                log.info("사용자 {} SSE 연결이 성공적으로 종료되었습니다.", userId);
             } catch (Exception e) {
                 log.warn("사용자 {} SSE 연결 종료 실패: {}", userId, e.getMessage());
             }
