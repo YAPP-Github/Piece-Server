@@ -21,7 +21,7 @@ public class SseController {
     @PreAuthorize(value = "hasRole('USER')")
     @PostMapping("/personal/connect")
     @Operation(summary = "SSE 연결", description = "로그인 회원에 대한 이벤트 수신 스트림을 얻습니다", tags = {"SSE"})
-    public Flux<ServerSentEvent<Object>> streamEvents(@AuthenticationPrincipal Long userId) {
+    public Flux<ServerSentEvent<Object>> connect(@AuthenticationPrincipal Long userId) {
         return ssePersonalService.connect(userId);
     }
 }
