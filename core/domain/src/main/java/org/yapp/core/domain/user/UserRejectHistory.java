@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.yapp.core.domain.BaseEntity;
 
 @Entity
@@ -30,7 +31,11 @@ public class UserRejectHistory extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    boolean reasonImage;
+    @ColumnDefault("false")
+    @Builder.Default
+    private boolean reasonImage = false;
 
-    boolean reasonDescription;
+    @Builder.Default
+    @ColumnDefault("false")
+    private boolean reasonDescription = false;
 }
