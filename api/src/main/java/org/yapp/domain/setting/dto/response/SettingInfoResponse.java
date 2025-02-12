@@ -1,4 +1,4 @@
-package org.yapp.domain.setting.dto;
+package org.yapp.domain.setting.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

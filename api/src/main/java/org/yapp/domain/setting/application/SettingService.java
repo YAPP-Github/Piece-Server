@@ -7,7 +7,7 @@ import org.yapp.core.domain.setting.Setting;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.SettingErrorCode;
 import org.yapp.domain.setting.dao.SettingRepository;
-import org.yapp.domain.setting.dto.SettingInfoResponse;
+import org.yapp.domain.setting.dto.response.SettingInfoResponse;
 
 @Service
 @RequiredArgsConstructor
