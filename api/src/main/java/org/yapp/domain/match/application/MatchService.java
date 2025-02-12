@@ -260,7 +260,7 @@ public class MatchService {
   }
 
   @Transactional
-  public void rejectMatch(Long userId) {
+  public void refuseMatch(Long userId) {
     MatchInfo matchInfo = getMatchInfo(userId);
     matchInfo.refusePiece(userId);
   }
