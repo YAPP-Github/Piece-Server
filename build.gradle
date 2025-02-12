@@ -50,6 +50,7 @@ subprojects {
 
 		//security
 		implementation 'org.springframework.boot:spring-boot-starter-security'
+		implementation 'org.bouncycastle:bcpkix-jdk18on:1.76'
 
 		//jwt
 		implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
