@@ -3,9 +3,9 @@ package org.yapp.domain.auth.application.oauth.service;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
-import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.core.auth.token.RefreshTokenService;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
@@ -13,6 +13,7 @@ import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
+import org.yapp.domain.setting.application.SettingService;
 import org.yapp.domain.user.dao.UserRepository;
 
 @Service
@@ -20,11 +21,12 @@ import org.yapp.domain.user.dao.UserRepository;
 public class OauthService {
 
   private final OauthProviderResolver oauthProviderResolver;
-  private final JwtUtil jwtUtil;
   private final UserRepository userRepository;
   private final RefreshTokenService refreshTokenService;
   private final AuthTokenGenerator authTokenGenerator;
+  private final SettingService settingService;
 
+  @Transactional
   public OauthLoginResponse login(OauthLoginRequest request) {
     OauthProvider oauthProvider = oauthProviderResolver.find(request.getProviderName());
     String oauthId =
@@ -36,6 +38,7 @@ public class OauthService {
       User newUser = User.builder().oauthId(oauthId).role(RoleStatus.NONE.getStatus()).build();
       User savedUser = userRepository.save(newUser);
       Long userId = savedUser.getId();
+      settingService.createSetting(userId);
       AuthToken token = authTokenGenerator.generate(userId, savedUser.getOauthId(), "NONE");
       String accessToken = token.accessToken();
       String refreshToken = token.refreshToken();
