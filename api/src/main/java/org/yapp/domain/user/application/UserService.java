@@ -7,16 +7,20 @@ import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
+import org.yapp.domain.user.dao.UserRejectHistoryRepository;
 import org.yapp.domain.user.dao.UserRepository;
+import org.yapp.domain.user.presentation.response.UserRejectHistoryResponse;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserRejectHistoryRepository userRejectHistoryRepository;
     private final JwtUtil jwtUtil;
 
     /**
@@ -62,5 +66,28 @@ public class UserService {
         String refreshToken = jwtUtil.createJwt("refresh_token", userId, oauthId, user.getRole(),
             864000000L);
         return new OauthLoginResponse(RoleStatus.REGISTER.getStatus(), accessToken, refreshToken);
+    }
+
+    @Transactional(readOnly = true)
+    public UserRejectHistoryResponse getUserRejectHistoryLatest(Long userId) {
+        User user = this.getUserById(userId);
+        Profile profile = user.getProfile();
+
+        boolean reasonImage = false;
+        boolean reasonDescription = false;
+
+        UserRejectHistory userRejectHistory = userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
+            userId).orElse(null);
+
+        if (userRejectHistory != null) {
+            reasonImage = userRejectHistory.isReasonImage();
+            reasonDescription = userRejectHistory.isReasonDescription();
+        }
+
+        return new UserRejectHistoryResponse(
+            profile.getProfileStatus(),
+            reasonImage,
+            reasonDescription
+        );
     }
 }
