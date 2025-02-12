@@ -1,4 +1,4 @@
-package org.yapp.profile.dao;
+package org.yapp.user.dao;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
