@@ -123,35 +123,30 @@ public class MatchService {
   }
 
   private String getMatchStatus(Long userId, MatchInfo matchInfo) {
-    if (userId.equals(matchInfo.getUser1().getId())) {
-      if (!matchInfo.getUser1PieceChecked()) {
-        return MatchStatus.BEFORE_OPEN.getStatus();
-      }
-      if (matchInfo.getUser1Accepted() && matchInfo.getUser2Accepted()) {
-        return MatchStatus.MATCHED.getStatus();
-      }
-      if (matchInfo.getUser1Accepted()) {
-        return MatchStatus.RESPONDED.getStatus();
-      }
-      if (matchInfo.getUser2Accepted()) {
-        return MatchStatus.GREEN_LIGHT.getStatus();
-      }
-      return MatchStatus.WAITING.getStatus();
-    } else {
-      if (!matchInfo.getUser2PieceChecked()) {
-        return MatchStatus.BEFORE_OPEN.getStatus();
-      }
-      if (matchInfo.getUser1Accepted() && matchInfo.getUser2Accepted()) {
-        return MatchStatus.MATCHED.getStatus();
-      }
-      if (matchInfo.getUser2Accepted()) {
-        return MatchStatus.RESPONDED.getStatus();
-      }
-      if (matchInfo.getUser1Accepted()) {
-        return MatchStatus.GREEN_LIGHT.getStatus();
-      }
-      return MatchStatus.WAITING.getStatus();
+    boolean isUser1 = userId.equals(matchInfo.getUser1().getId());
+
+    boolean userPieceChecked =
+        isUser1 ? matchInfo.getUser1PieceChecked() : matchInfo.getUser2PieceChecked();
+    boolean userAccepted = isUser1 ? matchInfo.getUser1Accepted() : matchInfo.getUser2Accepted();
+    boolean otherAccepted = isUser1 ? matchInfo.getUser2Accepted() : matchInfo.getUser1Accepted();
+    boolean userRefused = isUser1 ? matchInfo.getUser1Refused() : matchInfo.getUser2Refused();
+
+    if (!userPieceChecked) {
+      return MatchStatus.BEFORE_OPEN.getStatus();
     }
+    if (userRefused) {
+      return MatchStatus.REFUSED.getStatus();
+    }
+    if (userAccepted && otherAccepted) {
+      return MatchStatus.MATCHED.getStatus();
+    }
+    if (userAccepted) {
+      return MatchStatus.RESPONDED.getStatus();
+    }
+    if (otherAccepted) {
+      return MatchStatus.GREEN_LIGHT.getStatus();
+    }
+    return MatchStatus.WAITING.getStatus();
   }
 
   @Transactional(readOnly = true)
@@ -255,12 +250,12 @@ public class MatchService {
 
   @Transactional(readOnly = true)
   public Map<ContactType, String> getContacts() {
-      Long userId = authenticationService.getUserId();
-      MatchInfo matchInfo = getMatchInfo(userId);
-      if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
-          throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
-      }
-      User matchedUser = getMatchedUser(userId, matchInfo);
-      return matchedUser.getProfile().getProfileBasic().getContacts();
+    Long userId = authenticationService.getUserId();
+    MatchInfo matchInfo = getMatchInfo(userId);
+    if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
+      throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
+    }
+    User matchedUser = getMatchedUser(userId, matchInfo);
+    return matchedUser.getProfile().getProfileBasic().getContacts();
   }
 }
