@@ -18,7 +18,7 @@ import org.yapp.core.exception.error.code.ProfileErrorCode;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.format.PageResponse;
 import org.yapp.profile.dao.ProfileValueTalkRepository;
-import org.yapp.profile.dao.UserRejectHistoryRepository;
+import org.yapp.user.dao.UserRejectHistoryRepository;
 import org.yapp.user.dao.UserRepository;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
