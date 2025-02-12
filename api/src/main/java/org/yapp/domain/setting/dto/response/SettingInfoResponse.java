@@ -1,4 +1,4 @@
-package org.yapp.domain.setting.dto;
+package org.yapp.domain.setting.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +8,6 @@ import lombok.Getter;
 public class SettingInfoResponse {
 
   private Boolean isNotificationEnabled;
-  private Boolean isMatchingNotificationEnabled;
+  private Boolean isMatchNotificationEnabled;
   private Boolean isAcquaintanceBlockEnabled;
 }

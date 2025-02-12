@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.setting.application.SettingService;
-import org.yapp.domain.setting.dto.SettingInfoResponse;
+import org.yapp.domain.setting.dto.request.SettingToggleRequest;
+import org.yapp.domain.setting.dto.response.SettingInfoResponse;
 import org.yapp.format.CommonResponse;
 
 @RestController
@@ -26,28 +27,28 @@ public class SettingController {
     return ResponseEntity.ok(CommonResponse.createSuccess(userSettingInfo));
   }
 
-  @PutMapping("/notification/{switch}")
+  @PutMapping("/notification")
   public ResponseEntity<CommonResponse<Void>> updateMatchNotificationStatus(
-      @PathVariable(name = "switch") boolean switchValue,
+      @RequestBody SettingToggleRequest toggleRequest,
       @AuthenticationPrincipal Long userId) {
-    settingService.setMatchNotificationStatus(userId, switchValue);
+    settingService.setMatchNotificationStatus(userId, toggleRequest.getToggle());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
 
-  @PutMapping("/notification/match/{switch}")
+  @PutMapping("/notification/match")
   public ResponseEntity<CommonResponse<Void>> updateNotificationStatus(
-      @PathVariable(name = "switch") boolean switchValue,
+      @RequestBody SettingToggleRequest toggleRequest,
       @AuthenticationPrincipal Long userId) {
-    settingService.setNotificationStatus(userId, switchValue);
+    settingService.setNotificationStatus(userId, toggleRequest.getToggle());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
 
-  @PutMapping("/block/acquaintance/{switch}")
+  @PutMapping("/block/acquaintance")
   public ResponseEntity<CommonResponse<Void>> updateAcquaintanceBlockStatus(
-      @PathVariable(name = "switch") boolean switchValue,
+      @RequestBody SettingToggleRequest toggleRequest,
       @AuthenticationPrincipal Long userId
   ) {
-    settingService.setAcquaintanceBlockStatus(userId, switchValue);
+    settingService.setAcquaintanceBlockStatus(userId, toggleRequest.getToggle());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
 
