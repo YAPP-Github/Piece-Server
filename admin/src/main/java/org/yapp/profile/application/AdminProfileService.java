@@ -10,8 +10,8 @@ import org.yapp.core.domain.user.User;
 import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
-import org.yapp.profile.dao.UserRejectHistoryRepository;
 import org.yapp.user.application.UserService;
+import org.yapp.user.dao.UserRejectHistoryRepository;
 
 @Service
 @RequiredArgsConstructor
