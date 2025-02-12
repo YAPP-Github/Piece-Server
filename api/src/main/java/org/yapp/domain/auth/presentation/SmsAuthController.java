@@ -3,6 +3,7 @@ package org.yapp.domain.auth.presentation;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,10 +34,11 @@ public class SmsAuthController {
     @PostMapping("/code/verify")
     @Operation(summary = "SMS 인증번호 검증", description = "받은 인증번호를 검증합니다.", tags = {"SMS 인증"})
     public ResponseEntity<CommonResponse<OauthLoginResponse>> verifyCode(
-        @RequestBody SmsAuthVerifyRequest request) {
+        @RequestBody SmsAuthVerifyRequest request,
+        @AuthenticationPrincipal Long userId) {
         smsAuthService.verifySmsAuthCode(request.getPhoneNumber(), request.getCode());
         OauthLoginResponse registerToken = userService.registerPhoneNumber(
-            request.getPhoneNumber());
+            userId, request.getPhoneNumber());
         return ResponseEntity.ok(CommonResponse.createSuccess(registerToken));
     }
 }

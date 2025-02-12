@@ -52,7 +52,7 @@ public class ClovaChatSummarizationService implements SummarizationService {
                 ),
                 "topP", 0.8,
                 "topK", 0,
-                "maxTokens", 10,
+                "maxTokens", 30,
                 "temperature", 0.8,
                 "repeatPenalty", 8.0,
                 "stopBefore", List.of(),
