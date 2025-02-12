@@ -258,4 +258,10 @@ public class MatchService {
     User matchedUser = getMatchedUser(userId, matchInfo);
     return matchedUser.getProfile().getProfileBasic().getContacts();
   }
+
+  @Transactional
+  public void rejectMatch(Long userId) {
+    MatchInfo matchInfo = getMatchInfo(userId);
+    matchInfo.refusePiece(userId);
+  }
 }
