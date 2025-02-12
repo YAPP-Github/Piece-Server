@@ -3,7 +3,6 @@ package org.yapp.domain.user.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yapp.core.auth.AuthenticationService;
 import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.user.RoleStatus;
@@ -18,7 +17,6 @@ import org.yapp.domain.user.dao.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final AuthenticationService authenticationService;
     private final JwtUtil jwtUtil;
 
     /**
@@ -27,8 +25,7 @@ public class UserService {
      * @return 액세스토큰과 리프레시 토큰
      */
     @Transactional
-    public OauthLoginResponse completeProfileInitialize(Profile profile) {
-        Long userId = authenticationService.getUserId();
+    public OauthLoginResponse completeProfileInitialize(Long userId, Profile profile) {
         User user =
             userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
@@ -53,8 +50,7 @@ public class UserService {
      * @return 액세스토큰과 리프레시 토큰
      */
     @Transactional
-    public OauthLoginResponse registerPhoneNumber(String phoneNumber) {
-        Long userId = authenticationService.getUserId();
+    public OauthLoginResponse registerPhoneNumber(Long userId, String phoneNumber) {
         User user =
             userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));

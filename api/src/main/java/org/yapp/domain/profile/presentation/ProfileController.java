@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +31,7 @@ import org.yapp.domain.profile.application.ProfileValueTalkService;
 import org.yapp.domain.profile.application.ProfileValueTalkSummaryService;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileTalkSummaryUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileBasicPreviewResponse;
@@ -54,10 +57,14 @@ public class ProfileController {
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
     public ResponseEntity<CommonResponse<OauthLoginResponse>> createProfile(
-        @RequestBody @Valid ProfileCreateRequest request) {
+        @RequestBody @Valid ProfileCreateRequest request,
+        @AuthenticationPrincipal Long userId) {
 
         Profile profile = profileService.create(request);
-        OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(profile);
+        profileValueTalkSummaryService.summaryProfileValueTalksSync(profile);
+        OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(userId,
+            profile);
+
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.createSuccess(oauthLoginResponse));
     }
@@ -149,7 +156,7 @@ public class ProfileController {
         @RequestBody ProfileValueTalkUpdateRequest request) {
 
         profileService.updateProfileValueTalks(userId, request);
-        profileValueTalkSummaryService.summaryProfileValueTalks(userId);
+        profileValueTalkSummaryService.summaryProfileValueTalksAsync(userId);
 
         ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
             userId);
@@ -158,6 +165,18 @@ public class ProfileController {
             .body(CommonResponse.createSuccess(profileValueTalkResponses));
     }
 
+    @PatchMapping("/valueTalks/{profileTalkId}/summary")
+    @Operation(summary = "프로필 가치관 Talk 요약 업데이트", description = "프로필 가치관 Talk 요약을 사용자 입력값으로 업데이트합니다.", tags = {
+        "프로필"
+    })
+    public ResponseEntity<CommonResponse<Void>> updateProfileTalkSummary(
+        @PathVariable Long profileTalkId,
+        @Valid @RequestBody ProfileTalkSummaryUpdateRequest request) {
+        profileValueTalkService.updateSummary(profileTalkId, request.summary());
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccessWithNoContent("요약 업데이트가 성공하였습니다."));
+    }
 
     @PostMapping("/check-nickname")
     @Operation(summary = "프로필 닉네임 중복 확인", description = "요청 파라미터로 전달된 닉네임이 중복되는지 확인합니다.", tags = {
