@@ -156,7 +156,7 @@ public class ProfileService {
         return profile;
     }
 
-    public void updateProfileStatus(Profile profile) {
+    private void updateProfileStatus(Profile profile) {
         ProfileStatus profileStatus = profile.getProfileStatus();
 
         if (ProfileStatus.INCOMPLETE.equals(profileStatus) ||
