@@ -8,6 +8,6 @@ import lombok.Getter;
 public class SettingInfoResponse {
 
   private Boolean isNotificationEnabled;
-  private Boolean isMatchingNotificationEnabled;
+  private Boolean isMatchNotificationEnabled;
   private Boolean isAcquaintanceBlockEnabled;
 }
