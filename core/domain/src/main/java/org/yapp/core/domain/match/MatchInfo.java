@@ -75,4 +75,12 @@ public class MatchInfo {
       user2Accepted = true;
     }
   }
+
+  public void refusePiece(Long userId) {
+    if (user1.getId().equals(userId)) {
+      user1Refused = true;
+    } else {
+      user2Refused = true;
+    }
+  }
 }
