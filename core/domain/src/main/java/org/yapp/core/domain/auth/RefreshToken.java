@@ -12,19 +12,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "refresh_token")
 public class RefreshToken {
-  @Id
-  @Column(name = "user_id")
-  private Long userId;
 
-  @Column(name = "token")
-  private String token;
+    @Id
+    @Column(name = "user_id")
+    private Long userId;
 
-  public RefreshToken(Long userId, String token) {
-    this.userId = userId;
-    this.token = token;
-  }
+    @Column(name = "token", length = 500)
+    private String token;
 
-  public void updateToken(String token) {
-    this.token = token;
-  }
+    public RefreshToken(Long userId, String token) {
+        this.userId = userId;
+        this.token = token;
+    }
+
+    public void updateToken(String token) {
+        this.token = token;
+    }
 }
