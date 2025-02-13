@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,7 +65,7 @@ public class LoginController {
   @GetMapping("/token/health-check")
   @Operation(summary = "토큰 헬스체크", description = "토큰 헬스체크.", tags = {"로그인"})
   public ResponseEntity<CommonResponse<Void>> tokenHealthCheck(
-      @RequestBody TokenHealthCheckRequest request) {
+      @ModelAttribute TokenHealthCheckRequest request) {
     tokenHealthCheckService.healthCheck(request.getToken());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
