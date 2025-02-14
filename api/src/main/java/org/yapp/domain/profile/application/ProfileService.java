@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
+import org.yapp.core.domain.profile.ProfileStatus;
 import org.yapp.core.domain.profile.ProfileValuePick;
 import org.yapp.core.domain.profile.ProfileValueTalk;
 import org.yapp.core.domain.user.RoleStatus;
@@ -91,6 +92,8 @@ public class ProfileService {
         ProfileBasic profileBasic = dto.toProfileBasic();
 
         profile.updateBasic(profileBasic);
+        updateProfileStatus(profile);
+
         return profile;
     }
 
@@ -118,6 +121,7 @@ public class ProfileService {
             }
         }
 
+        updateProfileStatus(profile);
         return profile;
     }
 
@@ -148,9 +152,18 @@ public class ProfileService {
             }
         }
 
+        updateProfileStatus(profile);
         return profile;
     }
 
+    private void updateProfileStatus(Profile profile) {
+        ProfileStatus profileStatus = profile.getProfileStatus();
+
+        if (ProfileStatus.INCOMPLETE.equals(profileStatus) ||
+            ProfileStatus.REJECTED.equals(profileStatus)) {
+            profile.updateProfileStatus(ProfileStatus.REVISED);
+        }
+    }
 
     public boolean isNicknameAvailable(String nickname) {
         return !profileRepository.existsByProfileBasic_Nickname(nickname);

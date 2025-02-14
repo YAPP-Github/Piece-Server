@@ -10,15 +10,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
-import org.yapp.core.domain.profile.ProfileRejectHistory;
 import org.yapp.core.domain.profile.ProfileValueTalk;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.format.PageResponse;
-import org.yapp.profile.dao.ProfileRejectHistoryRepository;
 import org.yapp.profile.dao.ProfileValueTalkRepository;
+import org.yapp.user.dao.UserRejectHistoryRepository;
 import org.yapp.user.dao.UserRepository;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
@@ -28,7 +28,7 @@ import org.yapp.user.presentation.response.UserProfileValidationResponse;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ProfileRejectHistoryRepository profileRejectHistoryRepository;
+    private final UserRejectHistoryRepository userRejectHistoryRepository;
     private final ProfileValueTalkRepository profileValueTalkRepository;
 
     public User getUserById(Long userId) {
@@ -49,14 +49,14 @@ public class UserService {
 
         List<UserProfileValidationResponse> content = userPage.getContent().stream()
             .map(user -> {
-                Optional<ProfileRejectHistory> optionalProfileRejectHistory =
-                    profileRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
+                Optional<UserRejectHistory> optionalProfileRejectHistory =
+                    userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
                         user.getId());
 
                 boolean reasonImage = optionalProfileRejectHistory.map(
-                    ProfileRejectHistory::isReasonImage).orElse(false);
+                    UserRejectHistory::isReasonImage).orElse(false);
                 boolean reasonDescription = optionalProfileRejectHistory.map(
-                    ProfileRejectHistory::isReasonDescription).orElse(false);
+                    UserRejectHistory::isReasonDescription).orElse(false);
 
                 return UserProfileValidationResponse.from(user, reasonImage, reasonDescription);
             })

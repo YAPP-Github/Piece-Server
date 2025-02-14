@@ -1,4 +1,4 @@
-package org.yapp.core.domain.profile;
+package org.yapp.core.domain.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,18 +12,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.yapp.core.domain.BaseEntity;
-import org.yapp.core.domain.user.User;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-public class ProfileRejectHistory extends BaseEntity {
+public class UserRejectHistory extends BaseEntity {
 
     @Id
-    @Column(name = "profile_reject_history_id")
+    @Column(name = "user_reject_history_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -31,7 +31,11 @@ public class ProfileRejectHistory extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    boolean reasonImage;
+    @ColumnDefault("false")
+    @Builder.Default
+    private boolean reasonImage = false;
 
-    boolean reasonDescription;
+    @Builder.Default
+    @ColumnDefault("false")
+    private boolean reasonDescription = false;
 }
