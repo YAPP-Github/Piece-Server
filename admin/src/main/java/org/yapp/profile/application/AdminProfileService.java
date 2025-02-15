@@ -4,20 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
-import org.yapp.core.domain.profile.ProfileRejectHistory;
 import org.yapp.core.domain.profile.ProfileStatus;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
-import org.yapp.profile.dao.ProfileRejectHistoryRepository;
 import org.yapp.user.application.UserService;
+import org.yapp.user.dao.UserRejectHistoryRepository;
 
 @Service
 @RequiredArgsConstructor
 public class AdminProfileService {
 
-    private final ProfileRejectHistoryRepository profileRejectHistoryRepository;
+    private final UserRejectHistoryRepository userRejectHistoryRepository;
     private final UserService userService;
 
     @Transactional
@@ -37,7 +37,7 @@ public class AdminProfileService {
     }
 
     private void rejectProfile(Profile profile, boolean reasonImage, boolean reasonDescription) {
-        profileRejectHistoryRepository.save(ProfileRejectHistory.builder()
+        userRejectHistoryRepository.save(UserRejectHistory.builder()
             .user(profile.getUser())
             .reasonImage(reasonImage)
             .reasonDescription(reasonDescription)

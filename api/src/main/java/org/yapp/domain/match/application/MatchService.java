@@ -31,6 +31,7 @@ import org.yapp.domain.match.presentation.dto.response.MatchValueTalkInnerRespon
 import org.yapp.domain.match.presentation.dto.response.MatchValueTalkResponse;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 import org.yapp.domain.user.application.UserService;
+import org.yapp.domain.value.presentation.dto.response.ValuePickAnswerResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -103,6 +104,7 @@ public class MatchService {
 
     return MatchInfoResponse.builder()
         .matchId(matchInfo.getId())
+        .matchedUserId(matchedUser.getId())
         .matchStatus(getMatchStatus(userId, matchInfo))
         .description(profileBasic
             .getDescription())
@@ -171,12 +173,13 @@ public class MatchService {
   public MatchValuePickResponse getMatchedUserValuePicks() {
     Long userId = authenticationService.getUserId();
     User user = userService.getUserById(userId);
+    ProfileBasic profileBasic = user.getProfile().getProfileBasic();
     MatchInfo matchInfo = getMatchInfo(userId);
     User matchedUser = getMatchedUser(userId, matchInfo);
     List<MatchValuePickInnerResponse> matchValuePickInnerResponses = getMatchValuePickInnerResponses(
         user.getProfile().getId(), matchedUser.getProfile().getId());
 
-    return new MatchValuePickResponse(matchInfo.getId(), "",
+    return new MatchValuePickResponse(matchInfo.getId(), profileBasic.getDescription(),
         matchedUser.getProfile().getProfileBasic().getNickname(), matchValuePickInnerResponses);
   }
 
@@ -189,13 +192,18 @@ public class MatchService {
 
     List<MatchValuePickInnerResponse> talkInnerResponses = new ArrayList<>();
     int valueListSize = profileValuePicksOfFrom.size();
+
     for (int i = 0; i < valueListSize; i++) {
       ProfileValuePick profileValuePickFrom = profileValuePicksOfFrom.get(i);
       ProfileValuePick profileValuePickTo = profileValuePicksOfTo.get(i);
       String category = profileValuePickTo.getValuePick().getCategory();
       String question = profileValuePickTo.getValuePick().getQuestion();
       Integer selectedAnswer = profileValuePickTo.getSelectedAnswer();
-      Map<Integer, Object> answers = profileValuePickTo.getValuePick().getAnswers();
+      Map<Integer, Object> answersMap = profileValuePickTo.getValuePick().getAnswers();
+      List<ValuePickAnswerResponse> answers = answersMap.entrySet()
+          .stream()
+          .map(entry -> new ValuePickAnswerResponse(entry.getKey(), (String) entry.getValue()))
+          .toList();
       if (profileValuePickTo.getSelectedAnswer()
           .equals(profileValuePickFrom.getSelectedAnswer())) {
         talkInnerResponses.add(
@@ -208,6 +216,7 @@ public class MatchService {
         );
       }
     }
+
     return talkInnerResponses;
   }
 
