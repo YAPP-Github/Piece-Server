@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.yapp.core.domain.BaseEntity;
 
 @Entity
@@ -22,20 +24,21 @@ import org.yapp.core.domain.BaseEntity;
 @Getter
 public class UserRejectHistory extends BaseEntity {
 
-    @Id
-    @Column(name = "user_reject_history_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @Column(name = "user_reject_history_id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-    @ColumnDefault("false")
-    @Builder.Default
-    private boolean reasonImage = false;
+  @ColumnDefault("false")
+  @Builder.Default
+  private boolean reasonImage = false;
 
-    @Builder.Default
-    @ColumnDefault("false")
-    private boolean reasonDescription = false;
+  @Builder.Default
+  @ColumnDefault("false")
+  private boolean reasonDescription = false;
 }

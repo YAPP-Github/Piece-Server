@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.yapp.core.domain.match.enums.UserMatchStatus;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
@@ -31,6 +33,7 @@ public class MatchInfo {
 
   @ManyToOne
   @JoinColumn(name = "user_1")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private User user1;
 
   @Column(name = "user_1_match_status")
@@ -39,6 +42,7 @@ public class MatchInfo {
 
   @ManyToOne
   @JoinColumn(name = "user_2")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private User user2;
 
   @Column(name = "user_2_match_status")
