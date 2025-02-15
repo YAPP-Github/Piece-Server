@@ -51,6 +51,11 @@ public class RefreshTokenService {
     refreshTokenRepository.save(new RefreshToken(userId, refreshToken));
   }
 
+  @Transactional
+  public void deleteRefreshToken(Long userId) {
+    refreshTokenRepository.deleteById(userId);
+  }
+
   private void validateRefreshToken(String givenRefreshToken, String expectedRefreshToken) {
     try {
       jwtUtil.isExpired(givenRefreshToken);
