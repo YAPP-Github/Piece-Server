@@ -6,12 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MatchStatus {
-  REFUSED("REFUSED"),
-  BEFORE_OPEN("BEFORE OPEN"),
-  WAITING("WAITING"),
-  RESPONDED("RESPONDED"),
-  GREEN_LIGHT("GREEN_LIGHT"),
-  MATCHED("MATCHED");
+    REFUSED("REFUSED"),
+    BEFORE_OPEN("BEFORE_OPEN"),
+    WAITING("WAITING"),
+    RESPONDED("RESPONDED"),
+    GREEN_LIGHT("GREEN_LIGHT"),
+    MATCHED("MATCHED");
 
-  private final String status;
+    private final String status;
 }
