@@ -2,6 +2,8 @@ package org.yapp.core.domain.match;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,7 +14,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.yapp.core.domain.match.enums.UserMatchStatus;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.MatchErrorCode;
 
 @Entity
 @Getter
@@ -31,22 +36,18 @@ public class MatchInfo {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user1;
 
-  @Column(name = "user_1_piece_checked")
-  private Boolean user1PieceChecked = false;
-
-  @Column(name = "user_1_accept")
-  private Boolean user1Accepted = false;
+  @Column(name = "user_1_match_status")
+  @Enumerated(EnumType.STRING)
+  private UserMatchStatus user1MatchStatus = UserMatchStatus.UNCHECKED;
 
   @ManyToOne
   @JoinColumn(name = "user_2")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user2;
 
-  @Column(name = "user_2_piece_checked")
-  private Boolean user2PieceChecked = false;
-
-  @Column(name = "user_2_accept")
-  private Boolean user2Accepted = false;
+  @Column(name = "user_2_match_status")
+  @Enumerated(EnumType.STRING)
+  private UserMatchStatus user2MatchStatus = UserMatchStatus.UNCHECKED;
 
   public MatchInfo(LocalDate date, User user1, User user2) {
     this.date = date;
@@ -60,17 +61,31 @@ public class MatchInfo {
 
   public void checkPiece(Long userId) {
     if (user1.getId().equals(userId)) {
-      user1PieceChecked = true;
+      user1MatchStatus = UserMatchStatus.CHECKED;
+    } else if (user2.getId().equals(userId)) {
+      user2MatchStatus = UserMatchStatus.CHECKED;
     } else {
-      user2PieceChecked = true;
+      throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
     }
   }
 
   public void acceptPiece(Long userId) {
     if (user1.getId().equals(userId)) {
-      user1Accepted = true;
+      user1MatchStatus = UserMatchStatus.ACCEPTED;
+    } else if (user2.getId().equals(userId)) {
+      user2MatchStatus = UserMatchStatus.ACCEPTED;
     } else {
-      user2Accepted = true;
+      throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
+    }
+  }
+
+  public void refusePiece(Long userId) {
+    if (user1.getId().equals(userId)) {
+      user1MatchStatus = UserMatchStatus.REFUSED;
+    } else if (user2.getId().equals(userId)) {
+      user2MatchStatus = UserMatchStatus.REFUSED;
+    } else {
+      throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
     }
   }
 }

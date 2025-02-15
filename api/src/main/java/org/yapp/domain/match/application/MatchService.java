@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthenticationService;
 import org.yapp.core.domain.match.MatchInfo;
 import org.yapp.core.domain.match.enums.MatchStatus;
+import org.yapp.core.domain.match.enums.UserMatchStatus;
 import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
@@ -125,35 +126,30 @@ public class MatchService {
   }
 
   private String getMatchStatus(Long userId, MatchInfo matchInfo) {
-    if (userId.equals(matchInfo.getUser1().getId())) {
-      if (!matchInfo.getUser1PieceChecked()) {
-        return MatchStatus.BEFORE_OPEN.getStatus();
-      }
-      if (matchInfo.getUser1Accepted() && matchInfo.getUser2Accepted()) {
-        return MatchStatus.MATCHED.getStatus();
-      }
-      if (matchInfo.getUser1Accepted()) {
-        return MatchStatus.RESPONDED.getStatus();
-      }
-      if (matchInfo.getUser2Accepted()) {
-        return MatchStatus.GREEN_LIGHT.getStatus();
-      }
-      return MatchStatus.WAITING.getStatus();
-    } else {
-      if (!matchInfo.getUser2PieceChecked()) {
-        return MatchStatus.BEFORE_OPEN.getStatus();
-      }
-      if (matchInfo.getUser1Accepted() && matchInfo.getUser2Accepted()) {
-        return MatchStatus.MATCHED.getStatus();
-      }
-      if (matchInfo.getUser2Accepted()) {
-        return MatchStatus.RESPONDED.getStatus();
-      }
-      if (matchInfo.getUser1Accepted()) {
-        return MatchStatus.GREEN_LIGHT.getStatus();
-      }
-      return MatchStatus.WAITING.getStatus();
+    boolean isUser1 = userId.equals(matchInfo.getUser1().getId());
+
+    UserMatchStatus userMatchStatus =
+        isUser1 ? matchInfo.getUser1MatchStatus() : matchInfo.getUser2MatchStatus();
+    UserMatchStatus otherMatchStatus =
+        isUser1 ? matchInfo.getUser2MatchStatus() : matchInfo.getUser1MatchStatus();
+
+    if (userMatchStatus == UserMatchStatus.UNCHECKED) {
+      return MatchStatus.BEFORE_OPEN.getStatus();
     }
+    if (userMatchStatus == UserMatchStatus.REFUSED) {
+      return MatchStatus.REFUSED.getStatus();
+    }
+    if (userMatchStatus == UserMatchStatus.ACCEPTED
+        && otherMatchStatus == UserMatchStatus.ACCEPTED) {
+      return MatchStatus.MATCHED.getStatus();
+    }
+    if (userMatchStatus == UserMatchStatus.ACCEPTED) {
+      return MatchStatus.RESPONDED.getStatus();
+    }
+    if (otherMatchStatus == UserMatchStatus.ACCEPTED) {
+      return MatchStatus.GREEN_LIGHT.getStatus();
+    }
+    return MatchStatus.WAITING.getStatus();
   }
 
   @Transactional(readOnly = true)
@@ -266,10 +262,17 @@ public class MatchService {
   public Map<ContactType, String> getContacts() {
     Long userId = authenticationService.getUserId();
     MatchInfo matchInfo = getMatchInfo(userId);
-    if (!matchInfo.getUser1Accepted() || !matchInfo.getUser2Accepted()) {
+    if (matchInfo.getUser1MatchStatus() != UserMatchStatus.ACCEPTED
+        || matchInfo.getUser2MatchStatus() != UserMatchStatus.ACCEPTED) {
       throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
     }
     User matchedUser = getMatchedUser(userId, matchInfo);
     return matchedUser.getProfile().getProfileBasic().getContacts();
+  }
+
+  @Transactional
+  public void refuseMatch(Long userId) {
+    MatchInfo matchInfo = getMatchInfo(userId);
+    matchInfo.refusePiece(userId);
   }
 }
