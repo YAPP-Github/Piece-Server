@@ -88,4 +88,24 @@ public class MatchInfo {
             throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
         }
     }
+
+    public void blockMatch(Long userId) {
+        if (user1.getId().equals(userId)) {
+            user1MatchStatus = UserMatchStatus.BLOCKED;
+        } else if (user2.getId().equals(userId)) {
+            user2MatchStatus = UserMatchStatus.BLOCKED;
+        } else {
+            throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
+        }
+    }
+
+    public boolean determineBlocked(Long userId) {
+        if (user1.getId().equals(userId)) {
+            return user1MatchStatus == UserMatchStatus.BLOCKED;
+        } else if (user2.getId().equals(userId)) {
+            return user2MatchStatus == UserMatchStatus.BLOCKED;
+        } else {
+            throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
+        }
+    }
 }
