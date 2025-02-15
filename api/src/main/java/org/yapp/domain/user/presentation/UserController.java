@@ -1,6 +1,7 @@
 package org.yapp.domain.user.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class UserController {
   @PreAuthorize(value = "hasRole('USER')")
   @Operation(summary = "회원 탈퇴", description = "회원 탈퇴합니다.", tags = {"사용자"})
   public ResponseEntity<CommonResponse<Void>> deleteUser(
-      @RequestBody UserDeleteRequest request,
+      @RequestBody @Valid UserDeleteRequest request,
       @AuthenticationPrincipal Long userId) {
     userService.deleteUser(userId, request.getReason());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
