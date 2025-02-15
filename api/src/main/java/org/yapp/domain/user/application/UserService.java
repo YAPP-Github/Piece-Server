@@ -7,13 +7,15 @@ import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.domain.user.UserDeleteReason;
 import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
+import org.yapp.domain.user.dao.UserDeleteReasonRepository;
 import org.yapp.domain.user.dao.UserRejectHistoryRepository;
 import org.yapp.domain.user.dao.UserRepository;
-import org.yapp.domain.user.presentation.response.UserRejectHistoryResponse;
+import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final UserRejectHistoryRepository userRejectHistoryRepository;
+  private final UserDeleteReasonRepository userDeleteReasonRepository;
   private final JwtUtil jwtUtil;
 
   /**
@@ -92,7 +95,8 @@ public class UserService {
   }
 
   @Transactional
-  public void deleteUser(Long userId) {
+  public void deleteUser(Long userId, String reason) {
+    userDeleteReasonRepository.save(new UserDeleteReason(userId, reason));
     userRepository.deleteById(userId);
   }
 }
