@@ -108,4 +108,14 @@ public class MatchInfo {
             throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
         }
     }
+
+    public Long getPartnerUserId(Long userId) {
+        if (user1.getId().equals(userId)) {
+            return user2.getId();
+        } else if (user2.getId().equals(userId)) {
+            return user1.getId();
+        } else {
+            throw new ApplicationException(MatchErrorCode.INVALID_MATCH_ACCESS);
+        }
+    }
 }

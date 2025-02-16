@@ -22,7 +22,6 @@ import org.yapp.core.domain.profile.ProfileValueTalk;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.MatchErrorCode;
-import org.yapp.domain.block.application.DirectBlockService;
 import org.yapp.domain.match.dao.MatchInfoRepository;
 import org.yapp.domain.match.presentation.dto.response.MatchInfoResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchProfileBasicResponse;
@@ -42,7 +41,6 @@ public class MatchService {
     private final AuthenticationService authenticationService;
     private final ProfileValuePickService profileValuePickService;
     private final UserService userService;
-    private final DirectBlockService directBlockService;
 
     @Transactional
     public MatchInfo createMatchInfo(Long user1Id, Long user2Id) {
@@ -101,11 +99,10 @@ public class MatchService {
         User matchedUser = getMatchedUser(userId, matchInfo);
         User user = userService.getUserById(userId);
 
-        boolean isBlocked = directBlockService.checkBlock(userId, matchedUser.getId());
-
         List<String> matchedValues = getMatchedValues(user.getProfile().getId(),
             matchedUser.getProfile().getId());
 
+        boolean isBlocked = matchInfo.determineBlocked(userId);
         ProfileBasic profileBasic = matchedUser.getProfile().getProfileBasic();
 
         return MatchInfoResponse.builder()

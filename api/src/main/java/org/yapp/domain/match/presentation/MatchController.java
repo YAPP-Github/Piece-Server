@@ -102,13 +102,14 @@ public class MatchController {
             .body(CommonResponse.createSuccess(contactResponses));
     }
 
-    @PostMapping("/blocks/users/{userId}")
+    @PostMapping("/{matchId}/blocks")
     @Operation(summary = "매칭 상대 차단", description = "매칭 상대를 차단합니다", tags = {"매칭"})
     public ResponseEntity<CommonResponse<Void>> blockUsers(
-        @PathVariable(name = "userId") Long userId) {
-        directBlockService.blockUser(userId);
+        @AuthenticationPrincipal Long userId,
+        @PathVariable Long matchId) {
+        directBlockService.blockMatchedUser(userId, matchId);
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccessWithNoContent());
+            .body(CommonResponse.createSuccessWithNoContent("매칭 상대방을 차단하였습니다."));
     }
 
     @PutMapping("/refuse")
