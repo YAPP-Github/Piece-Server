@@ -10,7 +10,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yapp.core.auth.AuthenticationService;
 import org.yapp.core.domain.match.MatchInfo;
 import org.yapp.core.domain.match.enums.MatchStatus;
 import org.yapp.core.domain.match.enums.UserMatchStatus;
@@ -38,7 +37,6 @@ import org.yapp.domain.value.presentation.dto.response.ValuePickAnswerResponse;
 public class MatchService {
 
   private final MatchInfoRepository matchInfoRepository;
-  private final AuthenticationService authenticationService;
   private final ProfileValuePickService profileValuePickService;
   private final UserService userService;
 
@@ -258,15 +256,13 @@ public class MatchService {
   }
 
   @Transactional
-  public void acceptMatch() {
-    Long userId = authenticationService.getUserId();
+  public void acceptMatch(Long userId) {
     MatchInfo matchInfo = getMatchInfo(userId);
     matchInfo.acceptPiece(userId);
   }
 
   @Transactional(readOnly = true)
-  public Map<ContactType, String> getContacts() {
-    Long userId = authenticationService.getUserId();
+  public Map<ContactType, String> getContacts(Long userId) {
     MatchInfo matchInfo = getMatchInfo(userId);
     if (matchInfo.getUser1MatchStatus() != UserMatchStatus.ACCEPTED
         || matchInfo.getUser2MatchStatus() != UserMatchStatus.ACCEPTED) {
