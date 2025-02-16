@@ -37,7 +37,7 @@ public class UserController {
   }
 
   @DeleteMapping
-  @PreAuthorize(value = "hasAnyRole('REGISTER','USER')")
+  @PreAuthorize(value = "hasAnyAuthority('REGISTER','USER')")
   @Operation(summary = "회원 탈퇴", description = "회원 탈퇴합니다.", tags = {"사용자"})
   public ResponseEntity<CommonResponse<Void>> deleteUser(
       @RequestBody @Valid UserDeleteRequest request,
