@@ -12,6 +12,7 @@ import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
+import org.yapp.domain.setting.application.SettingService;
 import org.yapp.domain.user.dao.UserRepository;
 
 @Service
@@ -22,6 +23,7 @@ public class OauthService {
     private final UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
     private final AuthTokenGenerator authTokenGenerator;
+    private final SettingService settingService;
 
     public OauthLoginResponse login(OauthLoginRequest request) {
         OauthProvider oauthProvider = oauthProviderResolver.find(request.getProviderName());
@@ -39,6 +41,7 @@ public class OauthService {
             AuthToken token = authTokenGenerator.generate(userId, savedUser.getOauthId(), "NONE");
             String accessToken = token.accessToken();
             String refreshToken = token.refreshToken();
+            settingService.createSetting(userId);
             refreshTokenService.saveRefreshToken(userId, refreshToken);
             return new OauthLoginResponse(RoleStatus.NONE.getStatus(), accessToken, refreshToken);
         }
