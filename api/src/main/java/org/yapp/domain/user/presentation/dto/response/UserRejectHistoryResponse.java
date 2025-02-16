@@ -1,4 +1,4 @@
-package org.yapp.domain.user.presentation.response;
+package org.yapp.domain.user.presentation.dto.response;
 
 import org.yapp.core.domain.profile.ProfileStatus;
 
