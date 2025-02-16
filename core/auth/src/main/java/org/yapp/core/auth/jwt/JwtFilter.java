@@ -20,49 +20,49 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+  private final JwtUtil jwtUtil;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain)
-        throws ServletException, IOException {
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+      FilterChain filterChain)
+      throws ServletException, IOException {
 
-        String accessToken = request.getHeader("Authorization");
-        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        accessToken = accessToken.substring(7);
-
-        try {
-            jwtUtil.isExpired(accessToken);
-        } catch (ExpiredJwtException e) {
-
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        String category = jwtUtil.getCategory(accessToken);
-        if (!category.equals("access_token")) {
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        Long userId = jwtUtil.getUserId(accessToken);
-        String role = jwtUtil.getRole(accessToken);
-
-        Authentication authToken =
-            new UsernamePasswordAuthenticationToken(userId, null, Collections.singleton(
-                (GrantedAuthority) () -> role));
-
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
+    String accessToken = request.getHeader("Authorization");
+    if (accessToken == null || !accessToken.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response);
+      return;
     }
+    accessToken = accessToken.substring(7);
+
+    try {
+      jwtUtil.isExpired(accessToken);
+    } catch (ExpiredJwtException e) {
+
+      PrintWriter writer = response.getWriter();
+      writer.print("액세스 토큰이 만료되었습니다.");
+
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
+    String category = jwtUtil.getCategory(accessToken);
+    if (!category.equals("access_token")) {
+      PrintWriter writer = response.getWriter();
+      writer.print("토큰의 카테고리가 액세스 토큰이 아닙니다.");
+
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
+    Long userId = jwtUtil.getUserId(accessToken);
+    String role = jwtUtil.getRole(accessToken);
+
+    Authentication authToken =
+        new UsernamePasswordAuthenticationToken(userId, null, Collections.singleton(
+            (GrantedAuthority) () -> role));
+
+    SecurityContextHolder.getContext().setAuthentication(authToken);
+
+    filterChain.doFilter(request, response);
+  }
 }
