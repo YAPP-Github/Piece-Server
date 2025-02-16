@@ -27,13 +27,14 @@ public class RefreshTokenService {
   }
 
   @Transactional
-  public RefreshedTokens getUserRefreshedTokens(Long userId,
-      String refreshToken) {
+  public RefreshedTokens getUserRefreshedTokens(String refreshToken) {
+    Long userId = jwtUtil.getUserId(refreshToken);
+    String oauthId = jwtUtil.getOauthId(refreshToken);
+    String role = jwtUtil.getRole(refreshToken);
+
     String expectedRefreshToken = getUserRefreshToken(userId).getToken();
     validateRefreshToken(refreshToken, expectedRefreshToken);
 
-    String oauthId = jwtUtil.getOauthId(refreshToken);
-    String role = jwtUtil.getRole(refreshToken);
     AuthToken token = authTokenGenerator.generate(userId, oauthId, role);
     saveRefreshToken(userId, token.refreshToken());
 
