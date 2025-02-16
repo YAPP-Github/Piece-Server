@@ -37,242 +37,247 @@ import org.yapp.domain.value.presentation.dto.response.ValuePickAnswerResponse;
 @RequiredArgsConstructor
 public class MatchService {
 
-  private final MatchInfoRepository matchInfoRepository;
-  private final AuthenticationService authenticationService;
-  private final ProfileValuePickService profileValuePickService;
-  private final UserService userService;
+    private final MatchInfoRepository matchInfoRepository;
+    private final AuthenticationService authenticationService;
+    private final ProfileValuePickService profileValuePickService;
+    private final UserService userService;
 
-  @Transactional
-  public MatchInfo createMatchInfo(Long user1Id, Long user2Id) {
-    User user1 = userService.getUserById(user1Id);
-    User user2 = userService.getUserById(user2Id);
-    return matchInfoRepository.save(new MatchInfo(LocalDate.now(), user1, user2));
-  }
-
-  @Transactional(readOnly = true)
-  public MatchProfileBasicResponse getMatchProfileBasic() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-
-    User matchedUser = getMatchedUser(userId, matchInfo);
-    Profile matchedProfile = matchedUser.getProfile();
-    return MatchProfileBasicResponse.fromProfile(matchInfo.getId(), matchedProfile);
-  }
-
-  @Transactional
-  public void checkPiece() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-    matchInfo.checkPiece(userId);
-  }
-
-  public LocalDate getMatchDate() {
-    LocalDateTime nowDateTime = LocalDateTime.now();
-    LocalDate nowDate = nowDateTime.toLocalDate();
-    LocalTime cutOffTime = LocalTime.of(22, 0);
-
-    if (nowDateTime.toLocalTime().isBefore(cutOffTime)) {
-      return nowDate.minusDays(1);
-    }
-    return nowDate;
-  }
-
-  @Transactional(readOnly = true)
-  public boolean wasUsersMatched(Long user1Id, Long user2Id) {
-    Optional<MatchInfo> matchInfoByIds = matchInfoRepository.findMatchInfoByIds(user1Id,
-        user2Id);
-    return matchInfoByIds.isPresent();
-  }
-
-  @Transactional(readOnly = true)
-  public MatchInfo getMatchInfo(Long userId) {
-    return matchInfoRepository.findByUserIdAndDate(userId, getMatchDate())
-        .orElseThrow(() -> new ApplicationException(MatchErrorCode.NOTFOUND_MATCH));
-  }
-
-  @Transactional(readOnly = true)
-  public MatchInfoResponse getMatchInfoResponse() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-
-    User matchedUser = getMatchedUser(userId, matchInfo);
-    User user = userService.getUserById(userId);
-    List<String> matchedValues = getMatchedValues(user.getProfile().getId(),
-        matchedUser.getProfile().getId());
-
-    ProfileBasic profileBasic = matchedUser.getProfile().getProfileBasic();
-
-    return MatchInfoResponse.builder()
-        .matchId(matchInfo.getId())
-        .matchedUserId(matchedUser.getId())
-        .matchStatus(getMatchStatus(userId, matchInfo))
-        .description(profileBasic
-            .getDescription())
-        .nickname(profileBasic.getNickname())
-        .birthYear(
-            String.valueOf(profileBasic.getBirthdate().getYear()).substring(2))
-        .location(profileBasic.getLocation())
-        .job(profileBasic.getJob())
-        .matchedValueCount(matchedValues.size())
-        .matchedValueList(matchedValues)
-        .build();
-  }
-
-  private User getMatchedUser(Long userId, MatchInfo matchInfo) {
-    if (userId.equals(matchInfo.getUser1().getId())) {
-      return matchInfo.getUser2();
-    }
-    return matchInfo.getUser1();
-  }
-
-  private String getMatchStatus(Long userId, MatchInfo matchInfo) {
-    boolean isUser1 = userId.equals(matchInfo.getUser1().getId());
-
-    UserMatchStatus userMatchStatus =
-        isUser1 ? matchInfo.getUser1MatchStatus() : matchInfo.getUser2MatchStatus();
-    UserMatchStatus otherMatchStatus =
-        isUser1 ? matchInfo.getUser2MatchStatus() : matchInfo.getUser1MatchStatus();
-
-    if (userMatchStatus == UserMatchStatus.UNCHECKED) {
-      return MatchStatus.BEFORE_OPEN.getStatus();
-    }
-    if (userMatchStatus == UserMatchStatus.REFUSED) {
-      return MatchStatus.REFUSED.getStatus();
-    }
-    if (userMatchStatus == UserMatchStatus.ACCEPTED
-        && otherMatchStatus == UserMatchStatus.ACCEPTED) {
-      return MatchStatus.MATCHED.getStatus();
-    }
-    if (userMatchStatus == UserMatchStatus.ACCEPTED) {
-      return MatchStatus.RESPONDED.getStatus();
-    }
-    if (otherMatchStatus == UserMatchStatus.ACCEPTED) {
-      return MatchStatus.GREEN_LIGHT.getStatus();
-    }
-    return MatchStatus.WAITING.getStatus();
-  }
-
-  @Transactional(readOnly = true)
-  public MatchValueTalkResponse getMatchValueTalk() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-    User matchedUser = getMatchedUser(userId, matchInfo);
-    List<ProfileValueTalk> profileValueTalks = matchedUser.getProfile().getProfileValueTalks();
-    List<MatchValueTalkInnerResponse> talkResponses = new ArrayList<>();
-    for (ProfileValueTalk profileValueTalk : profileValueTalks) {
-      String summary = profileValueTalk.getSummary();
-      String answer = profileValueTalk.getAnswer();
-      String category = profileValueTalk.getValueTalk().getCategory();
-      talkResponses.add(new MatchValueTalkInnerResponse(category, summary, answer));
-    }
-    return new MatchValueTalkResponse(matchInfo.getId(), "",
-        matchedUser.getProfile().getProfileBasic().getNickname(), talkResponses);
-  }
-
-  @Transactional(readOnly = true)
-  public MatchValuePickResponse getMatchedUserValuePicks() {
-    Long userId = authenticationService.getUserId();
-    User user = userService.getUserById(userId);
-    ProfileBasic profileBasic = user.getProfile().getProfileBasic();
-    MatchInfo matchInfo = getMatchInfo(userId);
-    User matchedUser = getMatchedUser(userId, matchInfo);
-    List<MatchValuePickInnerResponse> matchValuePickInnerResponses = getMatchValuePickInnerResponses(
-        user.getProfile().getId(), matchedUser.getProfile().getId());
-
-    return new MatchValuePickResponse(matchInfo.getId(), profileBasic.getDescription(),
-        matchedUser.getProfile().getProfileBasic().getNickname(), matchValuePickInnerResponses);
-  }
-
-  private List<MatchValuePickInnerResponse> getMatchValuePickInnerResponses(Long fromProfileId,
-      Long toProfileId) {
-    List<ProfileValuePick> profileValuePicksOfFrom =
-        profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
-        toProfileId);
-
-    List<MatchValuePickInnerResponse> talkInnerResponses = new ArrayList<>();
-    int valueListSize = profileValuePicksOfFrom.size();
-
-    for (int i = 0; i < valueListSize; i++) {
-      ProfileValuePick profileValuePickFrom = profileValuePicksOfFrom.get(i);
-      ProfileValuePick profileValuePickTo = profileValuePicksOfTo.get(i);
-      String category = profileValuePickTo.getValuePick().getCategory();
-      String question = profileValuePickTo.getValuePick().getQuestion();
-      Integer selectedAnswer = profileValuePickTo.getSelectedAnswer();
-      Map<Integer, Object> answersMap = profileValuePickTo.getValuePick().getAnswers();
-      List<ValuePickAnswerResponse> answers = answersMap.entrySet()
-          .stream()
-          .map(entry -> new ValuePickAnswerResponse(entry.getKey(), (String) entry.getValue()))
-          .toList();
-      if (profileValuePickTo.getSelectedAnswer()
-          .equals(profileValuePickFrom.getSelectedAnswer())) {
-        talkInnerResponses.add(
-            new MatchValuePickInnerResponse(category, question, true, answers,
-                selectedAnswer));
-      } else {
-        talkInnerResponses.add(
-            new MatchValuePickInnerResponse(category, question, false, answers,
-                selectedAnswer)
-        );
-      }
+    @Transactional
+    public MatchInfo createMatchInfo(Long user1Id, Long user2Id) {
+        User user1 = userService.getUserById(user1Id);
+        User user2 = userService.getUserById(user2Id);
+        return matchInfoRepository.save(new MatchInfo(LocalDate.now(), user1, user2));
     }
 
-    return talkInnerResponses;
-  }
+    @Transactional(readOnly = true)
+    public MatchProfileBasicResponse getMatchProfileBasic() {
+        Long userId = authenticationService.getUserId();
+        MatchInfo matchInfo = getMatchInfo(userId);
 
-  @Transactional(readOnly = true)
-  public String getMatchedUserImageUrl() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-    User matchedUser = getMatchedUser(userId, matchInfo);
+        User matchedUser = getMatchedUser(userId, matchInfo);
 
-    return matchedUser.getProfile().getProfileBasic().getImageUrl();
-  }
-
-  private List<String> getMatchedValues(Long fromProfileId, Long toProfileId) {
-    List<ProfileValuePick> profileValuePicksOfFrom =
-        profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
-        toProfileId);
-
-    int valueListSize = profileValuePicksOfFrom.size();
-    List<String> matchedValues = new ArrayList<>();
-    for (int i = 0; i < valueListSize; i++) {
-      ProfileValuePick profileValuePickOfFrom = profileValuePicksOfFrom.get(i);
-      ProfileValuePick profileValuePickOfTo = profileValuePicksOfTo.get(i);
-      if (profileValuePickOfFrom.getSelectedAnswer()
-          .equals(profileValuePickOfTo.getSelectedAnswer())) {
-        Integer selectedAnswer = profileValuePickOfTo.getSelectedAnswer();
-        Map<Integer, Object> answers = profileValuePickOfTo.getValuePick().getAnswers();
-        String value = (String) answers.get(selectedAnswer);
-        matchedValues.add(value);
-      }
+        Profile matchedProfile = matchedUser.getProfile();
+        return MatchProfileBasicResponse.fromProfile(matchInfo.getId(), matchedProfile);
     }
-    return matchedValues;
-  }
 
-  @Transactional
-  public void acceptMatch() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-    matchInfo.acceptPiece(userId);
-  }
-
-  @Transactional(readOnly = true)
-  public Map<ContactType, String> getContacts() {
-    Long userId = authenticationService.getUserId();
-    MatchInfo matchInfo = getMatchInfo(userId);
-    if (matchInfo.getUser1MatchStatus() != UserMatchStatus.ACCEPTED
-        || matchInfo.getUser2MatchStatus() != UserMatchStatus.ACCEPTED) {
-      throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
+    @Transactional
+    public void checkPiece() {
+        Long userId = authenticationService.getUserId();
+        MatchInfo matchInfo = getMatchInfo(userId);
+        matchInfo.checkPiece(userId);
     }
-    User matchedUser = getMatchedUser(userId, matchInfo);
-    return matchedUser.getProfile().getProfileBasic().getContacts();
-  }
 
-  @Transactional
-  public void refuseMatch(Long userId) {
-    MatchInfo matchInfo = getMatchInfo(userId);
-    matchInfo.refusePiece(userId);
-  }
+    public LocalDate getMatchDate() {
+        LocalDateTime nowDateTime = LocalDateTime.now();
+        LocalDate nowDate = nowDateTime.toLocalDate();
+        LocalTime cutOffTime = LocalTime.of(22, 0);
+
+        if (nowDateTime.toLocalTime().isBefore(cutOffTime)) {
+            return nowDate.minusDays(1);
+        }
+        return nowDate;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean wasUsersMatched(Long user1Id, Long user2Id) {
+        Optional<MatchInfo> matchInfoByIds = matchInfoRepository.findMatchInfoByIds(user1Id,
+            user2Id);
+        return matchInfoByIds.isPresent();
+    }
+
+    @Transactional(readOnly = true)
+    public MatchInfo getMatchInfo(Long userId) {
+        return matchInfoRepository.findByUserIdAndDate(userId, getMatchDate())
+            .orElseThrow(() -> new ApplicationException(MatchErrorCode.NOTFOUND_MATCH));
+    }
+
+    @Transactional(readOnly = true)
+    public MatchInfoResponse getMatchInfoResponse() {
+        Long userId = authenticationService.getUserId();
+        MatchInfo matchInfo = getMatchInfo(userId);
+
+        User matchedUser = getMatchedUser(userId, matchInfo);
+        User user = userService.getUserById(userId);
+
+        List<String> matchedValues = getMatchedValues(user.getProfile().getId(),
+            matchedUser.getProfile().getId());
+
+        boolean isBlocked = matchInfo.determineBlocked(userId);
+        ProfileBasic profileBasic = matchedUser.getProfile().getProfileBasic();
+
+        return MatchInfoResponse.builder()
+            .matchId(matchInfo.getId())
+            .matchedUserId(matchedUser.getId())
+            .matchStatus(getMatchStatus(userId, matchInfo))
+            .description(profileBasic
+                .getDescription())
+            .nickname(profileBasic.getNickname())
+            .birthYear(
+                String.valueOf(profileBasic.getBirthdate().getYear()).substring(2))
+            .location(profileBasic.getLocation())
+            .job(profileBasic.getJob())
+            .matchedValueCount(matchedValues.size())
+            .matchedValueList(matchedValues)
+            .isBlocked(isBlocked)
+            .build();
+    }
+
+    private User getMatchedUser(Long userId, MatchInfo matchInfo) {
+        if (userId.equals(matchInfo.getUser1().getId())) {
+            return matchInfo.getUser2();
+        }
+        return matchInfo.getUser1();
+    }
+
+    private String getMatchStatus(Long userId, MatchInfo matchInfo) {
+        boolean isUser1 = userId.equals(matchInfo.getUser1().getId());
+
+        UserMatchStatus userMatchStatus =
+            isUser1 ? matchInfo.getUser1MatchStatus() : matchInfo.getUser2MatchStatus();
+        UserMatchStatus otherMatchStatus =
+            isUser1 ? matchInfo.getUser2MatchStatus() : matchInfo.getUser1MatchStatus();
+
+        if (userMatchStatus == UserMatchStatus.UNCHECKED) {
+            return MatchStatus.BEFORE_OPEN.getStatus();
+        }
+        if (userMatchStatus == UserMatchStatus.REFUSED) {
+            return MatchStatus.REFUSED.getStatus();
+        }
+        if (userMatchStatus == UserMatchStatus.ACCEPTED
+            && otherMatchStatus == UserMatchStatus.ACCEPTED) {
+            return MatchStatus.MATCHED.getStatus();
+        }
+        if (userMatchStatus == UserMatchStatus.ACCEPTED) {
+            return MatchStatus.RESPONDED.getStatus();
+        }
+        if (otherMatchStatus == UserMatchStatus.ACCEPTED) {
+            return MatchStatus.GREEN_LIGHT.getStatus();
+        }
+        return MatchStatus.WAITING.getStatus();
+    }
+
+    @Transactional(readOnly = true)
+    public MatchValueTalkResponse getMatchValueTalk() {
+        Long userId = authenticationService.getUserId();
+        MatchInfo matchInfo = getMatchInfo(userId);
+        User matchedUser = getMatchedUser(userId, matchInfo);
+        List<ProfileValueTalk> profileValueTalks = matchedUser.getProfile().getProfileValueTalks();
+        List<MatchValueTalkInnerResponse> talkResponses = new ArrayList<>();
+        for (ProfileValueTalk profileValueTalk : profileValueTalks) {
+            String summary = profileValueTalk.getSummary();
+            String answer = profileValueTalk.getAnswer();
+            String category = profileValueTalk.getValueTalk().getCategory();
+            talkResponses.add(new MatchValueTalkInnerResponse(category, summary, answer));
+        }
+        return new MatchValueTalkResponse(matchInfo.getId(), "",
+            matchedUser.getProfile().getProfileBasic().getNickname(), talkResponses);
+    }
+
+    @Transactional(readOnly = true)
+    public MatchValuePickResponse getMatchedUserValuePicks() {
+        Long userId = authenticationService.getUserId();
+        User user = userService.getUserById(userId);
+        ProfileBasic profileBasic = user.getProfile().getProfileBasic();
+        MatchInfo matchInfo = getMatchInfo(userId);
+        User matchedUser = getMatchedUser(userId, matchInfo);
+        List<MatchValuePickInnerResponse> matchValuePickInnerResponses = getMatchValuePickInnerResponses(
+            user.getProfile().getId(), matchedUser.getProfile().getId());
+
+        return new MatchValuePickResponse(matchInfo.getId(), profileBasic.getDescription(),
+            matchedUser.getProfile().getProfileBasic().getNickname(), matchValuePickInnerResponses);
+    }
+
+    private List<MatchValuePickInnerResponse> getMatchValuePickInnerResponses(Long fromProfileId,
+        Long toProfileId) {
+        List<ProfileValuePick> profileValuePicksOfFrom =
+            profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
+        List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
+            toProfileId);
+
+        List<MatchValuePickInnerResponse> talkInnerResponses = new ArrayList<>();
+        int valueListSize = profileValuePicksOfFrom.size();
+
+        for (int i = 0; i < valueListSize; i++) {
+            ProfileValuePick profileValuePickFrom = profileValuePicksOfFrom.get(i);
+            ProfileValuePick profileValuePickTo = profileValuePicksOfTo.get(i);
+            String category = profileValuePickTo.getValuePick().getCategory();
+            String question = profileValuePickTo.getValuePick().getQuestion();
+            Integer selectedAnswer = profileValuePickTo.getSelectedAnswer();
+            Map<Integer, Object> answersMap = profileValuePickTo.getValuePick().getAnswers();
+            List<ValuePickAnswerResponse> answers = answersMap.entrySet()
+                .stream()
+                .map(
+                    entry -> new ValuePickAnswerResponse(entry.getKey(), (String) entry.getValue()))
+                .toList();
+            if (profileValuePickTo.getSelectedAnswer()
+                .equals(profileValuePickFrom.getSelectedAnswer())) {
+                talkInnerResponses.add(
+                    new MatchValuePickInnerResponse(category, question, true, answers,
+                        selectedAnswer));
+            } else {
+                talkInnerResponses.add(
+                    new MatchValuePickInnerResponse(category, question, false, answers,
+                        selectedAnswer)
+                );
+            }
+        }
+
+        return talkInnerResponses;
+    }
+
+    @Transactional(readOnly = true)
+    public String getMatchedUserImageUrl() {
+        Long userId = authenticationService.getUserId();
+        MatchInfo matchInfo = getMatchInfo(userId);
+        User matchedUser = getMatchedUser(userId, matchInfo);
+
+        return matchedUser.getProfile().getProfileBasic().getImageUrl();
+    }
+
+    private List<String> getMatchedValues(Long fromProfileId, Long toProfileId) {
+        List<ProfileValuePick> profileValuePicksOfFrom =
+            profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
+        List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
+            toProfileId);
+
+        int valueListSize = profileValuePicksOfFrom.size();
+        List<String> matchedValues = new ArrayList<>();
+        for (int i = 0; i < valueListSize; i++) {
+            ProfileValuePick profileValuePickOfFrom = profileValuePicksOfFrom.get(i);
+            ProfileValuePick profileValuePickOfTo = profileValuePicksOfTo.get(i);
+            if (profileValuePickOfFrom.getSelectedAnswer()
+                .equals(profileValuePickOfTo.getSelectedAnswer())) {
+                Integer selectedAnswer = profileValuePickOfTo.getSelectedAnswer();
+                Map<Integer, Object> answers = profileValuePickOfTo.getValuePick().getAnswers();
+                String value = (String) answers.get(selectedAnswer);
+                matchedValues.add(value);
+            }
+        }
+        return matchedValues;
+    }
+
+    @Transactional
+    public void acceptMatch() {
+        Long userId = authenticationService.getUserId();
+        MatchInfo matchInfo = getMatchInfo(userId);
+        matchInfo.acceptPiece(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<ContactType, String> getContacts() {
+        Long userId = authenticationService.getUserId();
+        MatchInfo matchInfo = getMatchInfo(userId);
+        if (matchInfo.getUser1MatchStatus() != UserMatchStatus.ACCEPTED
+            || matchInfo.getUser2MatchStatus() != UserMatchStatus.ACCEPTED) {
+            throw new ApplicationException(MatchErrorCode.MATCH_NOT_ACCEPTED);
+        }
+        User matchedUser = getMatchedUser(userId, matchInfo);
+        return matchedUser.getProfile().getProfileBasic().getContacts();
+    }
+
+    @Transactional
+    public void refuseMatch(Long userId) {
+        MatchInfo matchInfo = getMatchInfo(userId);
+        matchInfo.refusePiece(userId);
+    }
 }

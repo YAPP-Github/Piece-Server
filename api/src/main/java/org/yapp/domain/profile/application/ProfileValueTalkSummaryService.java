@@ -81,6 +81,9 @@ public class ProfileValueTalkSummaryService {
                     profileValueTalk.getAnswer() + TEXT_CONDITION)
                 .map(summarizedAnswer -> {
                     summarizedAnswer = summarizedAnswer.replaceAll("[\"']", "");
+                    summarizedAnswer = summarizedAnswer.substring(0,
+                        Math.min(summarizedAnswer.length(), 50));
+
                     sentSummaryResponse(userId, profileValueTalk.getId(),
                         summarizedAnswer);
 
@@ -98,6 +101,9 @@ public class ProfileValueTalkSummaryService {
                     profileValueTalk.getAnswer() + TEXT_CONDITION)
                 .map(summarizedAnswer -> {
                     summarizedAnswer = summarizedAnswer.replaceAll("[\"']", "");
+                    summarizedAnswer = summarizedAnswer.substring(0,
+                        Math.min(summarizedAnswer.length(), 50));
+
                     return new ProfileValueTalkSummaryResponse(profileValueTalk.getId(),
                         summarizedAnswer);
                 }))
