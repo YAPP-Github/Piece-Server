@@ -3,7 +3,6 @@ package org.yapp.domain.auth.presentation;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -53,10 +52,9 @@ public class LoginController {
   @PatchMapping("/token/refresh")
   @Operation(summary = "토큰 리프레시", description = "accessToken과 refreshToken을 갱신합니다.", tags = {"로그인"})
   public ResponseEntity<CommonResponse<RefreshedTokensResponse>> refreshToken(
-      @RequestBody RefreshTokenRequest request,
-      @AuthenticationPrincipal Long userId) {
+      @RequestBody RefreshTokenRequest request) {
     RefreshedTokens refreshedTokens = refreshTokenService.getUserRefreshedTokens(
-        userId, request.getRefreshToken());
+        request.getRefreshToken());
     RefreshedTokensResponse response = new RefreshedTokensResponse(
         refreshedTokens.accessToken(), refreshedTokens.refreshToken());
     return ResponseEntity.ok(CommonResponse.createSuccess(response));
