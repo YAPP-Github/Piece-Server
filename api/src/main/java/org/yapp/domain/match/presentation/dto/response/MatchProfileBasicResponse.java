@@ -37,7 +37,8 @@ public class MatchProfileBasicResponse {
     Integer weight = profileBasic.getWeight();
     String job = profileBasic.getJob();
     String smokingStatus = profileBasic.getSmokingStatus();
-    return new MatchProfileBasicResponse(matchId, description, nickname, age, birthYearFormatted
+    return new MatchProfileBasicResponse(matchId, description, nickname, age,
+        birthYearFormatted
         , height, weight, location, job, smokingStatus);
   }
 }
