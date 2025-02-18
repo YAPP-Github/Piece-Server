@@ -22,27 +22,27 @@ import org.yapp.format.CommonResponse;
 @RequestMapping("/api/users")
 public class UserController {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  @PreAuthorize(value = "hasRole('USER')")
-  @GetMapping("/reject")
-  @Operation(summary = "사용자 거절 사유 조회", description = "사용자의 최근 거절 사유를 조회합니다.", tags = {"사용자"})
-  public ResponseEntity<CommonResponse<UserRejectHistoryResponse>> getUserRejectHistory(
-      @AuthenticationPrincipal Long userId) {
-    UserRejectHistoryResponse response = userService.getUserRejectHistoryLatest(
-        userId);
+    @GetMapping("/reject")
+    @PreAuthorize(value = "hasAnyAuthority('PENDING')")
+    @Operation(summary = "사용자 거절 사유 조회", description = "사용자의 최근 거절 사유를 조회합니다.", tags = {"사용자"})
+    public ResponseEntity<CommonResponse<UserRejectHistoryResponse>> getUserRejectHistory(
+        @AuthenticationPrincipal Long userId) {
+        UserRejectHistoryResponse response = userService.getUserRejectHistoryLatest(
+            userId);
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(CommonResponse.createSuccess(response));
-  }
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccess(response));
+    }
 
-  @DeleteMapping
-  @PreAuthorize(value = "hasAnyAuthority('REGISTER','PENDING','USER')")
-  @Operation(summary = "회원 탈퇴", description = "회원 탈퇴합니다.", tags = {"사용자"})
-  public ResponseEntity<CommonResponse<Void>> deleteUser(
-      @RequestBody @Valid UserDeleteRequest request,
-      @AuthenticationPrincipal Long userId) {
-    userService.deleteUser(userId, request.getReason());
-    return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
-  }
+    @DeleteMapping
+    @PreAuthorize(value = "hasAnyAuthority('REGISTER','PENDING','USER')")
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴합니다.", tags = {"사용자"})
+    public ResponseEntity<CommonResponse<Void>> deleteUser(
+        @RequestBody @Valid UserDeleteRequest request,
+        @AuthenticationPrincipal Long userId) {
+        userService.deleteUser(userId, request.getReason());
+        return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
+    }
 }
