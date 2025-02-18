@@ -169,7 +169,7 @@ public class MatchService {
       talkResponses.add(new MatchValueTalkInnerResponse(category, summary, answer));
     }
 
-    return new MatchValueTalkResponse(matchInfo.getId(), userId,
+    return new MatchValueTalkResponse(matchInfo.getId(),
         profileBasic.getDescription(),
         profileBasic.getNickname(), talkResponses);
   }
@@ -183,7 +183,7 @@ public class MatchService {
     List<MatchValuePickInnerResponse> matchValuePickInnerResponses = getMatchValuePickInnerResponses(
         user.getProfile().getId(), matchedUser.getProfile().getId());
 
-    return new MatchValuePickResponse(matchInfo.getId(), userId, profileBasic.getDescription(),
+    return new MatchValuePickResponse(matchInfo.getId(), profileBasic.getDescription(),
         matchedUser.getProfile().getProfileBasic().getNickname(), matchValuePickInnerResponses);
   }
 

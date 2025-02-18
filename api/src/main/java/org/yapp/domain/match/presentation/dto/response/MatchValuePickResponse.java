@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 public class MatchValuePickResponse {
 
   private Long matchId;
-  private Long matchedUserId;
   private String description;
   private String nickname;
   private List<MatchValuePickInnerResponse> valuePicks;
