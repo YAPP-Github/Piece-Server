@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.yapp.domain.auth.application.oauth.service.OauthService;
 import org.yapp.domain.user.application.UserService;
+import org.yapp.domain.user.presentation.dto.request.OauthUserDeleteRequest;
 import org.yapp.domain.user.presentation.dto.request.UserDeleteRequest;
 import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 import org.yapp.format.CommonResponse;
@@ -23,6 +25,7 @@ import org.yapp.format.CommonResponse;
 public class UserController {
 
     private final UserService userService;
+    private final OauthService oauthService;
 
     @GetMapping("/reject")
     @PreAuthorize(value = "hasAnyAuthority('PENDING')")
@@ -43,6 +46,17 @@ public class UserController {
         @RequestBody @Valid UserDeleteRequest request,
         @AuthenticationPrincipal Long userId) {
         userService.deleteUser(userId, request.getReason());
+        return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
+    }
+
+    @DeleteMapping("/oauth")
+    @PreAuthorize(value = "hasAnyAuthority('REGISTER','PENDING','USER')")
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴합니다.", tags = {"사용자"})
+    public ResponseEntity<CommonResponse<Void>> deleteUser(
+        @RequestBody @Valid OauthUserDeleteRequest request,
+        @AuthenticationPrincipal Long userId) {
+
+        oauthService.withdraw(request, userId);
         return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
     }
 }
