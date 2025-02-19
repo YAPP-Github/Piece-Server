@@ -32,4 +32,12 @@ public class GoogleOauthClient implements OauthClient {
         }
         return googleIdToken.getPayload().getSubject();
     }
+
+    @Override
+    public void unlink(String accessToken) {
+        /*
+            TODO: 구글 소셜 unlink 로직 필요
+        */
+        return;
+    }
 }

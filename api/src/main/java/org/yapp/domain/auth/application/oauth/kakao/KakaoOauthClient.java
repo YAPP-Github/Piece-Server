@@ -14,6 +14,7 @@ import org.yapp.domain.auth.application.oauth.OauthClient;
 @Component
 @RequiredArgsConstructor
 public class KakaoOauthClient implements OauthClient {
+
     @Value("${oauth.kakaoUserInfoUri}")
     private String userInfoUri;
     private final RestTemplate restTemplate;
@@ -26,10 +27,18 @@ public class KakaoOauthClient implements OauthClient {
         HttpEntity<Object> entity = new HttpEntity<>(headers);
 
         ResponseEntity<JsonNode> response = restTemplate.exchange(
-                userInfoUri, HttpMethod.GET, entity, JsonNode.class);
+            userInfoUri, HttpMethod.GET, entity, JsonNode.class);
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody().get("id").asText();
         }
         throw new RuntimeException();
+    }
+
+    @Override
+    public void unlink(String accessToken) {
+        /*
+            TODO: 카카오 소셜 unlink 로직 필요
+        */
+        return;
     }
 }
