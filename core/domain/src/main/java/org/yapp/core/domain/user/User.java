@@ -24,37 +24,37 @@ import org.yapp.core.domain.profile.Profile;
 @NoArgsConstructor
 public class User extends BaseEntity {
 
-  @Id
-  @Column(name = "user_id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(name = "oauth_id")
-  private String oauthId;
+    @Column(name = "oauth_id")
+    private String oauthId;
 
-  @Column(name = "name")
-  private String name;
+    @Column(name = "name")
+    private String name;
 
-  @Column(name = "phone")
-  private String phoneNumber;
+    @Column(name = "phone")
+    private String phoneNumber;
 
-  @Column(name = "role")
-  private String role;
+    @Column(name = "role")
+    private String role;
 
-  @OneToOne(cascade = {CascadeType.REMOVE})
-  @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
-  private Profile profile;
+    @OneToOne(cascade = {CascadeType.REMOVE})
+    @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
+    private Profile profile;
 
-  public void initializePhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
+    public void initializePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-  public void setProfile(Profile profile) {
-    this.profile = profile;
-  }
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
 
-  public void updateUserRole(String role) {
-    this.role = role;
-  }
+    public void updateUserRole(String role) {
+        this.role = role;
+    }
 }
 
