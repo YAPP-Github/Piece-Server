@@ -3,6 +3,7 @@ package org.yapp.domain.auth.application.oauth.service;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
 import org.yapp.core.auth.token.RefreshTokenService;
@@ -13,7 +14,9 @@ import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.setting.application.SettingService;
+import org.yapp.domain.user.application.UserService;
 import org.yapp.domain.user.dao.UserRepository;
+import org.yapp.domain.user.presentation.dto.request.OauthUserDeleteRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class OauthService {
 
     private final OauthProviderResolver oauthProviderResolver;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final RefreshTokenService refreshTokenService;
     private final AuthTokenGenerator authTokenGenerator;
     private final SettingService settingService;
@@ -76,6 +80,12 @@ public class OauthService {
         return new OauthLoginResponse(user.getRole(), accessToken, refreshToken);
     }
 
+    @Transactional
+    public void withdraw(OauthUserDeleteRequest request, Long userId) {
+        userService.deleteUser(userId, request.getReason());
+        OauthProvider oauthProvider = oauthProviderResolver.find(request.getProviderName());
+        oauthProvider.unlink(request.getOauthCredential());
+    }
 
     public OauthLoginResponse tmpTokenGet(Long userId) {
         //이미 가입된 유저인지 확인하고 가입되어 있지 않으면 회원가입 처리

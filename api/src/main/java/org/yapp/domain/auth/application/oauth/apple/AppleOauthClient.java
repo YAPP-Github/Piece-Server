@@ -72,4 +72,38 @@ public class AppleOauthClient implements OauthClient {
             throw new ApplicationException(AuthErrorCode.OAUTH_ID_NOT_FOUND);
         }
     }
+
+    @Override
+    public void unlink(String authorizationCode) {
+        final String url = "https://appleid.apple.com/auth/revoke";
+
+        String clientSecret = appleOauthHelper.generateClientSecret();
+        AppleAuthResponse appleAuthResponse = this.getAppleAuthResponse(
+            appleOauthProperties.getClientId(),
+            clientSecret,
+            "authorization_code",
+            authorizationCode);
+
+        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("client_id", appleOauthProperties.getClientId());
+        params.add("client_secret", clientSecret);
+        params.add("token", appleAuthResponse.getAccessToken());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                url, entity, String.class
+            );
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return;
+            } else {
+                throw new ApplicationException(AuthErrorCode.OAUTH_ERROR);
+            }
+        } catch (Exception e) {
+            throw new ApplicationException(AuthErrorCode.OAUTH_ERROR);
+        }
+    }
 }
