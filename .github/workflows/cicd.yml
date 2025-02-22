@@ -1,4 +1,4 @@
-name: CI/CD using github actions & docker
+name: CI/CD using github actions and docker
 
 on:
   push:
