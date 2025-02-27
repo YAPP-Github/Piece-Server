@@ -62,7 +62,7 @@ public class UserController {
   }
 
   @GetMapping("/info")
-  @PreAuthorize(value = "hasAnyAuthority('NONE', 'REGISTER', 'PENDING', 'USER')")
+  @PreAuthorize(value = "isAuthenticated()")
   @Operation(summary = "회원 기본정보 확인", description = "회원의 기본 정보를 확인합니다", tags = {"사용자"})
   public ResponseEntity<CommonResponse<UserBasicInfoResponse>> getUserBasicInfo(
       @AuthenticationPrincipal Long userId) {
