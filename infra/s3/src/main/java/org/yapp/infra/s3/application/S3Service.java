@@ -3,7 +3,6 @@ package org.yapp.infra.s3.application;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
@@ -38,9 +37,8 @@ public class S3Service {
         objectMetadata.setContentLength(file.getSize());
 
         try {
-            s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(),
-                objectMetadata).withCannedAcl(
-                CannedAccessControlList.PublicRead));
+            s3Client.putObject(
+                new PutObjectRequest(bucket, fileName, file.getInputStream(), objectMetadata));
             return s3Client.getUrl(bucket, fileName).toString();
 
         } catch (AmazonServiceException e) {
