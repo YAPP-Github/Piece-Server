@@ -71,9 +71,6 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserRejectHistoryResponse getUserRejectHistoryLatest(Long userId) {
-        User user = this.getUserById(userId);
-        Profile profile = user.getProfile();
-
         boolean reasonImage = false;
         boolean reasonDescription = false;
 
@@ -86,7 +83,6 @@ public class UserService {
         }
 
         return new UserRejectHistoryResponse(
-            profile.getProfileStatus(),
             reasonImage,
             reasonDescription
         );
