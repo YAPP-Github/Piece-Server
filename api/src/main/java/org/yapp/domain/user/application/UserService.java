@@ -23,83 +23,89 @@ import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 @RequiredArgsConstructor
 public class UserService {
 
-  private final UserRepository userRepository;
-  private final UserRejectHistoryRepository userRejectHistoryRepository;
-  private final UserDeleteReasonRepository userDeleteReasonRepository;
-  private final AuthTokenGenerator authTokenGenerator;
+    private final UserRepository userRepository;
+    private final UserRejectHistoryRepository userRejectHistoryRepository;
+    private final UserDeleteReasonRepository userDeleteReasonRepository;
+    private final AuthTokenGenerator authTokenGenerator;
 
-  /**
-   * Role을 USER로 바꾸고 변경된 토큰을 반환한다.
-   *
-   * @return 액세스토큰과 리프레시 토큰
-   */
-  @Transactional
-  public OauthLoginResponse completeProfileInitialize(Long userId, Profile profile) {
-    User user =
-        userRepository.findById(userId)
-            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
-    user.setProfile(profile);
-    user.updateUserRole(RoleStatus.PENDING.getStatus());
-    String oauthId = user.getOauthId();
-    AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
-    return new OauthLoginResponse(RoleStatus.PENDING.getStatus(), authToken.accessToken(),
-        authToken.refreshToken());
-  }
-
-  public User getUserById(Long userId) {
-    return userRepository.findById(userId)
-        .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
-  }
-
-  /**
-   * Role을 Register로 바꾸고 변경된 토큰을 반환한다.
-   *
-   * @return 액세스토큰과 리프레시 토큰
-   */
-  @Transactional
-  public OauthLoginResponse registerPhoneNumber(Long userId, String phoneNumber) {
-    User user =
-        userRepository.findById(userId)
-            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
-    user.updateUserRole(RoleStatus.REGISTER.getStatus());
-    user.initializePhoneNumber(phoneNumber);
-    String oauthId = user.getOauthId();
-    AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
-    return new OauthLoginResponse(RoleStatus.REGISTER.getStatus(), authToken.accessToken(),
-        authToken.refreshToken());
-  }
-
-  @Transactional(readOnly = true)
-  public UserRejectHistoryResponse getUserRejectHistoryLatest(Long userId) {
-    User user = this.getUserById(userId);
-    Profile profile = user.getProfile();
-
-    boolean reasonImage = false;
-    boolean reasonDescription = false;
-
-    UserRejectHistory userRejectHistory = userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
-        userId).orElse(null);
-
-    if (userRejectHistory != null) {
-      reasonImage = userRejectHistory.isReasonImage();
-      reasonDescription = userRejectHistory.isReasonDescription();
+    /**
+     * Role을 USER로 바꾸고 변경된 토큰을 반환한다.
+     *
+     * @return 액세스토큰과 리프레시 토큰
+     */
+    @Transactional
+    public OauthLoginResponse completeProfileInitialize(Long userId, Profile profile) {
+        User user =
+            userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+        user.setProfile(profile);
+        user.updateUserRole(RoleStatus.PENDING.getStatus());
+        String oauthId = user.getOauthId();
+        AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
+        return new OauthLoginResponse(RoleStatus.PENDING.getStatus(), authToken.accessToken(),
+            authToken.refreshToken());
     }
 
-    return new UserRejectHistoryResponse(
-        profile.getProfileStatus(),
-        reasonImage,
-        reasonDescription
-    );
-  }
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+    }
 
-  @Transactional
-  public void deleteUser(Long userId, String reason) {
-    userDeleteReasonRepository.save(new UserDeleteReason(userId, reason));
-    userRepository.deleteById(userId);
-  }
+    /**
+     * Role을 Register로 바꾸고 변경된 토큰을 반환한다.
+     *
+     * @return 액세스토큰과 리프레시 토큰
+     */
+    @Transactional
+    public OauthLoginResponse registerPhoneNumber(Long userId, String phoneNumber) {
+        User user =
+            userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+        user.updateUserRole(RoleStatus.REGISTER.getStatus());
+        user.initializePhoneNumber(phoneNumber);
+        String oauthId = user.getOauthId();
+        AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
+        return new OauthLoginResponse(RoleStatus.REGISTER.getStatus(), authToken.accessToken(),
+            authToken.refreshToken());
+    }
 
-  public UserBasicInfoResponse getUserBasicInfo(Long userId) {
-    User user = this.getUserById(userId);
-    return new UserBasicInfoResponse(userId, user.getRole());
-  }
+    @Transactional(readOnly = true)
+    public UserRejectHistoryResponse getUserRejectHistoryLatest(Long userId) {
+        User user = this.getUserById(userId);
+        Profile profile = user.getProfile();
+
+        boolean reasonImage = false;
+        boolean reasonDescription = false;
+
+        UserRejectHistory userRejectHistory = userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
+            userId).orElse(null);
+
+        if (userRejectHistory != null) {
+            reasonImage = userRejectHistory.isReasonImage();
+            reasonDescription = userRejectHistory.isReasonDescription();
+        }
+
+        return new UserRejectHistoryResponse(
+            profile.getProfileStatus(),
+            reasonImage,
+            reasonDescription
+        );
+    }
+
+    @Transactional
+    public void deleteUser(Long userId, String reason) {
+        userDeleteReasonRepository.save(new UserDeleteReason(userId, reason));
+        userRepository.deleteById(userId);
+    }
+
+    public UserBasicInfoResponse getUserBasicInfo(Long userId) {
+        User user = this.getUserById(userId);
+
+        Profile profile = user.getProfile();
+
+        String profileStatus =
+            profile != null ? profile.getProfileStatus().toString() : null;
+
+        return new UserBasicInfoResponse(userId, user.getRole(), profileStatus);
+    }
 }
