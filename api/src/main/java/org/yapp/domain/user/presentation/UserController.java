@@ -9,11 +9,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.domain.auth.application.oauth.service.OauthService;
 import org.yapp.domain.user.application.UserService;
+import org.yapp.domain.user.presentation.dto.request.FcmTokenSaveRequest;
 import org.yapp.domain.user.presentation.dto.request.OauthUserDeleteRequest;
 import org.yapp.domain.user.presentation.dto.request.UserDeleteRequest;
 import org.yapp.domain.user.presentation.dto.response.UserBasicInfoResponse;
@@ -68,5 +70,15 @@ public class UserController {
       @AuthenticationPrincipal Long userId) {
     UserBasicInfoResponse userBasicInfo = userService.getUserBasicInfo(userId);
     return ResponseEntity.ok(CommonResponse.createSuccess(userBasicInfo));
+  }
+
+  @PostMapping("/fcm-token")
+  @PreAuthorize(value = "isAuthenticated()")
+  @Operation(summary = "FCM 토큰 등록", description = "FCM 토큰을 등록합니다", tags = {"사용자"})
+  public ResponseEntity<CommonResponse<Void>> saveFcmToken(
+      @AuthenticationPrincipal Long userId,
+      @RequestBody FcmTokenSaveRequest request) {
+    userService.saveFcmToken(userId, request);
+    return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
 }
