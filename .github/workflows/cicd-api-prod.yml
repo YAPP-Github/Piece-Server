@@ -1,0 +1,81 @@
+name: CI/CD API Application - Prod
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "api/**"
+      - "core/domain/**"
+      - "core/format/**"
+      - "core/exception/**"
+      - "core/auth/**"
+      - "core/sse/**"
+      - "infra/s3/**"
+      - "infra/redis/**"
+      - "infra/sms/**"
+      - "infra/ai/**"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: make application-secret.yml
+        run: |
+          cd ./api/src/main/resources
+          touch ./application-secret.yml
+          echo "${{ secrets.API_PROD_YML }}" > ./application-secret.yml
+        shell: bash
+
+      - name: Build with Gradle
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
+
+      - name: Set image tag
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Docker build & push to prod
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile-prod -t ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:latest
+
+      - name: Deploy to prod
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST_PROD }}
+          username: ${{ secrets.HOST_PROD_USERNAME }}
+          password: ${{ secrets.HOST_PROD_PASSWORD }}
+          port: 22
+          key: ${{ secrets.HOST_PROD_PRIVATE_KEY }}
+          script: |
+            sudo docker stop piece-api-prod || true
+            sudo docker rm piece-api-prod || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }}
+            sudo docker run -d --name piece-api-prod -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }}
+            sudo docker image prune -f
