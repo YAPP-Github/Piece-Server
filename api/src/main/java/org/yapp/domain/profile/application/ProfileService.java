@@ -20,6 +20,7 @@ import org.yapp.core.exception.error.code.ProfileErrorCode;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest.ProfileValuePickPair;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
@@ -68,6 +69,27 @@ public class ProfileService {
 
         profile.updateProfileValuePicks(allProfileValues);
         profile.updateProfileValueTalks(allProfileTalks);
+
+        return profile;
+    }
+
+    @Transactional
+    public Profile update(Long userId, ProfileUpdateRequest dto) {
+        Profile profile = userService.getUserById(userId).getProfile();
+
+        ProfileBasic profileBasic = dto.toProfileBasic();
+
+        List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
+            profile.getId(), dto.valuePicks());
+
+        List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
+            profile.getId(), dto.valueTalks()
+        );
+
+        profile.updateBasic(profileBasic);
+        profile.updateProfileValuePicks(allProfileValues);
+        profile.updateProfileValueTalks(allProfileTalks);
+        updateProfileStatus(profile);
 
         return profile;
     }
