@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.profile.ProfileStatus;
@@ -38,22 +37,7 @@ public class ProfileService {
 
     @Transactional
     public Profile create(ProfileCreateRequest dto) {
-        ProfileBasic profileBasic = ProfileBasic.builder()
-            .nickname(dto.nickname())
-            .description(dto.description())
-            .birthdate(dto.birthdate())
-            .height(dto.height())
-            .job(dto.job())
-            .location(dto.location())
-            .smokingStatus(dto.smokingStatus())
-            .weight(dto.weight())
-            .snsActivityLevel(dto.snsActivityLevel())
-            .contacts(dto.contacts().entrySet().stream().collect(Collectors.toMap(
-                entry -> ContactType.valueOf(entry.getKey()),
-                Map.Entry::getValue
-            )))
-            .imageUrl(dto.imageUrl())
-            .build();
+        ProfileBasic profileBasic = dto.toProfileBasic();
 
         Profile profile = Profile.builder().profileBasic(profileBasic)
             .build();

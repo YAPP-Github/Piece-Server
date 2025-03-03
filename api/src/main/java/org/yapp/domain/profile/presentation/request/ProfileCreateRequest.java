@@ -11,6 +11,9 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.yapp.core.domain.profile.ContactType;
+import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.presentation.validation.ValidContactType;
 
 public record ProfileCreateRequest(
@@ -43,7 +46,7 @@ public record ProfileCreateRequest(
     String snsActivityLevel,
 
     @Schema(description = "연락처 정보 (키: ContactType, 값: 연락처 정보) - 사용 가능한 키: " +
-        "[KAKAO_TALK_ID(필수), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택)]",
+        "[KAKAO_TALK_ID(선택), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택) 단, 최소 1개 이상]",
         example = "{\"KAKAO_TALK_ID\": \"john_kakao\", \"PHONE_NUMBER\": \"01098765432\"}")
     @ValidContactType
     Map<String, String> contacts,
@@ -59,5 +62,22 @@ public record ProfileCreateRequest(
 
 ) {
 
-
+    public ProfileBasic toProfileBasic() {
+        return ProfileBasic.builder()
+            .nickname(nickname())
+            .description(description())
+            .birthdate(birthdate())
+            .height(height())
+            .job(job())
+            .location(location())
+            .smokingStatus(smokingStatus())
+            .weight(weight())
+            .snsActivityLevel(snsActivityLevel())
+            .contacts(contacts().entrySet().stream().collect(Collectors.toMap(
+                entry -> ContactType.valueOf(entry.getKey()),
+                Map.Entry::getValue
+            )))
+            .imageUrl(imageUrl())
+            .build();
+    }
 }
