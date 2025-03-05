@@ -1,10 +1,12 @@
 package org.yapp.domain.user.application;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
+import org.yapp.core.domain.fcm.FcmToken;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
@@ -13,9 +15,11 @@ import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
+import org.yapp.domain.user.dao.FcmTokenRepository;
 import org.yapp.domain.user.dao.UserDeleteReasonRepository;
 import org.yapp.domain.user.dao.UserRejectHistoryRepository;
 import org.yapp.domain.user.dao.UserRepository;
+import org.yapp.domain.user.presentation.dto.request.FcmTokenSaveRequest;
 import org.yapp.domain.user.presentation.dto.response.UserBasicInfoResponse;
 import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 
@@ -23,10 +27,11 @@ import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final UserRejectHistoryRepository userRejectHistoryRepository;
-    private final UserDeleteReasonRepository userDeleteReasonRepository;
-    private final AuthTokenGenerator authTokenGenerator;
+  private final UserRepository userRepository;
+  private final UserRejectHistoryRepository userRejectHistoryRepository;
+  private final UserDeleteReasonRepository userDeleteReasonRepository;
+  private final AuthTokenGenerator authTokenGenerator;
+  private final FcmTokenRepository fcmTokenRepository;
 
     /**
      * Role을 USER로 바꾸고 변경된 토큰을 반환한다.
@@ -98,10 +103,26 @@ public class UserService {
         User user = this.getUserById(userId);
 
         Profile profile = user.getProfile();
-
         String profileStatus =
             profile != null ? profile.getProfileStatus().toString() : null;
 
         return new UserBasicInfoResponse(userId, user.getRole(), profileStatus);
     }
+
+  @Transactional
+  public void saveFcmToken(Long userId, FcmTokenSaveRequest request) {
+    Optional<FcmToken> fcmTokenOptional = fcmTokenRepository.findByUserId(userId);
+    if (fcmTokenOptional.isPresent()) {
+      FcmToken fcmToken = fcmTokenOptional.get();
+      fcmToken.updateToken(request.getToken());
+    } else {
+      FcmToken fcmToken = new FcmToken(userId, request.getToken());
+      fcmTokenRepository.save(fcmToken);
+    }
+  }
+
+  @Transactional
+  public void deleteFcmToken(Long userId) {
+    fcmTokenRepository.deleteByUserId(userId);
+  }
 }

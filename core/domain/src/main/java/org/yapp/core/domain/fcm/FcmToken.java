@@ -7,9 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "fcm_token")
 public class FcmToken {
 
@@ -21,4 +23,13 @@ public class FcmToken {
   private Long userId;
   @Column(name = "token")
   private String token;
+
+  public FcmToken(Long userId, String token) {
+    this.userId = userId;
+    this.token = token;
+  }
+
+  public void updateToken(String token) {
+    this.token = token;
+  }
 }
