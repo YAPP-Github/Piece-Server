@@ -1,11 +1,11 @@
-package provider;
+package org.yapp.core.notification.provider;
 
-import client.NotificationClient;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.NotificationErrorCode;
+import org.yapp.core.notification.client.NotificationClient;
 
 @Component
 @RequiredArgsConstructor
