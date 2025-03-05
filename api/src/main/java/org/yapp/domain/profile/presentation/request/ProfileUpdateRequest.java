@@ -16,7 +16,7 @@ import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.domain.profile.presentation.validation.ValidContactType;
 
-public record ProfileCreateRequest(
+public record ProfileUpdateRequest(
 
     @NotBlank(message = "닉네임은 필수입니다.")
     String nickname,

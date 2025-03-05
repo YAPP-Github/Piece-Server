@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yapp.core.domain.profile.ContactType;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.profile.ProfileStatus;
@@ -20,6 +19,7 @@ import org.yapp.core.exception.error.code.ProfileErrorCode;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest.ProfileValuePickPair;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
@@ -37,22 +37,7 @@ public class ProfileService {
 
     @Transactional
     public Profile create(ProfileCreateRequest dto) {
-        ProfileBasic profileBasic = ProfileBasic.builder()
-            .nickname(dto.nickname())
-            .description(dto.description())
-            .birthdate(dto.birthdate())
-            .height(dto.height())
-            .job(dto.job())
-            .location(dto.location())
-            .smokingStatus(dto.smokingStatus())
-            .weight(dto.weight())
-            .snsActivityLevel(dto.snsActivityLevel())
-            .contacts(dto.contacts().entrySet().stream().collect(Collectors.toMap(
-                entry -> ContactType.valueOf(entry.getKey()),
-                Map.Entry::getValue
-            )))
-            .imageUrl(dto.imageUrl())
-            .build();
+        ProfileBasic profileBasic = dto.toProfileBasic();
 
         Profile profile = Profile.builder().profileBasic(profileBasic)
             .build();
@@ -68,6 +53,27 @@ public class ProfileService {
 
         profile.updateProfileValuePicks(allProfileValues);
         profile.updateProfileValueTalks(allProfileTalks);
+
+        return profile;
+    }
+
+    @Transactional
+    public Profile update(Long userId, ProfileUpdateRequest dto) {
+        Profile profile = userService.getUserById(userId).getProfile();
+
+        ProfileBasic profileBasic = dto.toProfileBasic();
+
+        List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
+            profile.getId(), dto.valuePicks());
+
+        List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
+            profile.getId(), dto.valueTalks()
+        );
+
+        profile.updateBasic(profileBasic);
+        profile.updateProfileValuePicks(allProfileValues);
+        profile.updateProfileValueTalks(allProfileTalks);
+        updateProfileStatus(profile);
 
         return profile;
     }

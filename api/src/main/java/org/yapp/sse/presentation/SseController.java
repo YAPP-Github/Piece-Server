@@ -21,14 +21,14 @@ public class SseController {
 
     private final FluxSsePersonalService ssePersonalService;
 
-    @PreAuthorize(value = "hasRole('USER')")
+    @PreAuthorize(value = "hasAuthority('USER')")
     @GetMapping("/personal/connect")
     @Operation(summary = "SSE 연결", description = "로그인 회원에 대한 이벤트 수신 스트림을 얻습니다", tags = {"SSE"})
     public Flux<ServerSentEvent<Object>> connect(@AuthenticationPrincipal Long userId) {
         return ssePersonalService.connect(userId);
     }
 
-    @PreAuthorize(value = "hasRole('USER')")
+    @PreAuthorize(value = "hasAuthority('USER')")
     @DeleteMapping("/personal/disconnect")
     @Operation(summary = "SSE 연결 해제", description = "로그인 회원의 SSE 연결을 해제합니다", tags = {"SSE"})
     public ResponseEntity<CommonResponse<Void>> disconnect(@AuthenticationPrincipal Long userId) {
