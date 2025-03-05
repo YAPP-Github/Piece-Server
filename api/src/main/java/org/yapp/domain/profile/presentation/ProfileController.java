@@ -32,6 +32,7 @@ import org.yapp.domain.profile.application.ProfileValueTalkSummaryService;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileTalkSummaryUpdateRequest;
+import org.yapp.domain.profile.presentation.request.ProfileUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
 import org.yapp.domain.profile.presentation.response.ProfileBasicPreviewResponse;
@@ -67,6 +68,19 @@ public class ProfileController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.createSuccess(oauthLoginResponse));
+    }
+
+    @PutMapping("")
+    @Operation(summary = "반려 프로필 수정", description = "반려 당한 사용자의 프로필을 수정합니다.", tags = {"프로필"})
+    public ResponseEntity<CommonResponse<Void>> updateProfile(
+        @RequestBody @Valid ProfileUpdateRequest request,
+        @AuthenticationPrincipal Long userId) {
+
+        Profile profile = profileService.update(userId, request);
+        profileValueTalkSummaryService.summaryProfileValueTalksSync(profile);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(CommonResponse.createSuccessWithNoContent("프로필 업데이트가 완료되었습니다."));
     }
 
     @GetMapping("/basic")

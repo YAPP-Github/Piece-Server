@@ -54,11 +54,21 @@ public class Profile extends BaseEntity {
     }
 
     public void updateProfileValuePicks(List<ProfileValuePick> profileValuePicks) {
-        this.profileValuePicks = profileValuePicks;
+        if (this.profileValuePicks != null) {
+            this.profileValuePicks.clear();
+            this.profileValuePicks.addAll(profileValuePicks);
+        } else {
+            this.profileValuePicks = profileValuePicks;
+        }
     }
 
     public void updateProfileValueTalks(List<ProfileValueTalk> profileValueTalks) {
-        this.profileValueTalks = profileValueTalks;
+        if (this.profileValueTalks != null) {
+            this.profileValueTalks.clear();
+            this.profileValueTalks.addAll(profileValueTalks);
+        } else {
+            this.profileValueTalks = profileValueTalks;
+        }
     }
 
     public void updateProfileStatus(ProfileStatus profileStatus) {

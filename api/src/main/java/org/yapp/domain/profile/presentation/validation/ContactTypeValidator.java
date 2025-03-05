@@ -17,10 +17,9 @@ public class ContactTypeValidator implements
 
     @Override
     public boolean isValid(Map<String, String> contacts, ConstraintValidatorContext context) {
-        if (contacts == null || contacts.isEmpty() || !contacts.containsKey(
-            ContactType.KAKAO_TALK_ID.name())) {
+        if (contacts == null || contacts.isEmpty()) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("카카오톡 ID는 필수 값입니다.")
+            context.buildConstraintViolationWithTemplate("연락처는 최소 1개 이상 입력해야합니다.")
                 .addConstraintViolation();
             return false;
         }
