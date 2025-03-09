@@ -1,9 +1,10 @@
-package client;
+package org.yapp.core.notification.client;
 
-import application.FcmSendService;
-import enums.NotificationClientName;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.yapp.core.notification.enums.NotificationClientName;
+import org.yapp.infra.fcm.application.FcmSendService;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,8 @@ public class FcmClient implements NotificationClient {
   }
 
   @Override
-  public void sendNotification(String token, String title, String message) {
-    fcmSendService.sendNotificationWithToken(token, title, message);
+  public void sendNotificationWithData(String token, String title, String body,
+      Map<String, String> data) {
+    fcmSendService.sendNotificationAndDataWithToken(token, data, title, body);
   }
 }

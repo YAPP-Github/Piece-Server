@@ -15,6 +15,7 @@ dependencies {
     implementation project(':core:exception')
     implementation project(':core:auth')
     implementation project(':core:sse')
+    implementation project(':core:notification')
     implementation project(':core:log')
 
     implementation project(':infra:s3')

@@ -1,4 +1,4 @@
-package application;
+package org.yapp.infra.fcm.application;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -6,12 +6,14 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.NotificationErrorCode;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FcmSendService {
 
   public void sendNotificationWithToken(String token, String title, String body) {
@@ -76,6 +78,7 @@ public class FcmSendService {
           .putAllData(data)
           .build());
     } catch (FirebaseMessagingException e) {
+      log.error("fcm error", e);
       throw new ApplicationException(NotificationErrorCode.FCM_SEND_ERROR);
     }
   }

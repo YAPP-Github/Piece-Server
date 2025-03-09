@@ -14,6 +14,7 @@ dependencies {
     implementation project(':core:format')
     implementation project(':core:exception')
     implementation project(':core:auth')
+    implementation project(':core:notification')
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
