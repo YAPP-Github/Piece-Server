@@ -10,7 +10,7 @@ import org.yapp.core.domain.user.User;
 import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
-import org.yapp.core.notification.application.NotificationService;
+import org.yapp.notification.application.AdminNotificationService;
 import org.yapp.user.application.UserService;
 import org.yapp.user.dao.UserRejectHistoryRepository;
 
@@ -20,7 +20,7 @@ public class AdminProfileService {
 
   private final UserRejectHistoryRepository userRejectHistoryRepository;
   private final UserService userService;
-  private final NotificationService notificationService;
+  private final AdminNotificationService adminNotificationService;
 
   @Transactional
   public void updateProfileStatus(Long userId, boolean reasonImage, boolean reasonDescription) {
@@ -33,10 +33,10 @@ public class AdminProfileService {
 
     if (reasonImage || reasonDescription) {
       rejectProfile(user.getProfile(), reasonImage, reasonDescription);
-      notificationService.sendProfileRejectedNotification(userId);
+      adminNotificationService.sendProfileRejectedNotification(userId);
     } else {
       passProfile(profile);
-      notificationService.sendProfileApprovedNotification(userId);
+      adminNotificationService.sendProfileApprovedNotification(userId);
     }
   }
 
