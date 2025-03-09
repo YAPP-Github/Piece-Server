@@ -10,10 +10,12 @@ on:
       - "core/exception/**"
       - "core/auth/**"
       - "core/sse/**"
+      - "core/log/**"
       - "infra/s3/**"
       - "infra/redis/**"
       - "infra/sms/**"
       - "infra/ai/**"
+      - "infra/discord/**"
       - ".github/workflows/**"
 
 permissions:

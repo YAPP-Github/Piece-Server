@@ -41,6 +41,8 @@ import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.format.CommonResponse;
+import org.yapp.infra.discord.DiscordMessageFactory;
+import org.yapp.infra.discord.DiscordNotificationService;
 
 @Slf4j
 @RestController
@@ -54,6 +56,7 @@ public class ProfileController {
     private final ProfileValuePickService profileValuePickService;
     private final ProfileValueTalkService profileValueTalkService;
     private final ProfileValueTalkSummaryService profileValueTalkSummaryService;
+    private final DiscordNotificationService discordNotificationService;
 
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
@@ -65,6 +68,10 @@ public class ProfileController {
         profileValueTalkSummaryService.summaryProfileValueTalksSync(profile);
         OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(userId,
             profile);
+
+        discordNotificationService.sendNotification(
+            DiscordMessageFactory.createNewProfileMessage(profile.getId(),
+                profile.getProfileBasic().getNickname()));
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.createSuccess(oauthLoginResponse));
@@ -78,6 +85,10 @@ public class ProfileController {
 
         Profile profile = profileService.update(userId, request);
         profileValueTalkSummaryService.summaryProfileValueTalksSync(profile);
+
+        discordNotificationService.sendNotification(
+            DiscordMessageFactory.createRenewProfileMessage(profile.getId(),
+                profile.getProfileBasic().getNickname()));
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccessWithNoContent("프로필 업데이트가 완료되었습니다."));
