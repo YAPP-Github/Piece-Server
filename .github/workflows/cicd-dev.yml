@@ -1,0 +1,102 @@
+name: CI/CD API and ADMIN Application - dev
+
+on:
+  push:
+    branches: [ "develope" ]
+
+permissions:
+  contents: read
+
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: make API application-secret.yml
+        run: |
+          cd ./api/src/main/resources
+          touch ./application-secret.yml 
+          echo "${{ secrets.API_DEV_YML }}" > ./application-secret.yml
+        shell: bash
+
+      - name: Build API with Gradle
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
+
+      - name: Set image tag
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Docker build & push API to dev
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:latest
+
+      - name: Deploy API to dev
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DEV }}
+          username: ${{ secrets.HOST_DEV_USERNAME }}
+          port: 22
+          key: ${{ secrets.HOST_DEV_PRIVATE_KEY }}
+          script: |
+            sudo docker stop piece-api-dev || true
+            sudo docker rm piece-api-dev || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }}
+            sudo docker run -d --name piece-api-dev -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }}
+            sudo docker image prune -f
+
+      - name: make ADMIN application-secret.yml
+        run: |
+          cd ./admin/src/main/resources
+          touch ./application-secret.yml 
+          echo "${{ secrets.ADMIN_YML }}" > ./application-secret.yml
+        shell: bash
+
+      - name: Build ADMIN with Gradle
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew build -x test
+
+      - name: Docker build & push ADMIN to dev
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile-admin -t ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/piece-admin:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-admin:latest
+
+      - name: Deploy ADMIN to dev
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DEV }}
+          username: ${{ secrets.HOST_DEV_USERNAME }}
+          port: 22
+          key: ${{ secrets.HOST_DEV_PRIVATE_KEY }}
+          script: |
+            sudo docker stop piece-admin || true
+            sudo docker rm piece-admin || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }}
+            sudo docker run -d --name piece-admin -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }}
+            sudo docker image prune -f
