@@ -25,3 +25,8 @@ include 'core:notification'
 findProject(':core:notification')?.name = 'notification'
 include 'core:sse'
 findProject(':core:sse')?.name = 'sse'
+include 'core:log'
+findProject(':core:log')?.name = 'log'
+include 'infra:discord'
+findProject(':infra:discord')?.name = 'discord'
+
