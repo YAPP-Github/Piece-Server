@@ -21,7 +21,6 @@ import org.yapp.core.domain.profile.ProfileValueTalk;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.MatchErrorCode;
-import org.yapp.core.notification.application.NotificationService;
 import org.yapp.domain.match.dao.MatchInfoRepository;
 import org.yapp.domain.match.presentation.dto.response.MatchInfoResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchProfileBasicResponse;
@@ -29,6 +28,7 @@ import org.yapp.domain.match.presentation.dto.response.MatchValuePickInnerRespon
 import org.yapp.domain.match.presentation.dto.response.MatchValuePickResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchValueTalkInnerResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchValueTalkResponse;
+import org.yapp.domain.notification.application.ApiNotificationService;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.domain.value.presentation.dto.response.ValuePickAnswerResponse;
@@ -40,15 +40,15 @@ public class MatchService {
   private final MatchInfoRepository matchInfoRepository;
   private final ProfileValuePickService profileValuePickService;
   private final UserService userService;
-  private final NotificationService notificationService;
+  private final ApiNotificationService apiNotificationService;
 
   @Transactional
   public MatchInfo createMatchInfo(Long user1Id, Long user2Id) {
     User user1 = userService.getUserById(user1Id);
     User user2 = userService.getUserById(user2Id);
 
-    notificationService.sendNewMatchNotification(user1Id);
-    notificationService.sendNewMatchNotification(user2Id);
+    apiNotificationService.sendNewMatchNotification(user1Id);
+    apiNotificationService.sendNewMatchNotification(user2Id);
 
     return matchInfoRepository.save(new MatchInfo(LocalDate.now(), user1, user2));
   }
@@ -273,12 +273,12 @@ public class MatchService {
 
     if (matchInfo.getUser1MatchStatus().equals(UserMatchStatus.ACCEPTED) &&
         matchInfo.getUser2MatchStatus().equals(UserMatchStatus.ACCEPTED)) {
-      notificationService.sendMatchCompletedNotification(userId,
+      apiNotificationService.sendMatchCompletedNotification(userId,
           matchedUser.getProfile().getProfileBasic().getNickname());
-      notificationService.sendMatchCompletedNotification(matchedUserId,
+      apiNotificationService.sendMatchCompletedNotification(matchedUserId,
           user.getProfile().getProfileBasic().getNickname());
     } else {
-      notificationService.sendMatchAcceptedNotification(matchedUserId);
+      apiNotificationService.sendMatchAcceptedNotification(matchedUserId);
     }
   }
 
