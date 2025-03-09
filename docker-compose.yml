@@ -2,6 +2,7 @@ version: '3.8'
 services:
   db:
     image: mysql:8.0
+    container_name: piece-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -11,6 +12,23 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - piece-nw
+
+  redis:
+    image: redis:latest
+    container_name: piece-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - piece-nw
 
 volumes:
   mysql-data:
+  redis-data:
+
+networks:
+  piece-nw:

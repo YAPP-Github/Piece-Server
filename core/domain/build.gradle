@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.yapp'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('io.hypersistence:hypersistence-utils-hibernate-62:3.7.0')
+
+    implementation project(':core:exception')
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+}
+
+test {
+    useJUnitPlatform()
+}

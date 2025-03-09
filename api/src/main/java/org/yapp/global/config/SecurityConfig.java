@@ -1,7 +1,12 @@
 package org.yapp.global.config;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
+import java.util.Collections;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,16 +17,11 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.yapp.domain.auth.application.jwt.JwtFilter;
-
-import java.util.Collections;
-
-import lombok.RequiredArgsConstructor;
-
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+import org.yapp.core.auth.jwt.JwtFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -30,17 +30,19 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
-               .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-               .httpBasic(AbstractHttpConfigurer::disable)
-               .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-               .authorizeHttpRequests(registry -> registry.requestMatchers(getMatcherForUserAndAdmin())
-                                                          .hasAnyRole("USER", "ADMIN")
-                                                          .requestMatchers(getMatcherForAnyone())
-                                                          .permitAll()
-                                                          .anyRequest()
-                                                          .hasAnyRole("ADMIN"))
-               .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-               .build();
+        .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+        .httpBasic(AbstractHttpConfigurer::disable)
+        .sessionManagement(
+            configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(registry -> registry
+            .requestMatchers(getMatcherForUserAndAdmin())
+            .hasAnyRole("USER", "ADMIN")
+            .requestMatchers(getMatcherForAnyone())
+            .permitAll()
+            .anyRequest()
+            .authenticated())
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
   }
 
   private CorsConfigurationSource corsConfigurationSource() {
@@ -54,8 +56,13 @@ public class SecurityConfig {
   }
 
   private RequestMatcher getMatcherForAnyone() {
-    return RequestMatchers.anyOf(antMatcher("/login/**"), antMatcher("/api/**"), antMatcher("/swagger-ui/**"),
+    return RequestMatchers.anyOf(antMatcher("/api/login/**"), antMatcher("/api/**"),
+        antMatcher("/swagger-ui/**"),
         antMatcher("/v3/api-docs/**"), antMatcher("/swagger-ui.html"));
+  }
+
+  private RequestMatcher getMatcherForRegister() {
+    return RequestMatchers.anyOf(antMatcher("/api/profiles/init"));
   }
 
   private RequestMatcher getMatcherForUserAndAdmin() {

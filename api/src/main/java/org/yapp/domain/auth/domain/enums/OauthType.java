@@ -7,7 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum OauthType {
     GOOGLE("google"),
-    KAKAO("kakao");
+    KAKAO("kakao"),
+    APPLE("apple");
 
     private final String typeName;
 }

@@ -10,7 +10,21 @@ repositories {
 }
 
 dependencies {
-    implementation project(':common')
+    implementation project(':core:domain')
+    implementation project(':core:format')
+    implementation project(':core:exception')
+    implementation project(':core:auth')
+    implementation project(':core:sse')
+    implementation project(':core:log')
+
+    implementation project(':infra:s3')
+    implementation project(':infra:redis')
+    implementation project(':infra:sms')
+    implementation project(':infra:ai')
+    implementation project(':infra:discord')
+
+    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0');
+    implementation('org.bouncycastle:bcpkix-jdk18on:1.76');
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 

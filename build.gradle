@@ -1,73 +1,98 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.5'
-	id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'org.yapp'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 
 bootJar.enabled = false
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 subprojects {
-	sourceCompatibility = '21'
+    sourceCompatibility = '21'
 
-	apply plugin: 'java'
-	apply plugin: 'java-library'
-	apply plugin: 'org.springframework.boot'
-	apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
 
-	configurations {
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
-	}
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
 
-	repositories {
-		mavenCentral()
-	}
+    repositories {
+        mavenCentral()
+    }
 
-	dependencies {
-		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-		implementation 'org.springframework.boot:spring-boot-starter-web'
+    jar {
+        enabled = false
+    }
 
-		//security
-		implementation 'org.springframework.boot:spring-boot-starter-security'
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-		//jwt
-		implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-		runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-		runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+        //security
+        implementation 'org.springframework.boot:spring-boot-starter-security'
 
-		compileOnly 'org.projectlombok:lombok'
-		runtimeOnly 'com.mysql:mysql-connector-j'
-		annotationProcessor 'org.projectlombok:lombok'
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	}
+        //jwt
+        implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+        runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+        runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
-	test {
-		useJUnitPlatform()
-	}
-}
+        //google id token
+        implementation 'com.google.api-client:google-api-client:1.32.1'
+        implementation 'com.google.oauth-client:google-oauth-client:1.32.1'
+        implementation 'com.google.http-client:google-http-client-jackson2:1.40.1'
 
-tasks.named('test') {
-	useJUnitPlatform()
+        //cool sms
+        implementation 'net.nurigo:sdk:4.3.0'
+
+        //redis
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+        //S3
+        implementation 'com.amazonaws:aws-java-sdk-s3:1.12.331'
+
+        compileOnly 'org.projectlombok:lombok'
+        runtimeOnly 'com.mysql:mysql-connector-j'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+    test {
+        reports {
+            junitXml.outputLocation.set(file("${rootDir}/build/reports/test-results/xml"))
+            // XML 출력 경로 설정
+            html.required.set(true) // HTML 보고서 활성화
+            html.outputLocation.set(file("${rootDir}/build/reports/test-results/html"))
+            // HTML 출력 경로 설정
+        }
+    }
+
+    tasks.withType(Test) {
+        useJUnitPlatform()
+    }
 }
