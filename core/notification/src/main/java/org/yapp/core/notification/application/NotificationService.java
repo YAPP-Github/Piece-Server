@@ -14,7 +14,7 @@ import org.yapp.core.notification.provider.NotificationProvider;
 
 @Service
 @RequiredArgsConstructor
-public class CommonNotificationService {
+public class NotificationService {
 
   private final NotificationProvider notificationProvider;
   private final NotificationHistoryRepository notificationHistoryRepository;
@@ -34,7 +34,7 @@ public class CommonNotificationService {
         .isRead(false)
         .dateTime(LocalDateTime.now())
         .build();
-    
+
     NotificationHistory newNotificationHistory = notificationHistoryRepository.save(
         notificationHistory);
     data.put("notificationId", String.valueOf(newNotificationHistory.getId()));
