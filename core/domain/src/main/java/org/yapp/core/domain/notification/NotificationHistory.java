@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.yapp.core.domain.notification.enums.NotificationType;
@@ -41,6 +42,7 @@ public class NotificationHistory {
   @Column(name = "date_time")
   private LocalDateTime dateTime;
 
+  @Builder
   public NotificationHistory(Long userId, NotificationType notificationType, String title,
       String body, Boolean isRead, LocalDateTime dateTime) {
     this.userId = userId;

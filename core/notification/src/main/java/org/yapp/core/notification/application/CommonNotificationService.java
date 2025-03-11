@@ -26,8 +26,15 @@ public class CommonNotificationService {
     NotificationClient notificationClient = notificationProvider.getNotificationClient(
         clientName);
 
-    NotificationHistory notificationHistory = new NotificationHistory(userId, notificationType,
-        title, body, false, LocalDateTime.now());
+    NotificationHistory notificationHistory = NotificationHistory.builder()
+        .userId(userId)
+        .notificationType(notificationType)
+        .title(title)
+        .body(body)
+        .isRead(false)
+        .dateTime(LocalDateTime.now())
+        .build();
+    
     NotificationHistory newNotificationHistory = notificationHistoryRepository.save(
         notificationHistory);
     data.put("notificationId", String.valueOf(newNotificationHistory.getId()));
