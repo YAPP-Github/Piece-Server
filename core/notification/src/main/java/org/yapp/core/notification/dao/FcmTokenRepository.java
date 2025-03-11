@@ -1,4 +1,4 @@
-package org.yapp.domain.user.dao;
+package org.yapp.core.notification.dao;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

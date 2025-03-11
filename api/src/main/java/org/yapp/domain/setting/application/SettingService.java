@@ -35,7 +35,7 @@ public class SettingService {
 
   @Transactional
   public void createSetting(Long userId) {
-    Setting setting = new Setting(userId, true, true, true);
+    Setting setting = new Setting(userId, true, false, true);
     settingRepository.save(setting);
   }
 
