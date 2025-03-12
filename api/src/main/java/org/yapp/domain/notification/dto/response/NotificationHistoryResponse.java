@@ -7,7 +7,7 @@ import org.yapp.core.domain.notification.enums.NotificationType;
 
 @AllArgsConstructor
 @Getter
-public class NotificationResponse {
+public class NotificationHistoryResponse {
 
   private NotificationType notificationType;
   private Long notificationId;
@@ -15,8 +15,8 @@ public class NotificationResponse {
   private String title;
   private String body;
 
-  public static NotificationResponse fromNotificationHistory(NotificationHistory history) {
-    return new NotificationResponse(history.getNotificationType(),
+  public static NotificationHistoryResponse fromNotificationHistory(NotificationHistory history) {
+    return new NotificationHistoryResponse(history.getNotificationType(),
         history.getId(),
         history.getIsRead(),
         history.getTitle(),

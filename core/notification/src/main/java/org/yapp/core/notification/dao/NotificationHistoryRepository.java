@@ -11,5 +11,6 @@ public interface NotificationHistoryRepository extends JpaRepository<Notificatio
   @Query("select n from NotificationHistory n "
       + "where n.userId = :userId and (:cursor is null or n.id < :cursor) "
       + "order by n.id desc")
-  public List<NotificationHistory> getNotifications(Long cursor, Long userId, Pageable pageable);
+  public List<NotificationHistory> getNotificationHistories(Long cursor, Long userId,
+      Pageable pageable);
 }
