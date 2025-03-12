@@ -36,6 +36,13 @@ jobs:
           echo "${{ secrets.API_DEV_YML }}" > ./application-secret.yml
         shell: bash
 
+      - name: make firebasekey.json
+        run: |
+          cd ./infra/fcm/src/main/resources
+          touch ./firebasekey.json
+          echo "${{ secrets.FIREBASE_KEY }}" > ./firebasekey.json
+        shell: bash
+
       - name: Build API with Gradle
         run: |
           chmod u+x ./gradlew

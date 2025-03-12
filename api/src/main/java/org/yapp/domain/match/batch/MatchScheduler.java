@@ -12,17 +12,17 @@ import org.yapp.infra.discord.DiscordNotificationService;
 @RequiredArgsConstructor
 public class MatchScheduler {
 
-    private final CoupleMatcher matcher;
-    private final DiscordNotificationService discordNotificationService;
+  private final CoupleMatcher matcher;
+  private final DiscordNotificationService discordNotificationService;
 
-    /**
-     * 10시에 매칭을 위해 9시부터 배치 시작
-     */
-    @Scheduled(cron = "0 0 21 * * *")
-    public void match() {
-        matcher.match();
-        discordNotificationService.sendNotification(DiscordMessageFactory.createBasicServiceMessage(
-            null, "매칭 배치 작업", "매칭 배치 작업을 완료하였습니다"
-        ));
-    }
+  /**
+   * 10시에 매칭을 위해 9시부터 배치 시작
+   */
+  @Scheduled(cron = "0 55 21 * * *")
+  public void match() {
+    matcher.match();
+    discordNotificationService.sendNotification(DiscordMessageFactory.createBasicServiceMessage(
+        null, "매칭 배치 작업", "매칭 배치 작업을 완료하였습니다"
+    ));
+  }
 }
