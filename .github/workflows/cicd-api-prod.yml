@@ -52,6 +52,7 @@ jobs:
 
       - name: make firebasekey.json
         run: |
+          mkdir -p ./infra/fcm/src/main/resources
           cd ./infra/fcm/src/main/resources
           touch ./firebasekey.json
           echo "${{ secrets.FIREBASE_KEY }}" > ./firebasekey.json
