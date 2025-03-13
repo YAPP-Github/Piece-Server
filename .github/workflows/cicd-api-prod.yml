@@ -50,12 +50,12 @@ jobs:
           echo "${{ secrets.API_PROD_YML }}" > ./application-secret.yml
         shell: bash
 
-      - name: make firebasekey.json
+      - name: make firebasekey.json with base64 decoding
         run: |
           mkdir -p ./infra/fcm/src/main/resources
           cd ./infra/fcm/src/main/resources
           touch ./firebasekey.json
-          echo "${{ secrets.FIREBASE_KEY }}" > ./firebasekey.json
+          echo "${{ secrets.FIREBASE_KEY }}" | base64 --decode > ./firebasekey.json
         shell: bash
 
       - name: Build with Gradle
