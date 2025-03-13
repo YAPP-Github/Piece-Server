@@ -28,6 +28,7 @@ public class FcmConfig {
         FirebaseApp.initializeApp(options);
       }
     } catch (Exception e) {
+      log.error("Firebase initialization failed", e);
       throw new ApplicationException(NotificationErrorCode.FCM_INIT_ERROR);
     }
   }
