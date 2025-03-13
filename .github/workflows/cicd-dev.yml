@@ -36,7 +36,7 @@ jobs:
           echo "${{ secrets.API_DEV_YML }}" > ./application-secret.yml
         shell: bash
 
-      - name: make firebasekey.json
+      - name: make firebasekey.json with dir
         run: |
           mkdir -p ./infra/fcm/src/main/resources
           cd ./infra/fcm/src/main/resources
