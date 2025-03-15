@@ -52,4 +52,8 @@ public class NotificationHistory {
     this.isRead = isRead;
     this.dateTime = dateTime;
   }
+
+  public void checkRead() {
+    this.isRead = true;
+  }
 }
