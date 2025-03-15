@@ -28,6 +28,8 @@ public class RefreshTokenService {
 
   @Transactional
   public RefreshedTokens getUserRefreshedTokens(String refreshToken) {
+    checkRefreshTokenExpiration(refreshToken);
+
     Long userId = jwtUtil.getUserId(refreshToken);
     String oauthId = jwtUtil.getOauthId(refreshToken);
     String role = jwtUtil.getRole(refreshToken);
@@ -58,14 +60,16 @@ public class RefreshTokenService {
   }
 
   private void validateRefreshToken(String givenRefreshToken, String expectedRefreshToken) {
-    try {
-      jwtUtil.isExpired(givenRefreshToken);
-    } catch (Exception e) {
-      throw new ApplicationException(SecurityErrorCode.EXPIRED_REFRESH_TOKEN);
-    }
-
     if (!expectedRefreshToken.equals(givenRefreshToken)) {
       throw new ApplicationException(SecurityErrorCode.INVALID_REFRESH_TOKEN);
+    }
+  }
+
+  private void checkRefreshTokenExpiration(String refreshToken) {
+    try {
+      jwtUtil.isExpired(refreshToken);
+    } catch (Exception e) {
+      throw new ApplicationException(SecurityErrorCode.EXPIRED_REFRESH_TOKEN);
     }
   }
 }
