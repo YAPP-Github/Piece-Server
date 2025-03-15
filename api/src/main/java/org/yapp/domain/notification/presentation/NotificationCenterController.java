@@ -33,4 +33,13 @@ public class NotificationCenterController {
         notificationRequest.getCursor());
     return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccess(notifications));
   }
+
+  @PutMapping("/{notificationId}/read")
+  @Operation(summary = "알림 읽기", description = "알림을 읽음 표시합니다.", tags = {"알림"})
+  public ResponseEntity<CommonResponse<Void>> readNotifications(
+      @PathVariable(name = "notificationId") Long notificationId,
+      @AuthenticationPrincipal Long userId) {
+    notificationHistoryService.checkNotificationRead(userId, notificationId);
+    return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.createSuccessWithNoContent());
+  }
 }
