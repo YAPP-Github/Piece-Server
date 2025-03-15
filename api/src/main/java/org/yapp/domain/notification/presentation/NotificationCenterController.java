@@ -25,7 +25,7 @@ public class NotificationCenterController {
   @GetMapping
   @Operation(summary = "알림 목록 조회", description = "알림 목록을 조회합니다(cursor 방식)", tags = {"알림"})
   public ResponseEntity<CommonResponse<List<NotificationHistoryResponse>>> getNotifications(
-      @RequestBody(required = false) NotificationRequest notificationRequest,
+      @ModelAttribute NotificationRequest notificationRequest,
       @AuthenticationPrincipal Long userId
   ) {
     List<NotificationHistoryResponse> notifications = notificationHistoryService.getNotificationHistories(
