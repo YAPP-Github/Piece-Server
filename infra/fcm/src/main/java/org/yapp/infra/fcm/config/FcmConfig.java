@@ -1,4 +1,4 @@
-package config;
+package org.yapp.infra.fcm.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -28,6 +28,7 @@ public class FcmConfig {
         FirebaseApp.initializeApp(options);
       }
     } catch (Exception e) {
+      log.error("Firebase initialization failed", e);
       throw new ApplicationException(NotificationErrorCode.FCM_INIT_ERROR);
     }
   }

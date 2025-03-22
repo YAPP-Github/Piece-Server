@@ -1,4 +1,4 @@
-package enums;
+package org.yapp.core.notification.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum NotificationClientName {
   FCM_CLIENT("fcm"),
-  APM_CLIENT("apn"),
   ;
 
   private final String clientName;
