@@ -3,6 +3,7 @@ name: CI/CD API and ADMIN Application - dev
 on:
   push:
     branches: [ "develope" ]
+  workflow_dispatch:
 
 permissions:
   contents: read

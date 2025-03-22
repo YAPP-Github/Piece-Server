@@ -17,6 +17,7 @@ on:
       - "infra/ai/**"
       - "infra/discord/**"
       - ".github/workflows/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
