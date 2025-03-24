@@ -39,7 +39,7 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
 
                                         @Schema(description =
                                             "연락처 정보 (키: ContactType, 값: 연락처 정보) - 사용 가능한 키: " +
-                                                "[KAKAO_TALK_ID(필수), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택)]",
+                                                "[KAKAO_TALK_ID(선택), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택)]",
                                             example = "{\"KAKAO_TALK_ID\": \"john_kakao\", \"PHONE_NUMBER\": \"01098765432\"}")
                                         @ValidContactType
                                         Map<String, String> contacts) {
