@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.Map;
@@ -16,7 +18,9 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
 
                                         @NotBlank(message = "나를 소개하는 한 마디는 비어있을 수 없습니다") String description,
 
-                                        @NotBlank(message = "생일은 비어있을 수 없습니다.") String birthdate,
+                                        @NotNull(message = "생년월일은 비어있을 수 없습니다.")
+                                        @Past(message = "생년월일은 현재 날짜보다 과거여야 합니다.")
+                                        LocalDate birthdate,
 
                                         @Min(value = 50, message = "키는 최소 50cm 이상이어야 합니다.") @Max(value = 300,
                                             message = "키는 250cm를 초과할 수 없습니다.") int height,
@@ -49,7 +53,7 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
         return ProfileBasic.builder()
             .nickname(nickname)
             .description(description)
-            .birthdate(LocalDate.parse(birthdate))
+            .birthdate(birthdate)
             .height(height)
             .job(job)
             .location(location)
