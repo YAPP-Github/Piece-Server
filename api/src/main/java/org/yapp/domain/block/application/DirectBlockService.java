@@ -1,5 +1,7 @@
 package org.yapp.domain.block.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,27 +16,36 @@ import org.yapp.domain.match.dao.MatchInfoRepository;
 @RequiredArgsConstructor
 public class DirectBlockService {
 
-    private final DirectBlockRepository directBlockRepository;
-    private final MatchInfoRepository matchInfoRepository;
+  private final DirectBlockRepository directBlockRepository;
+  private final MatchInfoRepository matchInfoRepository;
+  private final BloomBlockService bloomBlockService;
 
-    @Transactional
-    public DirectBlock blockMatchedUser(Long userId, Long matchId) {
-        MatchInfo matchInfo = matchInfoRepository.findById(matchId)
-            .orElseThrow(() -> new ApplicationException(MatchErrorCode.NOTFOUND_MATCH));
+  @Transactional(readOnly = true)
+  public List<Long> getDirectBlockIds(Long blockingUserId) {
+    List<DirectBlock> blocks = directBlockRepository.findAllByBlockingUserId(
+        blockingUserId);
+    return blocks.stream().map(DirectBlock::getId).collect(Collectors.toList());
+  }
 
-        matchInfo.blockMatch(userId);
+  @Transactional
+  public DirectBlock blockMatchedUser(Long userId, Long matchId) {
+    MatchInfo matchInfo = matchInfoRepository.findById(matchId)
+        .orElseThrow(() -> new ApplicationException(MatchErrorCode.NOTFOUND_MATCH));
 
-        return blockUser(userId, matchInfo.getPartnerUserId(userId));
-    }
+    matchInfo.blockMatch(userId);
 
-    @Transactional
-    public DirectBlock blockUser(Long userId, Long blockId) {
-        return directBlockRepository.save(new DirectBlock(userId, blockId));
-    }
+    return blockUser(userId, matchInfo.getPartnerUserId(userId));
+  }
 
-    public boolean checkBlock(Long userId, Long partnerId) {
-        return directBlockRepository.existsDirectBlockByBlockingUserIdAndBlockedUserId(userId,
-            partnerId);
-    }
+  @Transactional
+  public DirectBlock blockUser(Long userId, Long blockId) {
+    bloomBlockService.blockUserId(userId, blockId);
+    return directBlockRepository.save(new DirectBlock(userId, blockId));
+  }
+
+  public boolean checkBlock(Long userId, Long partnerId) {
+    return directBlockRepository.existsDirectBlockByBlockingUserIdAndBlockedUserId(userId,
+        partnerId);
+  }
 
 }
