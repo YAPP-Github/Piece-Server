@@ -23,7 +23,8 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
 
   private final ProfileValuePickService profileValuePickService;
   private final MatchService matchService;
-  private final List<Blocker> blockers;
+  private final Blocker blocker;
+  private final AcquaintanceBasedBlocker acquaintanceBasedBlocker;
 
   @Override
   @Transactional
@@ -61,7 +62,7 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
         if (profile1.getId().equals(profile2.getId())) {
           continue;
         }
-        if (checkBlock(profile1.getUser().getId(), profile2.getUser().getId())) {
+        if (checkBlock(profile1, profile2)) {
           continue;
         }
         int weight = calculateWeight(profile1.getId(), profile2.getId());
@@ -72,15 +73,21 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
     return priorityEdgeQueue;
   }
 
-  private boolean checkBlock(Long blockingUserId, Long blockedUserId) {
-    for (Blocker blocker : blockers) {
-      boolean blocked =
-          blocker.blocked(blockingUserId, blockedUserId) || blocker.blocked(blockedUserId,
-              blockingUserId);
-      if (blocked) {
-        return true;
-      }
+  private boolean checkBlock(Profile blockingProfile, Profile blockedProfile) {
+
+    Long blockingUserId = blockingProfile.getUser().getId();
+    Long blockedUserId = blockedProfile.getUser().getId();
+
+    boolean blockedById =
+        blocker.blocked(blockingUserId, blockedUserId) ||
+            blocker.blocked(blockedUserId, blockingUserId);
+
+    boolean blockedByContact = acquaintanceBasedBlocker.blocked(blockingProfile, blockedProfile);
+
+    if (blockedById || blockedByContact) {
+      return true;
     }
+
     return false;
   }
 
