@@ -7,17 +7,19 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
-import org.yapp.core.domain.profile.ProfileValuePick;
 import org.yapp.domain.match.application.MatchService;
+import org.yapp.domain.match.application.blocker.AcquaintanceBasedBlocker;
 import org.yapp.domain.match.application.blocker.Blocker;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 
 @Primary
 @RequiredArgsConstructor
+@Slf4j
 @Component
 public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
 
@@ -92,21 +94,7 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
   }
 
   private int calculateWeight(Long fromProfileId, Long toProfileId) {
-    List<ProfileValuePick> profileValuePicksOfFrom =
-        profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
-        toProfileId);
-
-    int valueListSize = profileValuePicksOfFrom.size();
-    int sumOfWeight = 0;
-    for (int i = 0; i < valueListSize; i++) {
-      ProfileValuePick profileValuePickOfFrom = profileValuePicksOfFrom.get(i);
-      ProfileValuePick profileValuePickOfTo = profileValuePicksOfTo.get(i);
-      if (profileValuePickOfFrom.getSelectedAnswer()
-          .equals(profileValuePickOfTo.getSelectedAnswer())) {
-        sumOfWeight++;
-      }
-    }
+    int sumOfWeight = profileValuePickService.getWeightWithSql(fromProfileId, toProfileId);
     return sumOfWeight;
   }
 
