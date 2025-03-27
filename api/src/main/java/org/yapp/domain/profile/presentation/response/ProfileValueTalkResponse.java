@@ -7,6 +7,7 @@ import org.yapp.core.domain.value.ValueTalk;
 public record ProfileValueTalkResponse(
     String title,
     String category,
+    Long valueTalkId,
     Long profileValueTalkId,
     String answer,
     String summary,
@@ -20,6 +21,7 @@ public record ProfileValueTalkResponse(
         return new ProfileValueTalkResponse(
             valueTalk.getTitle(),
             valueTalk.getCategory(),
+            valueTalk.getId(),
             profileValueTalk.getId(),
             profileValueTalk.getAnswer(),
             profileValueTalk.getSummary(),
