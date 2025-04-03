@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.RedisSystemException;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -89,5 +90,20 @@ public class RedisService {
     Long result = redisTemplate.execute(bloomFilterExistsScript, Collections.singletonList(key),
         value);
     return result > 0;
+  }
+
+  public void pushRightToList(String key, String value) {
+    ListOperations<String, String> listOps = redisTemplate.opsForList();
+    listOps.rightPush(key, value);
+  }
+
+  public void pushRightAllToList(String key, List<String> values) {
+    ListOperations<String, String> listOps = redisTemplate.opsForList();
+    listOps.rightPushAll(key, values);
+  }
+
+  public String popLeftFromList(String key) {
+    ListOperations<String, String> listOps = redisTemplate.opsForList();
+    return listOps.leftPop(key);
   }
 }
