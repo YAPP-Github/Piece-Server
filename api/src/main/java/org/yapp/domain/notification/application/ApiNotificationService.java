@@ -1,6 +1,7 @@
 package org.yapp.domain.notification.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.notification.enums.NotificationType;
@@ -16,17 +17,14 @@ public class ApiNotificationService {
   private final NotificationService notificationService;
   private final FcmTokenRepository fcmTokenRepository;
   private final SettingService settingService;
+  private final NotificationQueueService notificationQueueService;
 
   @Transactional
-  public void sendNewMatchNotification(Long userId) {
+  public void reserveNewMatchNotification(Long userId) {
     if (!isUserAllowingMatchNotification(userId)) {
       return;
     }
-    fcmTokenRepository.findByUserId(userId).ifPresent(fcmToken -> {
-      notificationService.sendNotification("fcm", fcmToken.getToken(), userId,
-          NotificationType.MATCH_NEW, "새로운 인연 도착!", "지금 상대방과의 퍼즐 조각을 맞춰보세요.");
-    });
-
+    notificationQueueService.pushUserIdToMatchNotificationQueue(userId);
   }
 
   private boolean isUserAllowingMatchNotification(Long userId) {
@@ -34,6 +32,16 @@ public class ApiNotificationService {
     return userSetting.isNotification() && userSetting.isMatchNotification();
   }
 
+  @Async
+  @Transactional
+  public void sendNewMatchNotification(Long userId) {
+    fcmTokenRepository.findByUserId(userId).ifPresent(fcmToken -> {
+      notificationService.sendNotification("fcm", fcmToken.getToken(), userId,
+          NotificationType.MATCH_NEW, "새로운 인연 도착!", "지금 상대방과의 퍼즐 조각을 맞춰보세요.");
+    });
+  }
+
+  @Async
   @Transactional
   public void sendMatchAcceptedNotification(Long userId) {
     if (!isUserAllowingMatchNotification(userId)) {
@@ -45,6 +53,7 @@ public class ApiNotificationService {
     });
   }
 
+  @Async
   @Transactional
   public void sendMatchCompletedNotification(Long userId, String matchedUserName) {
     if (!isUserAllowingMatchNotification(userId)) {
