@@ -8,7 +8,8 @@ import org.yapp.core.domain.profile.Profile;
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
-    boolean existsByProfileBasic_Nickname(String nickname);
+  boolean existsByProfileBasic_Nickname(String nickname);
 
-    List<Profile> findByProfileBasic_LocationAndUser_Role(String location, String role);
+  List<Profile> findByProfileBasic_LocationAndUser_RoleAndUser_IsAdminIsNull(
+      String profileBasicLocation, String userRole);
 }
