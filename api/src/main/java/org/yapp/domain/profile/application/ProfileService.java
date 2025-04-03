@@ -146,10 +146,10 @@ public class ProfileService {
                 HashMap::new
             ));
 
-        for (ProfileValueTalkPair profileValuePickPair : dto.profileValueTalkUpdateRequests()) {
-            final Long profileValueTalkId = profileValuePickPair.profileValueTalkId();
-            final String answer = profileValuePickPair.answer();
-            final String summary = profileValuePickPair.summary();
+        for (ProfileValueTalkPair profileValueTalkPair : dto.profileValueTalkUpdateRequests()) {
+            final Long profileValueTalkId = profileValueTalkPair.profileValueTalkId();
+            final String answer = profileValueTalkPair.answer();
+            final String summary = profileValueTalkPair.summary();
 
             ProfileValueTalk profileValueTalk = profileValueTalkHashMap.get(profileValueTalkId);
             if (profileValueTalk != null) {
