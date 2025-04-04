@@ -2,6 +2,7 @@ package org.yapp.infra.ai.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 @Service
 @Slf4j
@@ -62,7 +64,18 @@ public class ClovaChatSummarizationService implements SummarizationService {
             .retrieve()
             .bodyToFlux(String.class)
             .collectList()
-            .map(this::extractFinalResponse);
+            .map(this::extractFinalResponse)
+            .retryWhen(
+                Retry.backoff(2, Duration.ofMillis(1000))
+                    .maxBackoff(Duration.ofSeconds(2))
+                    .filter(throwable -> {
+                        log.warn("요약 API 재시도 대상 오류: {}", throwable.toString());
+                        return true;
+                    })
+            ).onErrorResume(e -> {
+                log.error("요약 API 최종 실패: {}", e.toString());
+                return Mono.just("요약을 진행할 수 없습니다.");
+            });
     }
 
     private String extractFinalResponse(List<String> jsonChunks) {
