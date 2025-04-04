@@ -149,12 +149,10 @@ public class ProfileService {
         for (ProfileValueTalkPair profileValueTalkPair : dto.profileValueTalkUpdateRequests()) {
             final Long profileValueTalkId = profileValueTalkPair.profileValueTalkId();
             final String answer = profileValueTalkPair.answer();
-            final String summary = profileValueTalkPair.summary();
 
             ProfileValueTalk profileValueTalk = profileValueTalkHashMap.get(profileValueTalkId);
             if (profileValueTalk != null) {
                 profileValueTalk.updateAnswer(answer);
-                profileValueTalk.updateSummary(summary);
             }
         }
 
