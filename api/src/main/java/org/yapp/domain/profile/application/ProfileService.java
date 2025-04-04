@@ -86,7 +86,8 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public List<Profile> getValidProfilesByLocation(String locationName) {
-        return profileRepository.findByProfileBasic_LocationAndUser_Role(locationName,
+        return profileRepository.findByProfileBasic_LocationAndUser_RoleAndUser_IsAdminIsNull(
+            locationName,
             RoleStatus.USER.getStatus());
     }
 
@@ -146,9 +147,9 @@ public class ProfileService {
                 HashMap::new
             ));
 
-        for (ProfileValueTalkPair profileValueTalkPair : dto.profileValueTalkUpdateRequests()) {
-            final Long profileValueTalkId = profileValueTalkPair.profileValueTalkId();
-            final String answer = profileValueTalkPair.answer();
+        for (ProfileValueTalkPair profileValuePickPair : dto.profileValueTalkUpdateRequests()) {
+            final Long profileValueTalkId = profileValuePickPair.profileValueTalkId();
+            final String answer = profileValuePickPair.answer();
 
             ProfileValueTalk profileValueTalk = profileValueTalkHashMap.get(profileValueTalkId);
             if (profileValueTalk != null) {

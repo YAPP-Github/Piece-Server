@@ -52,8 +52,8 @@ public class MatchService {
     bloomBlockService.blockUserId(user1Id, user2Id);
     bloomBlockService.blockUserId(user2Id, user1Id);
 
-    apiNotificationService.sendNewMatchNotification(user1Id);
-    apiNotificationService.sendNewMatchNotification(user2Id);
+    apiNotificationService.reserveNewMatchNotification(user1Id);
+    apiNotificationService.reserveNewMatchNotification(user2Id);
 
     return matchInfoRepository.save(new MatchInfo(LocalDate.now(), user1, user2));
   }
