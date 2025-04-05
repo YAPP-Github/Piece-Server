@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
@@ -24,6 +25,7 @@ public record ProfileCreateRequest(
     @NotBlank(message = "나를 표햔하는 한 마디는 필수입니다.")
     String description,
 
+    @NotNull(message = "생년월일은 비어있을 수 없습니다.")
     @Past(message = "생년월일은 현재 날짜보다 과거여야 합니다.")
     LocalDate birthdate,
 

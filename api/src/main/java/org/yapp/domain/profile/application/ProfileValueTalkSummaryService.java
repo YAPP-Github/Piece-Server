@@ -1,6 +1,11 @@
 package org.yapp.domain.profile.application;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +16,7 @@ import org.yapp.core.domain.user.User;
 import org.yapp.core.sse.SsePersonalService;
 import org.yapp.core.sse.dto.EventType;
 import org.yapp.core.sse.dto.SsePayload;
+import org.yapp.domain.profile.application.dto.ProfileValueTalkAnswerDto;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.infra.ai.application.SummarizationService;
 import org.yapp.sse.presentation.response.ProfileValueTalkSummaryResponse;
@@ -29,19 +35,54 @@ public class ProfileValueTalkSummaryService {
     private final UserService userService;
 
     private static final String SYSTEM_PROMPT = """
-            사용자가 작성한 자기소개 또는 가치관 관련 글을 요약해, 상대방이 매력을 느낄 수 있도록 자연스럽고 긍정적인 문장으로 정리해 주세요.
-            친근하면서도 진솔한 느낌을 살려 주세요.
-            자신의 가치관을 잘 전달하게 작성해주세요.
-            너무 일반적인 표현(예: "좋은 사람을 만나고 싶어요")은 피하고, 개성을 드러낼 수 있도록 해 주세요.
-            문장은 짧고 명확하게 작성해 주세요.
-            최대 50자로 요약해 주세요.
+            당신은 사용자가 작성한 자기소개/가치관 관련 글을 바탕으로, 소개팅 앱 프로필에 어울리는 문장을 작성하는 역할입니다.
+        
+            목적
+            - 상대방이 매력을 느낄 수 있도록 개성 있고 진솔하게 요약해 주세요.
+            - 소개팅 앱 프로필에 적합한 문장으로 구성합니다.
+        
+            작성 규칙
+            - 최대 50자 이내, 가능하면 40자 내외
+            - 문장 수: 1문장
+            - 따뜻하고 친근한 어조, 진솔한 느낌
+            - 사용자의 가치관과 성격이 잘 드러나도록 작성
+            - 너무 일반적인 표현은 금지 (예: “좋은 사람을 만나고 싶어요”)
+            - 줄바꿈 없이 한 줄로 작성
+            - 이모지, 말줄임표(…) 사용 금지
+            - 설명 없이 결과 문장만 출력
+        
+            [입력 예시 1]
+            여행과 사진 찍는 걸 좋아하고, 사람들과의 소통을 중요하게 생각해요. 사소한 일상 속에서 행복을 찾는 편이에요. 상대방을 배려하며, 서로 존중하는 관계를 꿈꿔요.
+        
+            [출력 예시 1]
+            소소한 행복을 나누는 따뜻한 사람입니다
+        
+            [입력 예시 2]
+            책 읽는 걸 좋아하고 사색을 즐겨요. 감정 표현에 솔직하고 진심 어린 대화를 좋아하는 편이에요. 깊이 있는 관계를 지향합니다.
+        
+            [출력 예시 2]
+            진심을 나누는 대화를 소중히 여겨요
+        
+            [입력 예시 3]
+            밝고 긍정적인 에너지를 가진 사람입니다. 일할 때는 성실하게, 쉴 때는 여유롭게 보내며 균형을 중요하게 생각해요.
+        
+            [출력 예시 3]
+            긍정과 여유를 담아 하루를 살아가요
         """;
 
     private static final String TEXT_CONDITION = " (제약조건: 글자수 최대 50자, 특수문자 금지)";
 
+    /**
+     * 사용자의 기존 프로필 가치관 답변과 새로운 답변들을 비교해, 변경된 항목에 대해서만 요약을 수행합니다.
+     *
+     * @param userId                요약을 수행할 대상 사용자의 ID
+     * @param newProfileTalkAnswers 사용자가 새로 입력한 프로필 가치관 답변 리스트
+     */
     @Transactional(readOnly = true)
-    public void summaryProfileValueTalksAsync(Long userId) {
-        List<Mono<ProfileValueTalkSummaryResponse>> summarizeTasks = getSummaryTasks(userId);
+    public void summaryProfileValueTalksAsync(Long userId,
+        List<ProfileValueTalkAnswerDto> newProfileTalkAnswers) {
+        List<Mono<ProfileValueTalkSummaryResponse>> summarizeTasks = getSummaryTasks(userId,
+            newProfileTalkAnswers);
 
         Flux.merge(summarizeTasks)
             .collectList()
@@ -56,8 +97,9 @@ public class ProfileValueTalkSummaryService {
     }
 
     @Transactional
-    public void summaryProfileValueTalksSync(Profile profile) {
-        List<Mono<ProfileValueTalkSummaryResponse>> summarizeTasks = getSummaryTasks(profile);
+    public void summaryProfileValueTalksSync(Profile currentProfile) {
+        List<Mono<ProfileValueTalkSummaryResponse>> summarizeTasks = getSummaryTasks(
+            currentProfile);
 
         List<ProfileValueTalkSummaryResponse> results = Flux.merge(summarizeTasks)
             .collectList()
@@ -71,25 +113,50 @@ public class ProfileValueTalkSummaryService {
         }
     }
 
-    private List<Mono<ProfileValueTalkSummaryResponse>> getSummaryTasks(Long userId) {
+    private List<Mono<ProfileValueTalkSummaryResponse>> getSummaryTasks(Long userId,
+        List<ProfileValueTalkAnswerDto> newProfileTalkAnswers) {
         User user = userService.getUserById(userId);
         Profile profile = user.getProfile();
         List<ProfileValueTalk> profileValueTalks = profile.getProfileValueTalks();
 
+        Map<Long, ProfileValueTalkAnswerDto> newProfileTalkAnswersMap = newProfileTalkAnswers.stream()
+            .collect(Collectors.toMap(
+                ProfileValueTalkAnswerDto::profileValueTalkId,
+                Function.identity()
+            ));
+
         return profileValueTalks.stream()
-            .map(profileValueTalk -> summarizationService.summarize(SYSTEM_PROMPT,
-                    profileValueTalk.getAnswer() + TEXT_CONDITION)
-                .map(summarizedAnswer -> {
-                    summarizedAnswer = summarizedAnswer.replaceAll("[\"']", "");
-                    summarizedAnswer = summarizedAnswer.substring(0,
-                        Math.min(summarizedAnswer.length(), 50));
+            .map(profileValueTalk -> {
 
-                    sentSummaryResponse(userId, profileValueTalk.getId(),
-                        summarizedAnswer);
+                String currentAnswer = profileValueTalk.getAnswer();
 
-                    return new ProfileValueTalkSummaryResponse(profileValueTalk.getId(),
-                        summarizedAnswer);
-                }))
+                String newAnswer = Optional.ofNullable(
+                        newProfileTalkAnswersMap.get(profileValueTalk.getId()))
+                    .map(ProfileValueTalkAnswerDto::answer)
+                    .orElse(null);
+
+                // 변경된 경우에만 요약
+                if (newAnswer != null && !Objects.equals(currentAnswer, newAnswer)) {
+                    return summarizationService.summarize(SYSTEM_PROMPT, newAnswer + TEXT_CONDITION)
+                        .map(summarizedAnswer -> {
+                            summarizedAnswer = summarizedAnswer.replaceAll("[\"']", "");
+                            summarizedAnswer = summarizedAnswer.substring(0,
+                                Math.min(summarizedAnswer.length(), 50));
+
+                            sentSummaryResponse(userId, profileValueTalk.getId(), summarizedAnswer);
+                            return new ProfileValueTalkSummaryResponse(profileValueTalk.getId(),
+                                summarizedAnswer);
+                        });
+                }
+
+                // 변경되지 않은 경우 기존 summary 사용
+                sentSummaryResponse(userId, profileValueTalk.getId(),
+                    profileValueTalk.getSummary());
+                return Mono.just(new ProfileValueTalkSummaryResponse(
+                    profileValueTalk.getId(),
+                    profileValueTalk.getSummary() // 기존 요약값 사용
+                ));
+            })
             .toList();
     }
 

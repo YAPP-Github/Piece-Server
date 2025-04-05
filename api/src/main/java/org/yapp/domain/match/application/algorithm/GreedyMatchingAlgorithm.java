@@ -7,23 +7,26 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
-import org.yapp.core.domain.profile.ProfileValuePick;
 import org.yapp.domain.match.application.MatchService;
+import org.yapp.domain.match.application.blocker.AcquaintanceBasedBlocker;
 import org.yapp.domain.match.application.blocker.Blocker;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 
 @Primary
 @RequiredArgsConstructor
+@Slf4j
 @Component
 public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
 
   private final ProfileValuePickService profileValuePickService;
   private final MatchService matchService;
-  private final List<Blocker> blockers;
+  private final Blocker blocker;
+  private final AcquaintanceBasedBlocker acquaintanceBasedBlocker;
 
   @Override
   @Transactional
@@ -61,7 +64,7 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
         if (profile1.getId().equals(profile2.getId())) {
           continue;
         }
-        if (checkBlock(profile1.getUser().getId(), profile2.getUser().getId())) {
+        if (checkBlock(profile1, profile2)) {
           continue;
         }
         int weight = calculateWeight(profile1.getId(), profile2.getId());
@@ -72,34 +75,26 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
     return priorityEdgeQueue;
   }
 
-  private boolean checkBlock(Long blockingUserId, Long blockedUserId) {
-    for (Blocker blocker : blockers) {
-      boolean blocked =
-          blocker.blocked(blockingUserId, blockedUserId) || blocker.blocked(blockedUserId,
-              blockingUserId);
-      if (blocked) {
-        return true;
-      }
+  private boolean checkBlock(Profile blockingProfile, Profile blockedProfile) {
+
+    Long blockingUserId = blockingProfile.getUser().getId();
+    Long blockedUserId = blockedProfile.getUser().getId();
+
+    boolean blockedById =
+        blocker.blocked(blockingUserId, blockedUserId) ||
+            blocker.blocked(blockedUserId, blockingUserId);
+
+    boolean blockedByContact = acquaintanceBasedBlocker.blocked(blockingProfile, blockedProfile);
+
+    if (blockedById || blockedByContact) {
+      return true;
     }
+
     return false;
   }
 
   private int calculateWeight(Long fromProfileId, Long toProfileId) {
-    List<ProfileValuePick> profileValuePicksOfFrom =
-        profileValuePickService.getAllProfileValuePicksByProfileId(fromProfileId);
-    List<ProfileValuePick> profileValuePicksOfTo = profileValuePickService.getAllProfileValuePicksByProfileId(
-        toProfileId);
-
-    int valueListSize = profileValuePicksOfFrom.size();
-    int sumOfWeight = 0;
-    for (int i = 0; i < valueListSize; i++) {
-      ProfileValuePick profileValuePickOfFrom = profileValuePicksOfFrom.get(i);
-      ProfileValuePick profileValuePickOfTo = profileValuePicksOfTo.get(i);
-      if (profileValuePickOfFrom.getSelectedAnswer()
-          .equals(profileValuePickOfTo.getSelectedAnswer())) {
-        sumOfWeight++;
-      }
-    }
+    int sumOfWeight = profileValuePickService.getWeightWithSql(fromProfileId, toProfileId);
     return sumOfWeight;
   }
 

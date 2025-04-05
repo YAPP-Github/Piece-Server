@@ -21,6 +21,7 @@ import org.yapp.core.domain.profile.ProfileValueTalk;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.MatchErrorCode;
+import org.yapp.domain.block.application.BloomBlockService;
 import org.yapp.domain.match.dao.MatchInfoRepository;
 import org.yapp.domain.match.presentation.dto.response.MatchInfoResponse;
 import org.yapp.domain.match.presentation.dto.response.MatchProfileBasicResponse;
@@ -41,14 +42,18 @@ public class MatchService {
   private final ProfileValuePickService profileValuePickService;
   private final UserService userService;
   private final ApiNotificationService apiNotificationService;
+  private final BloomBlockService bloomBlockService;
 
   @Transactional
   public MatchInfo createMatchInfo(Long user1Id, Long user2Id) {
     User user1 = userService.getUserById(user1Id);
     User user2 = userService.getUserById(user2Id);
 
-    apiNotificationService.sendNewMatchNotification(user1Id);
-    apiNotificationService.sendNewMatchNotification(user2Id);
+    bloomBlockService.blockUserId(user1Id, user2Id);
+    bloomBlockService.blockUserId(user2Id, user1Id);
+
+    apiNotificationService.reserveNewMatchNotification(user1Id);
+    apiNotificationService.reserveNewMatchNotification(user2Id);
 
     return matchInfoRepository.save(new MatchInfo(LocalDate.now(), user1, user2));
   }
@@ -297,5 +302,15 @@ public class MatchService {
   public void refuseMatch(Long userId) {
     MatchInfo matchInfo = getMatchInfo(userId);
     matchInfo.refusePiece(userId);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Long> getPreviouslyMatchedUserIds(Long userId) {
+    List<MatchInfo> previousMatches = matchInfoRepository.findPreviousMatchesById(userId);
+
+    return previousMatches.stream()
+        .map(match -> getMatchedUser(userId, match))
+        .map(User::getId)
+        .toList();
   }
 }

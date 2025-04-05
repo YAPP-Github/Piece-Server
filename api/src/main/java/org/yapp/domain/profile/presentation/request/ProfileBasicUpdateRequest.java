@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.Map;
@@ -16,7 +18,9 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
 
                                         @NotBlank(message = "나를 소개하는 한 마디는 비어있을 수 없습니다") String description,
 
-                                        @NotBlank(message = "생일은 비어있을 수 없습니다.") String birthdate,
+                                        @NotNull(message = "생년월일은 비어있을 수 없습니다.")
+                                        @Past(message = "생년월일은 현재 날짜보다 과거여야 합니다.")
+                                        LocalDate birthdate,
 
                                         @Min(value = 50, message = "키는 최소 50cm 이상이어야 합니다.") @Max(value = 300,
                                             message = "키는 250cm를 초과할 수 없습니다.") int height,
@@ -39,7 +43,7 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
 
                                         @Schema(description =
                                             "연락처 정보 (키: ContactType, 값: 연락처 정보) - 사용 가능한 키: " +
-                                                "[KAKAO_TALK_ID(필수), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택)]",
+                                                "[KAKAO_TALK_ID(선택), OPEN_CHAT_URL(선택), INSTAGRAM_ID(선택), PHONE_NUMBER(선택)]",
                                             example = "{\"KAKAO_TALK_ID\": \"john_kakao\", \"PHONE_NUMBER\": \"01098765432\"}")
                                         @ValidContactType
                                         Map<String, String> contacts) {
@@ -49,7 +53,7 @@ public record ProfileBasicUpdateRequest(@NotBlank(message = "닉네임은 비어
         return ProfileBasic.builder()
             .nickname(nickname)
             .description(description)
-            .birthdate(LocalDate.parse(birthdate))
+            .birthdate(birthdate)
             .height(height)
             .job(job)
             .location(location)

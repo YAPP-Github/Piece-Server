@@ -20,12 +20,14 @@ public class BlockContactService {
 
   private final BlockContactRepository blockContactRepository;
   private final BlockContactSyncTimeService blockContactSyncTimeService;
+  private final BloomBlockService bloomBlockService;
 
   @Transactional()
   public void blockPhoneNumbers(BlockContactCreateDto blockContactCreateDto) {
     Long userId = blockContactCreateDto.userId();
     List<String> phoneNumbers = blockContactCreateDto.phoneNumbers();
     List<BlockContact> newBlockContacts = new ArrayList<>();
+    List<String> newPhoneNumbers = new ArrayList<>();
 
     Set<String> blockedPhoneNumbers = blockContactRepository.findBlocksByUserId(userId)
         .stream()
@@ -39,9 +41,11 @@ public class BlockContactService {
               .user(User.builder().id(userId).build())
               .phoneNumber(phoneNumber)
               .build();
+          newPhoneNumbers.add(phoneNumber);
           newBlockContacts.add(blockContact);
         });
 
+    bloomBlockService.blockContactList(userId, newPhoneNumbers);
     blockContactSyncTimeService.saveBlockContactSyncTime(userId, LocalDateTime.now());
     blockContactRepository.saveAll(newBlockContacts);
   }

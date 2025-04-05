@@ -6,6 +6,7 @@ import org.yapp.domain.value.presentation.dto.response.ValuePickAnswerResponse;
 
 public record ProfileValuePickResponse(String category, String question,
                                        List<ValuePickAnswerResponse> answers,
+                                       Long valuePickId,
                                        Long profileValuePickId,
                                        Integer selectedAnswer) {
 

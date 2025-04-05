@@ -33,6 +33,7 @@ public record ProfileValuePickResponses(List<ProfileValuePickResponse> responses
             valuePick.getCategory(),
             valuePick.getQuestion(),
             answerList,
+            valuePick.getId(),
             profileValuePick != null ? profileValuePick.getId() : null,
             selectedAnswer
         );

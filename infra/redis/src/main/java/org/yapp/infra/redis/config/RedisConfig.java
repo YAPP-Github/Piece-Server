@@ -9,13 +9,13 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 @Configuration
 public class RedisConfig {
 
-    @Value("${redis.host}")
-    private String host;
-    @Value("${redis.port}")
-    private int port;
+  @Value("${redis.host}")
+  private String host;
+  @Value("${redis.port}")
+  private int port;
 
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
-    }
+  @Bean
+  public RedisConnectionFactory redisConnectionFactory() {
+    return new LettuceConnectionFactory(host, port);
+  }
 }
