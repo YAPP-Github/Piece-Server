@@ -30,149 +30,147 @@ import org.yapp.domain.user.application.UserService;
 @RequiredArgsConstructor
 public class ProfileService {
 
-  private final UserService userService;
-  private final ProfileValuePickService profileValuePickService;
-  private final ProfileValueTalkService profileValueTalkService;
-  private final ProfileRepository profileRepository;
+    private final UserService userService;
+    private final ProfileValuePickService profileValuePickService;
+    private final ProfileValueTalkService profileValueTalkService;
+    private final ProfileRepository profileRepository;
 
-  @Transactional
-  public Profile create(ProfileCreateRequest dto) {
-    ProfileBasic profileBasic = dto.toProfileBasic();
+    @Transactional
+    public Profile create(ProfileCreateRequest dto) {
+        ProfileBasic profileBasic = dto.toProfileBasic();
 
-    Profile profile = Profile.builder().profileBasic(profileBasic)
-        .build();
+        Profile profile = Profile.builder().profileBasic(profileBasic)
+            .build();
 
-    profileRepository.save(profile);
+        profileRepository.save(profile);
 
-    List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
-        profile.getId(), dto.valuePicks());
+        List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
+            profile.getId(), dto.valuePicks());
 
-    List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
-        profile.getId(), dto.valueTalks()
-    );
+        List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
+            profile.getId(), dto.valueTalks()
+        );
 
-    profile.updateProfileValuePicks(allProfileValues);
-    profile.updateProfileValueTalks(allProfileTalks);
+        profile.updateProfileValuePicks(allProfileValues);
+        profile.updateProfileValueTalks(allProfileTalks);
 
-    return profile;
-  }
-
-  @Transactional
-  public Profile update(Long userId, ProfileUpdateRequest dto) {
-    Profile profile = userService.getUserById(userId).getProfile();
-
-    ProfileBasic profileBasic = dto.toProfileBasic();
-
-    List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
-        profile.getId(), dto.valuePicks());
-
-    List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
-        profile.getId(), dto.valueTalks()
-    );
-
-    profile.updateBasic(profileBasic);
-    profile.updateProfileValuePicks(allProfileValues);
-    profile.updateProfileValueTalks(allProfileTalks);
-    updateProfileStatus(profile);
-
-    return profile;
-  }
-
-  @Transactional(readOnly = true)
-  public Profile getProfileById(long profileId) {
-    return profileRepository.findById(profileId)
-        .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
-  }
-
-  @Transactional(readOnly = true)
-  public List<Profile> getValidProfilesByLocation(String locationName) {
-    return profileRepository.findByProfileBasic_LocationAndUser_RoleAndUser_IsAdminIsNull(
-        locationName,
-        RoleStatus.USER.getStatus());
-  }
-
-  @Transactional
-  public Profile updateProfileBasic(long userId, ProfileBasicUpdateRequest dto) {
-    User user = this.userService.getUserById(userId);
-    Profile profile = getProfileById(user.getProfile().getId());
-
-    ProfileBasic profileBasic = dto.toProfileBasic();
-
-    profile.updateBasic(profileBasic);
-    updateProfileStatus(profile);
-
-    return profile;
-  }
-
-  @Transactional
-  public Profile updateProfileValuePicks(long userId, ProfileValuePickUpdateRequest dto) {
-    User user = this.userService.getUserById(userId);
-    Profile profile = getProfileById(user.getProfile().getId());
-
-    List<ProfileValuePick> profileValuePicks = profile.getProfileValuePicks();
-
-    Map<Long, Integer> userProfileValuePickIdMaps = new HashMap<>();
-    for (ProfileValuePickPair profileValuePickPair : dto.profileValuePickUpdateRequests()) {
-      final Long profileValuePickId = profileValuePickPair.profileValuePickId();
-      final Integer selectedAnswer = profileValuePickPair.selectedAnswer();
-
-      userProfileValuePickIdMaps.put(profileValuePickId, selectedAnswer);
+        return profile;
     }
 
-    for (ProfileValuePick profileValuePick : profileValuePicks) {
-      Long profileValuePickId = profileValuePick.getId();
+    @Transactional
+    public Profile update(Long userId, ProfileUpdateRequest dto) {
+        Profile profile = userService.getUserById(userId).getProfile();
 
-      if (userProfileValuePickIdMaps.containsKey(profileValuePickId)) {
-        Integer selectedAnswer = userProfileValuePickIdMaps.get(profileValuePickId);
-        profileValuePick.updatedSelectedAnswer(selectedAnswer);
-      }
+        ProfileBasic profileBasic = dto.toProfileBasic();
+
+        List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
+            profile.getId(), dto.valuePicks());
+
+        List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
+            profile.getId(), dto.valueTalks()
+        );
+
+        profile.updateBasic(profileBasic);
+        profile.updateProfileValuePicks(allProfileValues);
+        profile.updateProfileValueTalks(allProfileTalks);
+        updateProfileStatus(profile);
+
+        return profile;
     }
 
-    updateProfileStatus(profile);
-    return profile;
-  }
-
-  @Transactional
-  public Profile updateProfileValueTalks(long userId, ProfileValueTalkUpdateRequest dto) {
-    User user = this.userService.getUserById(userId);
-    Profile profile = getProfileById(user.getProfile().getId());
-
-    List<ProfileValueTalk> profileValueTalks = profile.getProfileValueTalks();
-
-    HashMap<Long, ProfileValueTalk> profileValueTalkHashMap = profileValueTalks.stream()
-        .collect(Collectors.toMap(
-            ProfileValueTalk::getId,
-            profileValueTalk -> profileValueTalk,
-            (existing, replacement) -> existing,
-            HashMap::new
-        ));
-
-    for (ProfileValueTalkPair profileValuePickPair : dto.profileValueTalkUpdateRequests()) {
-      final Long profileValueTalkId = profileValuePickPair.profileValueTalkId();
-      final String answer = profileValuePickPair.answer();
-      final String summary = profileValuePickPair.summary();
-
-      ProfileValueTalk profileValueTalk = profileValueTalkHashMap.get(profileValueTalkId);
-      if (profileValueTalk != null) {
-        profileValueTalk.updateAnswer(answer);
-        profileValueTalk.updateSummary(summary);
-      }
+    @Transactional(readOnly = true)
+    public Profile getProfileById(long profileId) {
+        return profileRepository.findById(profileId)
+            .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
     }
 
-    updateProfileStatus(profile);
-    return profile;
-  }
-
-  private void updateProfileStatus(Profile profile) {
-    ProfileStatus profileStatus = profile.getProfileStatus();
-
-    if (ProfileStatus.INCOMPLETE.equals(profileStatus) ||
-        ProfileStatus.REJECTED.equals(profileStatus)) {
-      profile.updateProfileStatus(ProfileStatus.REVISED);
+    @Transactional(readOnly = true)
+    public List<Profile> getValidProfilesByLocation(String locationName) {
+        return profileRepository.findByProfileBasic_LocationAndUser_RoleAndUser_IsAdminIsNull(
+            locationName,
+            RoleStatus.USER.getStatus());
     }
-  }
 
-  public boolean isNicknameAvailable(String nickname) {
-    return !profileRepository.existsByProfileBasic_Nickname(nickname);
-  }
+    @Transactional
+    public Profile updateProfileBasic(long userId, ProfileBasicUpdateRequest dto) {
+        User user = this.userService.getUserById(userId);
+        Profile profile = getProfileById(user.getProfile().getId());
+
+        ProfileBasic profileBasic = dto.toProfileBasic();
+
+        profile.updateBasic(profileBasic);
+        updateProfileStatus(profile);
+
+        return profile;
+    }
+
+    @Transactional
+    public Profile updateProfileValuePicks(long userId, ProfileValuePickUpdateRequest dto) {
+        User user = this.userService.getUserById(userId);
+        Profile profile = getProfileById(user.getProfile().getId());
+
+        List<ProfileValuePick> profileValuePicks = profile.getProfileValuePicks();
+
+        Map<Long, Integer> userProfileValuePickIdMaps = new HashMap<>();
+        for (ProfileValuePickPair profileValuePickPair : dto.profileValuePickUpdateRequests()) {
+            final Long profileValuePickId = profileValuePickPair.profileValuePickId();
+            final Integer selectedAnswer = profileValuePickPair.selectedAnswer();
+
+            userProfileValuePickIdMaps.put(profileValuePickId, selectedAnswer);
+        }
+
+        for (ProfileValuePick profileValuePick : profileValuePicks) {
+            Long profileValuePickId = profileValuePick.getId();
+
+            if (userProfileValuePickIdMaps.containsKey(profileValuePickId)) {
+                Integer selectedAnswer = userProfileValuePickIdMaps.get(profileValuePickId);
+                profileValuePick.updatedSelectedAnswer(selectedAnswer);
+            }
+        }
+
+        updateProfileStatus(profile);
+        return profile;
+    }
+
+    @Transactional
+    public Profile updateProfileValueTalks(long userId, ProfileValueTalkUpdateRequest dto) {
+        User user = this.userService.getUserById(userId);
+        Profile profile = getProfileById(user.getProfile().getId());
+
+        List<ProfileValueTalk> profileValueTalks = profile.getProfileValueTalks();
+
+        HashMap<Long, ProfileValueTalk> profileValueTalkHashMap = profileValueTalks.stream()
+            .collect(Collectors.toMap(
+                ProfileValueTalk::getId,
+                profileValueTalk -> profileValueTalk,
+                (existing, replacement) -> existing,
+                HashMap::new
+            ));
+
+        for (ProfileValueTalkPair profileValuePickPair : dto.profileValueTalkUpdateRequests()) {
+            final Long profileValueTalkId = profileValuePickPair.profileValueTalkId();
+            final String answer = profileValuePickPair.answer();
+
+            ProfileValueTalk profileValueTalk = profileValueTalkHashMap.get(profileValueTalkId);
+            if (profileValueTalk != null) {
+                profileValueTalk.updateAnswer(answer);
+            }
+        }
+
+        updateProfileStatus(profile);
+        return profile;
+    }
+
+    private void updateProfileStatus(Profile profile) {
+        ProfileStatus profileStatus = profile.getProfileStatus();
+
+        if (ProfileStatus.INCOMPLETE.equals(profileStatus) ||
+            ProfileStatus.REJECTED.equals(profileStatus)) {
+            profile.updateProfileStatus(ProfileStatus.REVISED);
+        }
+    }
+
+    public boolean isNicknameAvailable(String nickname) {
+        return !profileRepository.existsByProfileBasic_Nickname(nickname);
+    }
 }

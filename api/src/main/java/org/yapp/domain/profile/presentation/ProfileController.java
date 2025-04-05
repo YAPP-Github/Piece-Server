@@ -29,6 +29,7 @@ import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.application.ProfileValuePickService;
 import org.yapp.domain.profile.application.ProfileValueTalkService;
 import org.yapp.domain.profile.application.ProfileValueTalkSummaryService;
+import org.yapp.domain.profile.application.dto.ProfileValueTalkAnswerDto;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileTalkSummaryUpdateRequest;
@@ -180,8 +181,9 @@ public class ProfileController {
         @AuthenticationPrincipal Long userId,
         @RequestBody ProfileValueTalkUpdateRequest request) {
 
+        profileValueTalkSummaryService.summaryProfileValueTalksAsync(userId,
+            ProfileValueTalkAnswerDto.from(request));
         profileService.updateProfileValueTalks(userId, request);
-        profileValueTalkSummaryService.summaryProfileValueTalksAsync(userId);
 
         ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
             userId);
