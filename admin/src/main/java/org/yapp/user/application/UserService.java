@@ -58,7 +58,13 @@ public class UserService {
                 boolean reasonDescription = optionalProfileRejectHistory.map(
                     UserRejectHistory::isReasonDescription).orElse(false);
 
-                return UserProfileValidationResponse.from(user, reasonImage, reasonDescription);
+                Profile profile = user.getProfile();
+                boolean isApproved = profile != null
+                    && profile.getProfileStatus() != null
+                    && profile.getProfileStatus().name().equals("APPROVED");
+
+                return UserProfileValidationResponse.from(user, !isApproved && reasonImage,
+                    !isApproved && reasonDescription);
             })
             .toList();
 
