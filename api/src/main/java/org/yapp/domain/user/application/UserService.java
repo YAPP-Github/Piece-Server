@@ -33,81 +33,81 @@ public class UserService {
   private final AuthTokenGenerator authTokenGenerator;
   private final FcmTokenRepository fcmTokenRepository;
 
-    /**
-     * Role을 USER로 바꾸고 변경된 토큰을 반환한다.
-     *
-     * @return 액세스토큰과 리프레시 토큰
-     */
-    @Transactional
-    public OauthLoginResponse completeProfileInitialize(Long userId, Profile profile) {
-        User user =
-            userRepository.findById(userId)
-                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
-        user.setProfile(profile);
-        user.updateUserRole(RoleStatus.PENDING.getStatus());
-        String oauthId = user.getOauthId();
-        AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
-        return new OauthLoginResponse(RoleStatus.PENDING.getStatus(), authToken.accessToken(),
-            authToken.refreshToken());
-    }
-
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
+  /**
+   * Role을 USER로 바꾸고 변경된 토큰을 반환한다.
+   *
+   * @return 액세스토큰과 리프레시 토큰
+   */
+  @Transactional
+  public OauthLoginResponse completeProfileInitialize(Long userId, Profile profile) {
+    User user =
+        userRepository.findById(userId)
             .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+    user.setProfile(profile);
+    user.updateUserRole(RoleStatus.PENDING.getStatus());
+    String oauthId = user.getOauthId();
+    AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
+    return new OauthLoginResponse(RoleStatus.PENDING.getStatus(), authToken.accessToken(),
+        authToken.refreshToken());
+  }
+
+  public User getUserById(Long userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+  }
+
+  /**
+   * Role을 Register로 바꾸고 변경된 토큰을 반환한다.
+   *
+   * @return 액세스토큰과 리프레시 토큰
+   */
+  @Transactional
+  public OauthLoginResponse registerPhoneNumber(Long userId, String phoneNumber) {
+    User user =
+        userRepository.findById(userId)
+            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+    user.updateUserRole(RoleStatus.REGISTER.getStatus());
+    user.initializePhoneNumber(phoneNumber);
+    String oauthId = user.getOauthId();
+    AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
+    return new OauthLoginResponse(RoleStatus.REGISTER.getStatus(), authToken.accessToken(),
+        authToken.refreshToken());
+  }
+
+  @Transactional(readOnly = true)
+  public UserRejectHistoryResponse getUserRejectHistoryLatest(Long userId) {
+    boolean reasonImage = false;
+    boolean reasonDescription = false;
+
+    UserRejectHistory userRejectHistory = userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
+        userId).orElse(null);
+
+    if (userRejectHistory != null) {
+      reasonImage = userRejectHistory.isReasonImage();
+      reasonDescription = userRejectHistory.isReasonDescription();
     }
 
-    /**
-     * Role을 Register로 바꾸고 변경된 토큰을 반환한다.
-     *
-     * @return 액세스토큰과 리프레시 토큰
-     */
-    @Transactional
-    public OauthLoginResponse registerPhoneNumber(Long userId, String phoneNumber) {
-        User user =
-            userRepository.findById(userId)
-                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
-        user.updateUserRole(RoleStatus.REGISTER.getStatus());
-        user.initializePhoneNumber(phoneNumber);
-        String oauthId = user.getOauthId();
-        AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
-        return new OauthLoginResponse(RoleStatus.REGISTER.getStatus(), authToken.accessToken(),
-            authToken.refreshToken());
-    }
+    return new UserRejectHistoryResponse(
+        reasonImage,
+        reasonDescription
+    );
+  }
 
-    @Transactional(readOnly = true)
-    public UserRejectHistoryResponse getUserRejectHistoryLatest(Long userId) {
-        boolean reasonImage = false;
-        boolean reasonDescription = false;
+  @Transactional
+  public void deleteUser(Long userId, String reason) {
+    userDeleteReasonRepository.save(new UserDeleteReason(userId, reason));
+    userRepository.deleteById(userId);
+  }
 
-        UserRejectHistory userRejectHistory = userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
-            userId).orElse(null);
+  public UserBasicInfoResponse getUserBasicInfo(Long userId) {
+    User user = this.getUserById(userId);
 
-        if (userRejectHistory != null) {
-            reasonImage = userRejectHistory.isReasonImage();
-            reasonDescription = userRejectHistory.isReasonDescription();
-        }
+    Profile profile = user.getProfile();
+    String profileStatus =
+        profile != null ? profile.getProfileStatus().toString() : null;
 
-        return new UserRejectHistoryResponse(
-            reasonImage,
-            reasonDescription
-        );
-    }
-
-    @Transactional
-    public void deleteUser(Long userId, String reason) {
-        userDeleteReasonRepository.save(new UserDeleteReason(userId, reason));
-        userRepository.deleteById(userId);
-    }
-
-    public UserBasicInfoResponse getUserBasicInfo(Long userId) {
-        User user = this.getUserById(userId);
-
-        Profile profile = user.getProfile();
-        String profileStatus =
-            profile != null ? profile.getProfileStatus().toString() : null;
-
-        return new UserBasicInfoResponse(userId, user.getRole(), profileStatus);
-    }
+    return new UserBasicInfoResponse(userId, user.getRole(), profileStatus);
+  }
 
   @Transactional
   public void saveFcmToken(Long userId, FcmTokenSaveRequest request) {
@@ -124,5 +124,21 @@ public class UserService {
   @Transactional
   public void deleteFcmToken(Long userId) {
     fcmTokenRepository.deleteByUserId(userId);
+  }
+
+  public Optional<User> getUserByPhoneNumber(String phoneNumber) {
+    return userRepository.findByPhoneNumber(phoneNumber);
+  }
+
+  public String getUserOauthProvider(String oauthId) {
+    if (oauthId.startsWith("kakao")) {
+      return "kakao";
+    } else if (oauthId.startsWith("apple")) {
+      return "apple";
+    } else if (oauthId.startsWith("google")) {
+      return "google";
+    } else {
+      throw new ApplicationException(UserErrorCode.INVALID_OAUTH_PROVIDER);
+    }
   }
 }
