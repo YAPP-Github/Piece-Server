@@ -40,6 +40,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: make firebasekey.json with base64 decoding
+        run: |
+          mkdir -p ./infra/fcm/src/main/resources
+          cd ./infra/fcm/src/main/resources
+          touch ./firebasekey.json
+          echo "${{ secrets.FIREBASE_KEY }}" | base64 --decode > ./firebasekey.json
+        shell: bash
+
       - name: make ADMIN application-secret.yml
         run: |
           cd ./admin/src/main/resources
