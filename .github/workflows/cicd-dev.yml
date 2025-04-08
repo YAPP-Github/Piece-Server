@@ -91,10 +91,10 @@ jobs:
       - name: Docker build & push ADMIN to dev
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-admin -t ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }} .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/piece-admin:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/piece-admin:latest
+          docker build -f Dockerfile-admin -t ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:latest
 
       - name: Deploy ADMIN to dev
         uses: appleboy/ssh-action@master
@@ -104,8 +104,8 @@ jobs:
           port: 22
           key: ${{ secrets.HOST_DEV_PRIVATE_KEY }}
           script: |
-            sudo docker stop piece-admin || true
-            sudo docker rm piece-admin || true
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }}
-            sudo docker run -d --name piece-admin -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin:${{ env.IMAGE_TAG }}
+            sudo docker stop piece-admin-dev || true
+            sudo docker rm piece-admin-dev || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
+            sudo docker run -d --name piece-admin-dev -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
             sudo docker image prune -f
