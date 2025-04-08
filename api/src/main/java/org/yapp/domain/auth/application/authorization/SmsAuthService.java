@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.SmsAuthErrorCode;
+import org.yapp.domain.auth.presentation.dto.response.SmsAuthResponse;
 import org.yapp.global.application.SmsSenderService;
 import org.yapp.infra.redis.application.RedisService;
 
@@ -26,13 +27,15 @@ public class SmsAuthService {
      *
      * @param phoneNumber 인증 번호를 받을 핸드폰 번호
      */
-    public void sendAuthCodeTo(String phoneNumber) {
+    public SmsAuthResponse sendAuthCodeTo(String phoneNumber) {
+
         int authCode = authCodeGenerator.generate();
         redisService.setKeyWithExpiration(AUTH_CODE_KEY_PREFIX + phoneNumber,
             String.valueOf(authCode),
             AUTH_CODE_EXPIRE_TIME);
         String authCodeMessage = String.format(AUTH_CODE_FORMAT, authCode);
         smsSenderService.sendSMS(phoneNumber, authCodeMessage);
+        return new SmsAuthResponse(phoneNumber);
     }
 
     /**
