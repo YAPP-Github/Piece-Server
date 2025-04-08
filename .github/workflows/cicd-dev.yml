@@ -80,7 +80,7 @@ jobs:
         run: |
           cd ./admin/src/main/resources
           touch ./application-secret.yml 
-          echo "${{ secrets.ADMIN_YML }}" > ./application-secret.yml
+          echo "${{ secrets.ADMIN_DEV_YML }}" > ./application-secret.yml
         shell: bash
 
       - name: Build ADMIN with Gradle
