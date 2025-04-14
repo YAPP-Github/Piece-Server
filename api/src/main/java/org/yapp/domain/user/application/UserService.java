@@ -16,6 +16,7 @@ import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.core.notification.dao.FcmTokenRepository;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
+import org.yapp.domain.auth.presentation.dto.response.SmsVerifyResponse;
 import org.yapp.domain.user.dao.UserDeleteReasonRepository;
 import org.yapp.domain.user.dao.UserRejectHistoryRepository;
 import org.yapp.domain.user.dao.UserRepository;
@@ -27,11 +28,11 @@ import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 @RequiredArgsConstructor
 public class UserService {
 
-  private final UserRepository userRepository;
-  private final UserRejectHistoryRepository userRejectHistoryRepository;
-  private final UserDeleteReasonRepository userDeleteReasonRepository;
-  private final AuthTokenGenerator authTokenGenerator;
-  private final FcmTokenRepository fcmTokenRepository;
+    private final UserRepository userRepository;
+    private final UserRejectHistoryRepository userRejectHistoryRepository;
+    private final UserDeleteReasonRepository userDeleteReasonRepository;
+    private final AuthTokenGenerator authTokenGenerator;
+    private final FcmTokenRepository fcmTokenRepository;
 
     /**
      * Role을 USER로 바꾸고 변경된 토큰을 반환한다.
@@ -62,16 +63,27 @@ public class UserService {
      * @return 액세스토큰과 리프레시 토큰
      */
     @Transactional
-    public OauthLoginResponse registerPhoneNumber(Long userId, String phoneNumber) {
+    public SmsVerifyResponse registerPhoneNumber(Long userId, String phoneNumber) {
+        Optional<User> userOptionalByPhoneNumber = this.getUserByPhoneNumber(phoneNumber);
+
+        // 이미 가입한 유저
+        if (userOptionalByPhoneNumber.isPresent()) {
+            String userOauthProvider = this.getUserOauthProvider(
+                userOptionalByPhoneNumber.get().getOauthId());
+
+            return new SmsVerifyResponse(null, null, null, true, userOauthProvider);
+        }
+
         User user =
             userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+
         user.updateUserRole(RoleStatus.REGISTER.getStatus());
         user.initializePhoneNumber(phoneNumber);
         String oauthId = user.getOauthId();
         AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
-        return new OauthLoginResponse(RoleStatus.REGISTER.getStatus(), authToken.accessToken(),
-            authToken.refreshToken());
+        return new SmsVerifyResponse(RoleStatus.REGISTER.getStatus(), authToken.accessToken(),
+            authToken.refreshToken(), false, null);
     }
 
     @Transactional(readOnly = true)
@@ -109,20 +121,36 @@ public class UserService {
         return new UserBasicInfoResponse(userId, user.getRole(), profileStatus);
     }
 
-  @Transactional
-  public void saveFcmToken(Long userId, FcmTokenSaveRequest request) {
-    Optional<FcmToken> fcmTokenOptional = fcmTokenRepository.findByUserId(userId);
-    if (fcmTokenOptional.isPresent()) {
-      FcmToken fcmToken = fcmTokenOptional.get();
-      fcmToken.updateToken(request.getToken());
-    } else {
-      FcmToken fcmToken = new FcmToken(userId, request.getToken());
-      fcmTokenRepository.save(fcmToken);
+    @Transactional
+    public void saveFcmToken(Long userId, FcmTokenSaveRequest request) {
+        Optional<FcmToken> fcmTokenOptional = fcmTokenRepository.findByUserId(userId);
+        if (fcmTokenOptional.isPresent()) {
+            FcmToken fcmToken = fcmTokenOptional.get();
+            fcmToken.updateToken(request.getToken());
+        } else {
+            FcmToken fcmToken = new FcmToken(userId, request.getToken());
+            fcmTokenRepository.save(fcmToken);
+        }
     }
-  }
 
-  @Transactional
-  public void deleteFcmToken(Long userId) {
-    fcmTokenRepository.deleteByUserId(userId);
-  }
+    @Transactional
+    public void deleteFcmToken(Long userId) {
+        fcmTokenRepository.deleteByUserId(userId);
+    }
+
+    public Optional<User> getUserByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber);
+    }
+
+    public String getUserOauthProvider(String oauthId) {
+        if (oauthId.startsWith("kakao")) {
+            return "kakao";
+        } else if (oauthId.startsWith("apple")) {
+            return "apple";
+        } else if (oauthId.startsWith("google")) {
+            return "google";
+        } else {
+            throw new ApplicationException(UserErrorCode.INVALID_OAUTH_PROVIDER);
+        }
+    }
 }
