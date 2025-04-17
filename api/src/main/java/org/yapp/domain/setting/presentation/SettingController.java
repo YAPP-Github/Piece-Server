@@ -36,7 +36,7 @@ public class SettingController {
   public ResponseEntity<CommonResponse<Void>> updateMatchNotificationStatus(
       @RequestBody SettingToggleRequest toggleRequest,
       @AuthenticationPrincipal Long userId) {
-    settingService.setMatchNotificationStatus(userId, toggleRequest.getToggle());
+    settingService.setNotificationStatus(userId, toggleRequest.getToggle());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
 
@@ -44,7 +44,7 @@ public class SettingController {
   public ResponseEntity<CommonResponse<Void>> updateNotificationStatus(
       @RequestBody SettingToggleRequest toggleRequest,
       @AuthenticationPrincipal Long userId) {
-    settingService.setNotificationStatus(userId, toggleRequest.getToggle());
+    settingService.setMatchNotificationStatus(userId, toggleRequest.getToggle());
     return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
   }
 
