@@ -7,18 +7,19 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.core.domain.BaseEntity;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_delete_reason")
-public class UserDeleteReason {
+public class UserDeleteReason extends BaseEntity {
 
-  @Id
-  @Column(name = "user_id")
-  private Long id;
+    @Id
+    @Column(name = "user_id")
+    private Long id;
 
-  @Column(name = "reason")
-  private String reason;
+    @Column(name = "reason")
+    private String reason;
 }
