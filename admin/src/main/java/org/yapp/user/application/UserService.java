@@ -36,6 +36,10 @@ public class UserService {
             .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
     }
 
+    public Optional<User> getUserByIdIfExists(Long userId) {
+        return userRepository.findById(userId);
+    }
+
     public User getUserByOauthId(String oauthId) {
         return userRepository.findByOauthId(oauthId)
             .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
