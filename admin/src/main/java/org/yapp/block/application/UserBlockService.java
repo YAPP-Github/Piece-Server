@@ -1,6 +1,8 @@
 package org.yapp.block.application;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,7 @@ public class UserBlockService {
 
     private final DirectBlockRepository directBlockRepository;
     private final UserService userService;
+    private final String NON_MEMBER_NAME = "탈퇴한 회원";
 
     public PageResponse<UserBlockResponse> getUserBlockPageResponse(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -28,19 +31,34 @@ public class UserBlockService {
 
         List<UserBlockResponse> content = userBlockPage.getContent().stream()
             .map(userBlock -> {
+                Optional<User> blockingUserOpt = userService.getUserByIdIfExists(
+                    userBlock.getBlockingUserId());
+                Optional<User> blockedUserOpt = userService.getUserByIdIfExists(
+                    userBlock.getBlockedUserId());
 
-                User blockingUser = userService.getUserById(userBlock.getBlockingUserId());
-                User blockedUser = userService.getUserById(userBlock.getBlockedUserId());
+                String blockedNickname = blockedUserOpt
+                    .map(u -> u.getProfile().getProfileBasic().getNickname())
+                    .orElse(NON_MEMBER_NAME);
+                String blockedName = blockedUserOpt.map(User::getName).orElse(null);
+                LocalDate blockedBirthdate = blockedUserOpt
+                    .map(u -> u.getProfile().getProfileBasic().getBirthdate())
+                    .orElse(null);
+
+                String blockingNickname = blockingUserOpt
+                    .map(u -> u.getProfile().getProfileBasic().getNickname())
+                    .orElse(NON_MEMBER_NAME);
+                String blockingName = blockingUserOpt.map(User::getName).orElse(null);
 
                 return new UserBlockResponse(
-                    blockedUser.getId(),
-                    blockedUser.getProfile().getProfileBasic().getNickname(),
-                    blockedUser.getName(),
-                    blockedUser.getProfile().getProfileBasic().getBirthdate(),
-                    blockingUser.getId(),
-                    blockingUser.getProfile().getProfileBasic().getNickname(),
-                    blockingUser.getName(),
-                    userBlock.getCreatedAt().toLocalDate());
+                    blockedUserOpt.map(User::getId).orElse(null),
+                    blockedNickname,
+                    blockedName,
+                    blockedBirthdate,
+                    blockingUserOpt.map(User::getId).orElse(null),
+                    blockingNickname,
+                    blockingName,
+                    userBlock.getCreatedAt().toLocalDate()
+                );
             }).toList();
 
         return new PageResponse<>(
