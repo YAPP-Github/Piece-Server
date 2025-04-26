@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.event.ProfileCreatedEvent;
 import org.yapp.core.domain.profile.event.ProfileRenewedEvent;
+import org.yapp.core.domain.profile.event.ProfileValueTalkUpdatedEvent;
 import org.yapp.core.domain.user.User;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.profile.application.ProfileImageService;
@@ -190,6 +191,9 @@ public class ProfileController {
                 profileValueTalkSummaryService.summaryProfileValueTalksAsync(userId,
                                 ProfileValueTalkAnswerDto.from(request));
                 Profile profile = profileService.updateProfileValueTalks(userId, request);
+                eventPublisher.publishEvent(new ProfileValueTalkUpdatedEvent(
+                                profile.getId(),
+                                profile.getProfileBasic().getNickname()));
 
                 ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService
                                 .getProfileValueTalkResponses(
