@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
@@ -26,6 +26,8 @@ import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateReques
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest.ProfileValueTalkPair;
 import org.yapp.domain.user.application.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
@@ -40,16 +42,15 @@ public class ProfileService {
         ProfileBasic profileBasic = dto.toProfileBasic();
 
         Profile profile = Profile.builder().profileBasic(profileBasic)
-            .build();
+                .build();
 
         profileRepository.save(profile);
 
         List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
-            profile.getId(), dto.valuePicks());
+                profile.getId(), dto.valuePicks());
 
         List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
-            profile.getId(), dto.valueTalks()
-        );
+                profile.getId(), dto.valueTalks());
 
         profile.updateProfileValuePicks(allProfileValues);
         profile.updateProfileValueTalks(allProfileTalks);
@@ -64,11 +65,10 @@ public class ProfileService {
         ProfileBasic profileBasic = dto.toProfileBasic();
 
         List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
-            profile.getId(), dto.valuePicks());
+                profile.getId(), dto.valuePicks());
 
         List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
-            profile.getId(), dto.valueTalks()
-        );
+                profile.getId(), dto.valueTalks());
 
         profile.updateBasic(profileBasic);
         profile.updateProfileValuePicks(allProfileValues);
@@ -81,14 +81,14 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public Profile getProfileById(long profileId) {
         return profileRepository.findById(profileId)
-            .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
+                .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
     }
 
     @Transactional(readOnly = true)
     public List<Profile> getValidProfilesByLocation(String locationName) {
         return profileRepository.findByProfileBasic_LocationAndUser_RoleAndUser_IsAdminIsNull(
-            locationName,
-            RoleStatus.USER.getStatus());
+                locationName,
+                RoleStatus.USER.getStatus());
     }
 
     @Transactional
@@ -140,12 +140,11 @@ public class ProfileService {
         List<ProfileValueTalk> profileValueTalks = profile.getProfileValueTalks();
 
         HashMap<Long, ProfileValueTalk> profileValueTalkHashMap = profileValueTalks.stream()
-            .collect(Collectors.toMap(
-                ProfileValueTalk::getId,
-                profileValueTalk -> profileValueTalk,
-                (existing, replacement) -> existing,
-                HashMap::new
-            ));
+                .collect(Collectors.toMap(
+                        ProfileValueTalk::getId,
+                        profileValueTalk -> profileValueTalk,
+                        (existing, replacement) -> existing,
+                        HashMap::new));
 
         for (ProfileValueTalkPair profileValuePickPair : dto.profileValueTalkUpdateRequests()) {
             final Long profileValueTalkId = profileValuePickPair.profileValueTalkId();
@@ -165,7 +164,7 @@ public class ProfileService {
         ProfileStatus profileStatus = profile.getProfileStatus();
 
         if (ProfileStatus.INCOMPLETE.equals(profileStatus) ||
-            ProfileStatus.REJECTED.equals(profileStatus)) {
+                ProfileStatus.REJECTED.equals(profileStatus)) {
             profile.updateProfileStatus(ProfileStatus.REVISED);
         }
     }

@@ -1,7 +1,7 @@
 package org.yapp.domain.user.application;
 
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthToken;
@@ -24,6 +24,8 @@ import org.yapp.domain.user.presentation.dto.request.FcmTokenSaveRequest;
 import org.yapp.domain.user.presentation.dto.response.UserBasicInfoResponse;
 import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -41,20 +43,19 @@ public class UserService {
      */
     @Transactional
     public OauthLoginResponse completeProfileInitialize(Long userId, Profile profile) {
-        User user =
-            userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
         user.setProfile(profile);
         user.updateUserRole(RoleStatus.PENDING.getStatus());
         String oauthId = user.getOauthId();
         AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
         return new OauthLoginResponse(RoleStatus.PENDING.getStatus(), authToken.accessToken(),
-            authToken.refreshToken());
+                authToken.refreshToken());
     }
 
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
     }
 
     /**
@@ -69,13 +70,12 @@ public class UserService {
         // 이미 가입한 유저
         if (userOptionalByPhoneNumber.isPresent()) {
             String userOauthProvider = this.getUserOauthProvider(
-                userOptionalByPhoneNumber.get().getOauthId());
+                    userOptionalByPhoneNumber.get().getOauthId());
 
             return new SmsVerifyResponse(null, null, null, true, userOauthProvider);
         }
 
-        User user =
-            userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
 
         user.updateUserRole(RoleStatus.REGISTER.getStatus());
@@ -83,7 +83,7 @@ public class UserService {
         String oauthId = user.getOauthId();
         AuthToken authToken = authTokenGenerator.generate(userId, oauthId, user.getRole());
         return new SmsVerifyResponse(RoleStatus.REGISTER.getStatus(), authToken.accessToken(),
-            authToken.refreshToken(), false, null);
+                authToken.refreshToken(), false, null);
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +92,7 @@ public class UserService {
         boolean reasonDescription = false;
 
         UserRejectHistory userRejectHistory = userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
-            userId).orElse(null);
+                userId).orElse(null);
 
         if (userRejectHistory != null) {
             reasonImage = userRejectHistory.isReasonImage();
@@ -100,9 +100,8 @@ public class UserService {
         }
 
         return new UserRejectHistoryResponse(
-            reasonImage,
-            reasonDescription
-        );
+                reasonImage,
+                reasonDescription);
     }
 
     @Transactional
@@ -115,8 +114,7 @@ public class UserService {
         User user = this.getUserById(userId);
 
         Profile profile = user.getProfile();
-        String profileStatus =
-            profile != null ? profile.getProfileStatus().toString() : null;
+        String profileStatus = profile != null ? profile.getProfileStatus().toString() : null;
 
         return new UserBasicInfoResponse(userId, user.getRole(), profileStatus);
     }
