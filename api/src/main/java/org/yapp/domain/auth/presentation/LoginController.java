@@ -20,6 +20,7 @@ import org.yapp.domain.auth.presentation.dto.request.RefreshTokenRequest;
 import org.yapp.domain.auth.presentation.dto.request.TokenHealthCheckRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.auth.presentation.dto.response.RefreshedTokensResponse;
+import org.yapp.domain.user.application.BanCheckingService;
 import org.yapp.format.CommonResponse;
 
 @Controller
@@ -30,6 +31,7 @@ public class LoginController {
   private final OauthService oauthService;
   private final RefreshTokenService refreshTokenService;
   private final TokenHealthCheckService tokenHealthCheckService;
+  private final BanCheckingService banCheckingService;
 
   /**
    * 개발중 소셜 로그인으로 사용자의 accessToken을 가져오기 어렵기 때문에 만든 임시 메서드
@@ -53,6 +55,7 @@ public class LoginController {
   @Operation(summary = "토큰 리프레시", description = "accessToken과 refreshToken을 갱신합니다.", tags = {"로그인"})
   public ResponseEntity<CommonResponse<RefreshedTokensResponse>> refreshToken(
       @RequestBody RefreshTokenRequest request) {
+    banCheckingService.checkBlackListByRefreshToken(request.getRefreshToken());
     RefreshedTokens refreshedTokens = refreshTokenService.getUserRefreshedTokens(
         request.getRefreshToken());
     RefreshedTokensResponse response = new RefreshedTokensResponse(
