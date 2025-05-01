@@ -5,14 +5,15 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum RoleStatus {
-    NONE("NONE"),
-    REGISTER("REGISTER"),
-    PENDING("PENDING"),
-    USER("USER");
-    private String status;
+  NONE("NONE"),
+  REGISTER("REGISTER"),
+  PENDING("PENDING"),
+  BANNED("BANNED"),
+  USER("USER");
+  private String status;
 
-    @JsonValue
-    public String getStatus() {
-        return status;
-    }
+  @JsonValue
+  public String getStatus() {
+    return status;
+  }
 }
