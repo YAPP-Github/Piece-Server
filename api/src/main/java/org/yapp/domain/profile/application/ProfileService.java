@@ -35,6 +35,7 @@ public class ProfileService {
     private final UserService userService;
     private final ProfileValuePickService profileValuePickService;
     private final ProfileValueTalkService profileValueTalkService;
+    private final ProfileImageService profileImageService;
     private final ProfileRepository profileRepository;
 
     @Transactional
@@ -95,13 +96,27 @@ public class ProfileService {
     public Profile updateProfileBasic(long userId, ProfileBasicUpdateRequest dto) {
         User user = this.userService.getUserById(userId);
         Profile profile = getProfileById(user.getProfile().getId());
+        ProfileBasic newProfileBasic = dto.toProfileBasic();
 
-        ProfileBasic profileBasic = dto.toProfileBasic();
+        profileImageUpdate(profile, newProfileBasic.getImageUrl());
+        String oldImageUrl = null;
+        if (profile != null && profile.getProfileBasic() != null) {
+            oldImageUrl = profile.getProfileBasic().getImageUrl();
+        }
 
-        profile.updateBasic(profileBasic);
-        updateProfileRevised(profile);
-
+        newProfileBasic.setImageUrl(oldImageUrl);
         return profile;
+    }
+
+    private void profileImageUpdate(Profile profile, String newImageUrl) {
+        String oldImageUrl = null;
+        if (profile.getProfileBasic() != null) {
+            oldImageUrl = profile.getProfileBasic().getImageUrl();
+        }
+
+        if (newImageUrl != null && !newImageUrl.equals(oldImageUrl)) {
+            profileImageService.create(profile.getId(), newImageUrl);
+        }
     }
 
     @Transactional
