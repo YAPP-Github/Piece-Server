@@ -14,6 +14,7 @@ import org.yapp.core.domain.user.User;
 import org.yapp.core.domain.user.UserDeleteReason;
 import org.yapp.core.domain.user.UserRejectHistory;
 import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.AuthErrorCode;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.core.notification.dao.FcmTokenRepository;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
@@ -78,7 +79,7 @@ public class UserService {
 
     // 정지된 유저가 기존 계정 삭제하고 다시 가입하려고 할 때 방지
     if (bannedUserPhoneNumberRepository.findById(phoneNumber).isPresent()) {
-      return new SmsVerifyResponse("BANNED", null, null, false, null);
+      throw new ApplicationException(AuthErrorCode.PERMANENTLY_BANNED);
     }
 
     User user =
