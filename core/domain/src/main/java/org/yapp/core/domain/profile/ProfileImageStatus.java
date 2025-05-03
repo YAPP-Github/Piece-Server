@@ -1,9 +1,9 @@
 package org.yapp.core.domain.profile;
 
 public enum ProfileImageStatus {
-    INCOMPLETE("미완료"),
+    PENDING("심사중"),
     ACCEPTED("통과"),
-    REJECTED("보류");
+    REJECTED("거절");
 
     private final String displayName;
 
@@ -15,3 +15,4 @@ public enum ProfileImageStatus {
         return displayName;
     }
 }
+s
