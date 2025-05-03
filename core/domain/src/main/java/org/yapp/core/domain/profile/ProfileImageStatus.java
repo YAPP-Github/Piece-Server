@@ -15,4 +15,3 @@ public enum ProfileImageStatus {
         return displayName;
     }
 }
-s
