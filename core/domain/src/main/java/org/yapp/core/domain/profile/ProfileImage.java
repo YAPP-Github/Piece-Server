@@ -1,9 +1,9 @@
 package org.yapp.core.domain.profile;
 
-import org.yapp.core.domain.BaseEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yapp.core.domain.BaseEntity;
 
 @Entity
 @Getter
@@ -34,6 +35,7 @@ public class ProfileImage extends BaseEntity {
     private String imageUrl;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private ProfileImageStatus status;
 
     public void accept() {
