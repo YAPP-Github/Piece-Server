@@ -102,10 +102,11 @@ public class ProfileController {
     public ResponseEntity<CommonResponse<ProfileBasicResponse>> getProfileBasic(
         @AuthenticationPrincipal Long userId) {
 
-        User user = userService.getUserById(userId);
+        ProfileBasicResponse response = profileService.getProfileBasicNonPreview(
+            userId);
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(ProfileBasicResponse.from(user.getProfile())));
+            .body(CommonResponse.createSuccess(response));
     }
 
     @GetMapping("/basic/preview")

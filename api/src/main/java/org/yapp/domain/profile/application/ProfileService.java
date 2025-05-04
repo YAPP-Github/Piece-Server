@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
+import org.yapp.core.domain.profile.ProfileImageStatus;
 import org.yapp.core.domain.profile.ProfileStatus;
 import org.yapp.core.domain.profile.ProfileValuePick;
 import org.yapp.core.domain.profile.ProfileValueTalk;
@@ -16,6 +17,7 @@ import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
+import org.yapp.domain.profile.application.dto.ProfileImageDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
@@ -24,6 +26,7 @@ import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateReques
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest.ProfileValuePickPair;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest.ProfileValueTalkPair;
+import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
 import org.yapp.domain.user.application.UserService;
 
 @Service
@@ -116,6 +119,22 @@ public class ProfileService {
         if (newImageUrl != null && !newImageUrl.equals(oldImageUrl)) {
             profileImageService.create(profile.getId(), newImageUrl);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileBasicResponse getProfileBasicNonPreview(Long userId) {
+        User user = userService.getUserById(userId);
+        Profile profile = user.getProfile();
+
+        ProfileImageDto profileImageDto = profileImageService.getProfileImageLatest(
+            profile.getId());
+        String latestProfileImageUrl = null;
+
+        if (profileImageDto != null && profileImageDto.status() == ProfileImageStatus.PENDING) {
+            latestProfileImageUrl = profileImageDto.imageUrl();
+        }
+
+        return ProfileBasicResponse.from(profile, latestProfileImageUrl);
     }
 
     @Transactional
