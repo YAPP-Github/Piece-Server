@@ -14,6 +14,7 @@ import org.yapp.format.CommonResponse;
 import org.yapp.format.PageResponse;
 import org.yapp.profile.application.AdminProfileService;
 import org.yapp.user.application.UserService;
+import org.yapp.user.presentation.request.UpdateProfileStatusRequest;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
 
@@ -30,8 +31,9 @@ public class UserController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size) {
 
-        PageResponse<UserProfileValidationResponse> userProfilesWithPagination = userService.getUserProfilesWithPagination(
-            page, size);
+        PageResponse<UserProfileValidationResponse> userProfilesWithPagination = userService
+            .getUserProfilesWithPagination(
+                page, size);
 
         return ResponseEntity.ok(CommonResponse.createSuccess(userProfilesWithPagination));
     }
