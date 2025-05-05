@@ -1,5 +1,6 @@
 package org.yapp.profile.application;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -70,5 +71,13 @@ public class AdminProfileImageService {
         } catch (ApplicationException e) {
             log.warn("프로필 이미지 변경 FCM 알림 전송이 실패했습니다.", e);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileImage getLatestProfileImageByProfileId(Long profileId) {
+        Optional<ProfileImage> optionalProfileImage = profileImageRepository.findTopByProfileIdOrderByCreatedAtDesc(
+            profileId);
+
+        return optionalProfileImage.orElse(null);
     }
 }

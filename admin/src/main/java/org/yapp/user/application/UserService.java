@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.profile.ProfileImage;
+import org.yapp.core.domain.profile.ProfileImageStatus;
 import org.yapp.core.domain.profile.ProfileValueTalk;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.domain.user.UserRejectHistory;
@@ -17,16 +19,19 @@ import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
 import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.format.PageResponse;
+import org.yapp.profile.application.AdminProfileImageService;
 import org.yapp.profile.dao.ProfileValueTalkRepository;
 import org.yapp.user.dao.UserRejectHistoryRepository;
 import org.yapp.user.dao.UserRepository;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
+import org.yapp.user.presentation.response.UserProfileImageDetailResponse;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    private final AdminProfileImageService adminProfileImageService;
     private final UserRepository userRepository;
     private final UserRejectHistoryRepository userRejectHistoryRepository;
     private final ProfileValueTalkRepository profileValueTalkRepository;
@@ -67,7 +72,18 @@ public class UserService {
                     && profile.getProfileStatus() != null
                     && profile.getProfileStatus().name().equals("APPROVED");
 
-                return UserProfileValidationResponse.from(user, !isApproved && reasonImage,
+                ProfileImage profileImage = null;
+                ProfileImageStatus profileImageStatus = null;
+                if (profile != null) {
+                    profileImage = adminProfileImageService.getLatestProfileImageByProfileId(
+                        profile.getId());
+                }
+                if (profileImage != null) {
+                    profileImageStatus = profileImage.getStatus();
+                }
+
+                return UserProfileValidationResponse.from(user,
+                    profileImageStatus, !isApproved && reasonImage,
                     !isApproved && reasonDescription);
             })
             .toList();
@@ -98,5 +114,21 @@ public class UserService {
         return UserProfileDetailResponses.from(profile.getProfileBasic().getNickname(),
             profile.getProfileBasic().getImageUrl(),
             activeProfileValueTalks);
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileImageDetailResponse getUserProfileImageDetails(Long userId) {
+        User user = getUserById(userId);
+        Profile profile = user.getProfile();
+
+        if (profile == null) {
+            throw new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE);
+        }
+
+        ProfileImage profileImage = adminProfileImageService.getLatestProfileImageByProfileId(
+            profile.getId());
+
+        return UserProfileImageDetailResponse.from(profileImage,
+            profile.getProfileBasic().getImageUrl());
     }
 }

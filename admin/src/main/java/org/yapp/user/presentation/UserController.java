@@ -16,6 +16,7 @@ import org.yapp.profile.application.AdminProfileService;
 import org.yapp.user.application.UserService;
 import org.yapp.user.presentation.request.UpdateProfileStatusRequest;
 import org.yapp.user.presentation.response.UserProfileDetailResponses;
+import org.yapp.user.presentation.response.UserProfileImageDetailResponse;
 import org.yapp.user.presentation.response.UserProfileValidationResponse;
 
 @RestController()
@@ -44,6 +45,16 @@ public class UserController {
 
         UserProfileDetailResponses userProfileDetails = userService.getUserProfileDetails(userId);
         return ResponseEntity.ok(CommonResponse.createSuccess(userProfileDetails));
+    }
+
+    @GetMapping("/{userId}/profileImage")
+    public ResponseEntity<CommonResponse<UserProfileImageDetailResponse>> getUserProfileImage(
+        @PathVariable Long userId) {
+
+        UserProfileImageDetailResponse userProfileImageDetails = userService.getUserProfileImageDetails(
+            userId);
+
+        return ResponseEntity.ok(CommonResponse.createSuccess(userProfileImageDetails));
     }
 
     @PostMapping("/{userId}/profile")
