@@ -11,6 +11,7 @@ import org.yapp.core.domain.profile.event.ProfileRenewedEvent;
 import org.yapp.core.domain.profile.event.ProfileValueTalkUpdatedEvent;
 import org.yapp.infra.discord.DiscordMessageFactory;
 import org.yapp.infra.discord.DiscordNotificationService;
+import org.yapp.infra.discord.dto.DiscordMessage;
 
 @Slf4j
 @Component
@@ -22,57 +23,41 @@ public class ProfileEventDiscordListener {
     @Async
     @EventListener
     public void handleProfileCreated(ProfileCreatedEvent event) {
-        try {
-            discordNotificationService.sendNotification(
-                DiscordMessageFactory.createNewProfileMessage(
-                    event.getProfileId(),
-                    event.getNickname()));
-        } catch (Exception e) {
-            log.error("프로필 생성 디스코드 알림 전송 실패. 프로필 ID: {}, 에러: {}",
-                event.getProfileId(), e.getMessage(), e);
-        }
+        DiscordMessage discordMessage = DiscordMessageFactory.createNewProfileMessage(
+            event.getProfileId(), event.getNickname());
+        notifyWithLogging(event.getProfileId(), "프로필 생성 디스코드 알림 전송 실패", discordMessage);
     }
 
     @Async
     @EventListener
     public void handleProfileRenewed(ProfileRenewedEvent event) {
-        try {
-            discordNotificationService.sendNotification(
-                DiscordMessageFactory.createRenewProfileMessage(
-                    event.getProfileId(),
-                    event.getNickname()));
-        } catch (Exception e) {
-            log.error("프로필 갱신 디스코드 알림 전송 실패. 프로필 ID: {}, 에러: {}",
-                event.getProfileId(), e.getMessage(), e);
-        }
+        DiscordMessage discordMessage = DiscordMessageFactory.createRenewProfileMessage(
+            event.getProfileId(), event.getNickname());
+        notifyWithLogging(event.getProfileId(), "프로필 갱신 디스코드 알림 전송 실패", discordMessage);
     }
 
     @Async
     @EventListener
     public void handleProfileImageUpdated(ProfileImageUpdatedEvent event) {
-        try {
-            discordNotificationService.sendNotification(
-                DiscordMessageFactory.createProfileImageUpdateMessage(
-                    event.getProfileId(),
-                    event.getNickname()));
-        } catch (Exception e) {
-            log.error("프로필 이미지 업데이트 디스코드 알림 전송 실패. 프로필 ID: {}, 에러: {}",
-                event.getProfileId(), e.getMessage(), e);
-        }
+        DiscordMessage discordMessage = DiscordMessageFactory.createProfileImageUpdateMessage(
+            event.getProfileId(), event.getNickname());
+        notifyWithLogging(event.getProfileId(), "프로필 이미지 업데이트 디스코드 알림 전송 실패", discordMessage);
     }
 
     @Async
     @EventListener
     public void handleProfileValueTalkUpdated(ProfileValueTalkUpdatedEvent event) {
-        try {
-            discordNotificationService.sendNotification(
-                DiscordMessageFactory.createProfileValueTalkUpdateMessage(
+        DiscordMessage discordMessage = DiscordMessageFactory.createProfileValueTalkUpdateMessage(
+            event.getProfileId(), event.getNickname());
+        notifyWithLogging(event.getProfileId(), "프로필 가치관 톡 업데이트 디스코드 알림 전송 실패", discordMessage);
+    }
 
-                    event.getProfileId(),
-                    event.getNickname()));
+    private void notifyWithLogging(Long profileId, String errorMessage,
+        DiscordMessage discordMessage) {
+        try {
+            discordNotificationService.sendNotification(discordMessage);
         } catch (Exception e) {
-            log.error("프로필 가치관 톡 업데이트 디스코드 알림 전송 실패. 프로필 ID: {}, 에러: {}",
-                event.getProfileId(), e.getMessage(), e);
+            log.error("{} 프로필 ID: {}, 에러: {}", errorMessage, profileId, e.getMessage(), e);
         }
     }
 }
