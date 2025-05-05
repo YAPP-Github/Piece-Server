@@ -15,6 +15,7 @@ dependencies {
     implementation project(':core:exception')
     implementation project(':core:auth')
     implementation project(':core:notification')
+    implementation project(':infra:redis')
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
