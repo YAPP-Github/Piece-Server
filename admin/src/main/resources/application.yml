@@ -1,3 +1,5 @@
 spring:
   profiles:
-    include: db, secret
+    include: db, secret, discord
+server:
+  port: 8081
