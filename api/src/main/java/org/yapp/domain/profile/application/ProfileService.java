@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
@@ -13,6 +14,7 @@ import org.yapp.core.domain.profile.ProfileImageStatus;
 import org.yapp.core.domain.profile.ProfileStatus;
 import org.yapp.core.domain.profile.ProfileValuePick;
 import org.yapp.core.domain.profile.ProfileValueTalk;
+import org.yapp.core.domain.profile.event.ProfileImageUpdatedEvent;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
@@ -38,6 +40,7 @@ public class ProfileService {
     private final ProfileValueTalkService profileValueTalkService;
     private final ProfileImageService profileImageService;
     private final ProfileRepository profileRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public Profile create(ProfileCreateRequest dto) {
@@ -118,6 +121,8 @@ public class ProfileService {
 
         if (newImageUrl != null && !newImageUrl.equals(oldImageUrl)) {
             profileImageService.create(profile.getId(), newImageUrl);
+            eventPublisher.publishEvent(new ProfileImageUpdatedEvent(profile.getId(),
+                profile.getProfileBasic().getNickname()));
         }
     }
 
