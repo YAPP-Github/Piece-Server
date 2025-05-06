@@ -1,5 +1,10 @@
 package org.yapp.core.domain.profile;
 
+import java.util.List;
+
+import org.yapp.core.domain.BaseEntity;
+import org.yapp.core.domain.user.User;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -12,13 +17,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yapp.core.domain.BaseEntity;
-import org.yapp.core.domain.user.User;
 
 @Table(name = "profile")
 @Entity
@@ -51,6 +53,29 @@ public class Profile extends BaseEntity {
 
     public void updateBasic(ProfileBasic profileBasic) {
         this.profileBasic = profileBasic;
+    }
+
+    public void updateProfileImageUrl(String imageUrl) {
+        ProfileBasic profileBasic = this.profileBasic;
+
+        if (profileBasic != null) {
+
+            ProfileBasic updatedBasic = ProfileBasic.builder()
+                    .nickname(profileBasic.getNickname())
+                    .description(profileBasic.getDescription())
+                    .birthdate(profileBasic.getBirthdate())
+                    .height(profileBasic.getHeight())
+                    .job(profileBasic.getJob())
+                    .location(profileBasic.getLocation())
+                    .smokingStatus(profileBasic.getSmokingStatus())
+                    .weight(profileBasic.getWeight())
+                    .snsActivityLevel(profileBasic.getSnsActivityLevel())
+                    .contacts(profileBasic.getContacts())
+                    .imageUrl(imageUrl)
+                    .build();
+
+            this.updateBasic(updatedBasic);
+        }
     }
 
     public void updateProfileValuePicks(List<ProfileValuePick> profileValuePicks) {

@@ -11,9 +11,10 @@ public record ProfileBasicResponse(String nickname, String description, int age,
                                    String location,
                                    String smokingStatus, Integer weight, String snsActivityLevel,
                                    String imageUrl,
+                                   String pendingImageUrl,
                                    List<ContactResponse> contacts) {
 
-    public static ProfileBasicResponse from(Profile profile) {
+    public static ProfileBasicResponse from(Profile profile, String pendingImageUrl) {
 
         ProfileBasic basic = profile.getProfileBasic();
 
@@ -24,6 +25,7 @@ public record ProfileBasicResponse(String nickname, String description, int age,
             basic.getJob(), basic.getLocation(), basic.getSmokingStatus(), basic.getWeight(),
             basic.getSnsActivityLevel(),
             basic.getImageUrl(),
+            pendingImageUrl,
             ContactResponses.convert(basic.getContacts()));
     }
 }
