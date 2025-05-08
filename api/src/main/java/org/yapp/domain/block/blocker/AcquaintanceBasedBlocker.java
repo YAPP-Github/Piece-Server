@@ -1,4 +1,4 @@
-package org.yapp.domain.match.application.blocker;
+package org.yapp.domain.block.blocker;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
