@@ -23,6 +23,7 @@ dependencies {
     implementation project(':infra:sms')
     implementation project(':infra:ai')
     implementation project(':infra:discord')
+    implementation project(':infra:qdrant')
 
     implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0');
     implementation('org.bouncycastle:bcpkix-jdk18on:1.76');
