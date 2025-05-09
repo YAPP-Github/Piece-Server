@@ -17,8 +17,7 @@ public class SmsAuthService {
 
   private static final long AUTH_CODE_EXPIRE_TIME = 300000;
   private static final String AUTH_CODE_KEY_PREFIX = "authcode:";
-  private static final String AUTH_CODE_INNER_FORMAT = "%06d";
-  private static final String AUTH_CODE_FORMAT = "[PIECE] 인증 번호는 %06d 입니다.";
+  private static final String AUTH_CODE_FORMAT = "[PIECE] 인증 번호는 %s 입니다.";
   private final AuthCodeGenerator authCodeGenerator;
   private final SmsSenderService smsSenderService;
   private final RedisService redisService;
@@ -30,9 +29,9 @@ public class SmsAuthService {
    */
   public SmsAuthResponse sendAuthCodeTo(String phoneNumber) {
 
-    int authCode = authCodeGenerator.generate();
-    redisService.setKeyWithExpiration(AUTH_CODE_KEY_PREFIX + phoneNumber,
-        String.format(AUTH_CODE_INNER_FORMAT, authCode), AUTH_CODE_EXPIRE_TIME);
+    String authCode = authCodeGenerator.generate();
+    redisService.setKeyWithExpiration(AUTH_CODE_KEY_PREFIX + phoneNumber, authCode,
+        AUTH_CODE_EXPIRE_TIME);
     String authCodeMessage = String.format(AUTH_CODE_FORMAT, authCode);
     smsSenderService.sendSMS(phoneNumber, authCodeMessage);
     return new SmsAuthResponse(phoneNumber);

@@ -1,14 +1,16 @@
 package org.yapp.domain.auth.application.authorization;
 
-import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
+import org.springframework.stereotype.Service;
 
 /**
  * 랜덤 인증번호 생성기
  */
 @Service
 public class AuthCodeGenerator {
+
+  private static final String AUTH_CODE_FORMAT = "%06d";
+
   private final SecureRandom secureRandom = new SecureRandom();
 
   /**
@@ -16,7 +18,8 @@ public class AuthCodeGenerator {
    *
    * @return 6자리 난수
    */
-  public int generate() {
-    return secureRandom.nextInt(1000000);
+  public String generate() {
+    int randomValue = secureRandom.nextInt(1000000);
+    return String.format(AUTH_CODE_FORMAT, randomValue);
   }
 }
