@@ -4,18 +4,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileBasic;
+import org.yapp.core.domain.profile.ProfileImageStatus;
 import org.yapp.core.domain.profile.ProfileStatus;
 import org.yapp.core.domain.profile.ProfileValuePick;
 import org.yapp.core.domain.profile.ProfileValueTalk;
+import org.yapp.core.domain.profile.event.ProfileImageUpdatedEvent;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.ProfileErrorCode;
+import org.yapp.domain.profile.application.dto.ProfileImageDto;
 import org.yapp.domain.profile.dao.ProfileRepository;
 import org.yapp.domain.profile.presentation.request.ProfileBasicUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileCreateRequest;
@@ -24,9 +28,8 @@ import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateReques
 import org.yapp.domain.profile.presentation.request.ProfileValuePickUpdateRequest.ProfileValuePickPair;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest;
 import org.yapp.domain.profile.presentation.request.ProfileValueTalkUpdateRequest.ProfileValueTalkPair;
+import org.yapp.domain.profile.presentation.response.ProfileBasicResponse;
 import org.yapp.domain.user.application.UserService;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -35,22 +38,24 @@ public class ProfileService {
     private final UserService userService;
     private final ProfileValuePickService profileValuePickService;
     private final ProfileValueTalkService profileValueTalkService;
+    private final ProfileImageService profileImageService;
     private final ProfileRepository profileRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public Profile create(ProfileCreateRequest dto) {
         ProfileBasic profileBasic = dto.toProfileBasic();
 
         Profile profile = Profile.builder().profileBasic(profileBasic)
-                .build();
+            .build();
 
         profileRepository.save(profile);
 
         List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
-                profile.getId(), dto.valuePicks());
+            profile.getId(), dto.valuePicks());
 
         List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
-                profile.getId(), dto.valueTalks());
+            profile.getId(), dto.valueTalks());
 
         profile.updateProfileValuePicks(allProfileValues);
         profile.updateProfileValueTalks(allProfileTalks);
@@ -65,15 +70,15 @@ public class ProfileService {
         ProfileBasic profileBasic = dto.toProfileBasic();
 
         List<ProfileValuePick> allProfileValues = profileValuePickService.createAllProfileValuePicks(
-                profile.getId(), dto.valuePicks());
+            profile.getId(), dto.valuePicks());
 
         List<ProfileValueTalk> allProfileTalks = profileValueTalkService.createAllProfileValues(
-                profile.getId(), dto.valueTalks());
+            profile.getId(), dto.valueTalks());
 
         profile.updateBasic(profileBasic);
         profile.updateProfileValuePicks(allProfileValues);
         profile.updateProfileValueTalks(allProfileTalks);
-        updateProfileStatus(profile);
+        updateProfileRevised(profile);
 
         return profile;
     }
@@ -81,27 +86,60 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public Profile getProfileById(long profileId) {
         return profileRepository.findById(profileId)
-                .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
+            .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
     }
 
     @Transactional(readOnly = true)
     public List<Profile> getValidProfilesByLocation(String locationName) {
         return profileRepository.findByProfileBasic_LocationAndUser_RoleAndUser_IsAdminIsNull(
-                locationName,
-                RoleStatus.USER.getStatus());
+            locationName,
+            RoleStatus.USER.getStatus());
     }
 
     @Transactional
     public Profile updateProfileBasic(long userId, ProfileBasicUpdateRequest dto) {
         User user = this.userService.getUserById(userId);
         Profile profile = getProfileById(user.getProfile().getId());
+        ProfileBasic newProfileBasic = dto.toProfileBasic();
 
-        ProfileBasic profileBasic = dto.toProfileBasic();
+        profileImageUpdate(profile, newProfileBasic.getImageUrl());
+        String oldImageUrl = null;
+        if (profile.getProfileBasic() != null) {
+            oldImageUrl = profile.getProfileBasic().getImageUrl();
+        }
 
-        profile.updateBasic(profileBasic);
-        updateProfileStatus(profile);
-
+        profile.updateBasic(newProfileBasic);
+        profile.updateProfileImageUrl(oldImageUrl);
         return profile;
+    }
+
+    private void profileImageUpdate(Profile profile, String newImageUrl) {
+        String oldImageUrl = null;
+        if (profile.getProfileBasic() != null) {
+            oldImageUrl = profile.getProfileBasic().getImageUrl();
+        }
+
+        if (newImageUrl != null && !newImageUrl.equals(oldImageUrl)) {
+            profileImageService.create(profile.getId(), newImageUrl);
+            eventPublisher.publishEvent(new ProfileImageUpdatedEvent(profile.getId(),
+                profile.getProfileBasic().getNickname()));
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileBasicResponse getProfileBasicNonPreview(Long userId) {
+        User user = userService.getUserById(userId);
+        Profile profile = user.getProfile();
+
+        ProfileImageDto profileImageDto = profileImageService.getProfileImageLatest(
+            profile.getId());
+        String latestProfileImageUrl = null;
+
+        if (profileImageDto != null && profileImageDto.status() == ProfileImageStatus.PENDING) {
+            latestProfileImageUrl = profileImageDto.imageUrl();
+        }
+
+        return ProfileBasicResponse.from(profile, latestProfileImageUrl);
     }
 
     @Transactional
@@ -128,7 +166,6 @@ public class ProfileService {
             }
         }
 
-        updateProfileStatus(profile);
         return profile;
     }
 
@@ -140,11 +177,11 @@ public class ProfileService {
         List<ProfileValueTalk> profileValueTalks = profile.getProfileValueTalks();
 
         HashMap<Long, ProfileValueTalk> profileValueTalkHashMap = profileValueTalks.stream()
-                .collect(Collectors.toMap(
-                        ProfileValueTalk::getId,
-                        profileValueTalk -> profileValueTalk,
-                        (existing, replacement) -> existing,
-                        HashMap::new));
+            .collect(Collectors.toMap(
+                ProfileValueTalk::getId,
+                profileValueTalk -> profileValueTalk,
+                (existing, replacement) -> existing,
+                HashMap::new));
 
         for (ProfileValueTalkPair profileValuePickPair : dto.profileValueTalkUpdateRequests()) {
             final Long profileValueTalkId = profileValuePickPair.profileValueTalkId();
@@ -156,15 +193,14 @@ public class ProfileService {
             }
         }
 
-        updateProfileStatus(profile);
         return profile;
     }
 
-    private void updateProfileStatus(Profile profile) {
+    private void updateProfileRevised(Profile profile) {
         ProfileStatus profileStatus = profile.getProfileStatus();
 
         if (ProfileStatus.INCOMPLETE.equals(profileStatus) ||
-                ProfileStatus.REJECTED.equals(profileStatus)) {
+            ProfileStatus.REJECTED.equals(profileStatus)) {
             profile.updateProfileStatus(ProfileStatus.REVISED);
         }
     }
