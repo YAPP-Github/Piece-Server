@@ -13,20 +13,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.domain.match.application.MatchService;
-import org.yapp.domain.match.application.blocker.AcquaintanceBasedBlocker;
-import org.yapp.domain.match.application.blocker.Blocker;
-import org.yapp.domain.profile.application.ProfileValuePickService;
+import org.yapp.domain.match.application.algorithm.block.MatchBlocker;
+import org.yapp.domain.match.application.algorithm.preference.PreferenceCalculatingPolicy;
 
 @Primary
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
+public class GreedyMatchAlgorithm implements MatchAlgorithm {
 
-  private final ProfileValuePickService profileValuePickService;
   private final MatchService matchService;
-  private final Blocker blocker;
-  private final AcquaintanceBasedBlocker acquaintanceBasedBlocker;
+  private final MatchBlocker matchBlocker;
+  private final PreferenceCalculatingPolicy preferenceCalculatingPolicy;
 
   @Override
   @Transactional
@@ -76,26 +74,12 @@ public class GreedyMatchingAlgorithm implements MatchingAlgorithm {
   }
 
   private boolean checkBlock(Profile blockingProfile, Profile blockedProfile) {
-
-    Long blockingUserId = blockingProfile.getUser().getId();
-    Long blockedUserId = blockedProfile.getUser().getId();
-
-    boolean blockedById =
-        blocker.blocked(blockingUserId, blockedUserId) ||
-            blocker.blocked(blockedUserId, blockingUserId);
-
-    boolean blockedByContact = acquaintanceBasedBlocker.blocked(blockingProfile, blockedProfile);
-
-    if (blockedById || blockedByContact) {
-      return true;
-    }
-
-    return false;
+    return matchBlocker.isBlocked(blockedProfile, blockingProfile) ||
+        matchBlocker.isBlocked(blockingProfile, blockedProfile);
   }
 
   private int calculateWeight(Long fromProfileId, Long toProfileId) {
-    int sumOfWeight = profileValuePickService.getWeightWithSql(fromProfileId, toProfileId);
-    return sumOfWeight;
+    return preferenceCalculatingPolicy.calculatePreference(fromProfileId, toProfileId);
   }
 
   @AllArgsConstructor

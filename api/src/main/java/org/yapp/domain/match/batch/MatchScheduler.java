@@ -4,7 +4,7 @@ package org.yapp.domain.match.batch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.yapp.domain.match.application.matcher.CoupleMatcher;
+import org.yapp.domain.match.application.match.DailyMatch;
 import org.yapp.infra.discord.DiscordMessageFactory;
 import org.yapp.infra.discord.DiscordNotificationService;
 
@@ -12,7 +12,7 @@ import org.yapp.infra.discord.DiscordNotificationService;
 @RequiredArgsConstructor
 public class MatchScheduler {
 
-  private final CoupleMatcher matcher;
+  private final DailyMatch matcher;
   private final DiscordNotificationService discordNotificationService;
 
   /**
