@@ -30,6 +30,7 @@ public class ReportService {
         Page<ReportUserResponse> reportUserResponsePage = reportedUserPage.map(dto ->
             new ReportUserResponse(
                 dto.getUser().getId(),
+                dto.getUser().getRole(),
                 dto.getUser().getProfile().getProfileBasic().getNickname(),
                 dto.getUser().getName(),
                 dto.getUser().getProfile().getProfileBasic().getBirthdate(),
