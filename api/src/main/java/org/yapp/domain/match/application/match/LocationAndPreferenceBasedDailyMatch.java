@@ -1,4 +1,4 @@
-package org.yapp.domain.match.application.matcher;
+package org.yapp.domain.match.application.match;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,15 +8,15 @@ import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.yapp.core.domain.profile.Profile;
-import org.yapp.domain.match.application.algorithm.MatchingAlgorithm;
+import org.yapp.domain.match.application.algorithm.MatchAlgorithm;
 import org.yapp.domain.profile.application.ProfileService;
 import org.yapp.domain.profile.enums.Location;
 
 @Component
 @RequiredArgsConstructor
-public class PreferenceBasedMatcher implements CoupleMatcher {
+public class LocationAndPreferenceBasedDailyMatch implements DailyMatch {
 
-  private final MatchingAlgorithm matchingAlgorithm;
+  private final MatchAlgorithm matchAlgorithm;
   private final ProfileService profileService;
 
   @Override
@@ -33,7 +33,7 @@ public class PreferenceBasedMatcher implements CoupleMatcher {
           .map(location -> CompletableFuture.supplyAsync(() -> {
             List<Profile> profiles = profileService.getValidProfilesByLocation(
                 location);
-            return matchingAlgorithm.doMatch(profiles);
+            return matchAlgorithm.doMatch(profiles);
           }, executor)).toList();
 
       unmatchedProfiles = futures.stream()
@@ -42,7 +42,7 @@ public class PreferenceBasedMatcher implements CoupleMatcher {
           .toList();
 
       // 매칭 안되고 남은 애들 매칭하기
-      matchingAlgorithm.doMatch(unmatchedProfiles);
+      matchAlgorithm.doMatch(unmatchedProfiles);
     } finally {
       executor.shutdown();
     }

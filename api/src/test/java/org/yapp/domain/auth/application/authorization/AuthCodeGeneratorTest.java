@@ -1,9 +1,9 @@
 package org.yapp.domain.auth.application.authorization;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthCodeGeneratorTest {
 
@@ -14,7 +14,7 @@ class AuthCodeGeneratorTest {
     AuthCodeGenerator authCodeGenerator = new AuthCodeGenerator();
 
     //when
-    int authCode = authCodeGenerator.generate();
+    int authCode = Integer.parseInt(authCodeGenerator.generate());
 
     //then
     assertThat(authCode).isLessThanOrEqualTo(999999).isGreaterThanOrEqualTo(1);

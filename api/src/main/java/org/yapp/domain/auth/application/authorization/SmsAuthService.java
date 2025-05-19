@@ -1,6 +1,7 @@
 package org.yapp.domain.auth.application.authorization;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.SmsAuthErrorCode;
@@ -17,10 +18,16 @@ public class SmsAuthService {
 
     private static final long AUTH_CODE_EXPIRE_TIME = 300000;
     private static final String AUTH_CODE_KEY_PREFIX = "authcode:";
-    private static final String AUTH_CODE_FORMAT = "[PIECE] 인증 번호는 %06d 입니다.";
+    private static final String AUTH_CODE_FORMAT = "[PIECE] 인증 번호는 %s 입니다.";
     private final AuthCodeGenerator authCodeGenerator;
     private final SmsSenderService smsSenderService;
     private final RedisService redisService;
+
+    @Value("${auth.mock-phone-number}")
+    private String mockPhoneNumber;
+
+    @Value("${auth.mock-sms-auth-code}")
+    private String mockSmsAuthCode;
 
     /**
      * 인증번호 전송
@@ -28,10 +35,13 @@ public class SmsAuthService {
      * @param phoneNumber 인증 번호를 받을 핸드폰 번호
      */
     public SmsAuthResponse sendAuthCodeTo(String phoneNumber) {
+        String authCode = authCodeGenerator.generate();
 
-        int authCode = authCodeGenerator.generate();
-        redisService.setKeyWithExpiration(AUTH_CODE_KEY_PREFIX + phoneNumber,
-            String.valueOf(authCode),
+        if (mockPhoneNumber.equals(phoneNumber)) {
+            authCode = mockSmsAuthCode;
+        }
+
+        redisService.setKeyWithExpiration(AUTH_CODE_KEY_PREFIX + phoneNumber, authCode,
             AUTH_CODE_EXPIRE_TIME);
         String authCodeMessage = String.format(AUTH_CODE_FORMAT, authCode);
         smsSenderService.sendSMS(phoneNumber, authCodeMessage);

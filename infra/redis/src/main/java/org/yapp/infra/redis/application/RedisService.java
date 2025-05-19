@@ -106,4 +106,12 @@ public class RedisService {
     ListOperations<String, String> listOps = redisTemplate.opsForList();
     return listOps.leftPop(key);
   }
+
+  public void addToSet(String key, String value) {
+    redisTemplate.opsForSet().add(key, value);
+  }
+
+  public boolean existsInSet(String key, String value) {
+    return Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(key, value));
+  }
 }

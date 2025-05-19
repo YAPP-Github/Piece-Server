@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.profile.event.ProfileCreatedEvent;
+import org.yapp.core.domain.profile.event.ProfileRenewedEvent;
+import org.yapp.core.domain.profile.event.ProfileValueTalkUpdatedEvent;
 import org.yapp.core.domain.user.User;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.profile.application.ProfileImageService;
@@ -42,8 +46,6 @@ import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.profile.presentation.response.ProfileValueTalkResponses;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.format.CommonResponse;
-import org.yapp.infra.discord.DiscordMessageFactory;
-import org.yapp.infra.discord.DiscordNotificationService;
 
 @Slf4j
 @RestController
@@ -57,7 +59,7 @@ public class ProfileController {
     private final ProfileValuePickService profileValuePickService;
     private final ProfileValueTalkService profileValueTalkService;
     private final ProfileValueTalkSummaryService profileValueTalkSummaryService;
-    private final DiscordNotificationService discordNotificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @PostMapping("")
     @Operation(summary = "프로필 생성", description = "현재 로그인된 사용자의 프로필을 생성합니다.", tags = {"프로필"})
@@ -70,9 +72,9 @@ public class ProfileController {
         OauthLoginResponse oauthLoginResponse = userService.completeProfileInitialize(userId,
             profile);
 
-        discordNotificationService.sendNotification(
-            DiscordMessageFactory.createNewProfileMessage(profile.getId(),
-                profile.getProfileBasic().getNickname()));
+        eventPublisher.publishEvent(new ProfileCreatedEvent(
+            profile.getId(),
+            profile.getProfileBasic().getNickname()));
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.createSuccess(oauthLoginResponse));
@@ -87,9 +89,9 @@ public class ProfileController {
         Profile profile = profileService.update(userId, request);
         profileValueTalkSummaryService.summaryProfileValueTalksSync(profile);
 
-        discordNotificationService.sendNotification(
-            DiscordMessageFactory.createRenewProfileMessage(profile.getId(),
-                profile.getProfileBasic().getNickname()));
+        eventPublisher.publishEvent(new ProfileRenewedEvent(
+            profile.getId(),
+            profile.getProfileBasic().getNickname()));
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccessWithNoContent("프로필 업데이트가 완료되었습니다."));
@@ -101,9 +103,12 @@ public class ProfileController {
     @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
     public ResponseEntity<CommonResponse<ProfileBasicResponse>> getProfileBasic(
         @AuthenticationPrincipal Long userId) {
-        User user = userService.getUserById(userId);
+
+        ProfileBasicResponse response = profileService.getProfileBasicNonPreview(
+            userId);
+
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(ProfileBasicResponse.from(user.getProfile())));
+            .body(CommonResponse.createSuccess(response));
     }
 
     @GetMapping("/basic/preview")
@@ -112,6 +117,7 @@ public class ProfileController {
     @ApiResponse(responseCode = "200", description = "프로필 미리보기가 성공했습니다.")
     public ResponseEntity<CommonResponse<ProfileBasicPreviewResponse>> getProfileBasicPreview(
         @AuthenticationPrincipal Long userId) {
+
         User user = userService.getUserById(userId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -128,7 +134,7 @@ public class ProfileController {
         @RequestBody @Valid ProfileBasicUpdateRequest request) {
         Profile profile = profileService.updateProfileBasic(userId, request);
         return ResponseEntity.status(HttpStatus.OK)
-            .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile)));
+            .body(CommonResponse.createSuccess(ProfileBasicResponse.from(profile, null)));
     }
 
     @GetMapping("/valuePicks")
@@ -137,8 +143,9 @@ public class ProfileController {
     @ApiResponse(responseCode = "200", description = "프로필이 성공적으로 조회되었습니다.")
     public ResponseEntity<CommonResponse<ProfileValuePickResponses>> getProfilePick(
         @AuthenticationPrincipal Long userId) {
-        ProfileValuePickResponses profileValuePickResponses = profileValuePickService.getProfileValuePickResponses(
-            userId);
+        ProfileValuePickResponses profileValuePickResponses = profileValuePickService
+            .getProfileValuePickResponses(
+                userId);
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileValuePickResponses));
     }
@@ -152,8 +159,9 @@ public class ProfileController {
         @RequestBody ProfileValuePickUpdateRequest request) {
 
         profileService.updateProfileValuePicks(userId, request);
-        ProfileValuePickResponses profileValuePickResponses = profileValuePickService.getProfileValuePickResponses(
-            userId);
+        ProfileValuePickResponses profileValuePickResponses = profileValuePickService
+            .getProfileValuePickResponses(
+                userId);
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileValuePickResponses));
@@ -166,8 +174,9 @@ public class ProfileController {
     public ResponseEntity<CommonResponse<ProfileValueTalkResponses>> getProfileTalks(
         @AuthenticationPrincipal Long userId) {
 
-        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
-            userId);
+        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService
+            .getProfileValueTalkResponses(
+                userId);
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileValueTalkResponses));
@@ -183,10 +192,14 @@ public class ProfileController {
 
         profileValueTalkSummaryService.summaryProfileValueTalksAsync(userId,
             ProfileValueTalkAnswerDto.from(request));
-        profileService.updateProfileValueTalks(userId, request);
+        Profile profile = profileService.updateProfileValueTalks(userId, request);
+        eventPublisher.publishEvent(new ProfileValueTalkUpdatedEvent(
+            profile.getId(),
+            profile.getProfileBasic().getNickname()));
 
-        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService.getProfileValueTalkResponses(
-            userId);
+        ProfileValueTalkResponses profileValueTalkResponses = profileValueTalkService
+            .getProfileValueTalkResponses(
+                userId);
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileValueTalkResponses));
@@ -218,8 +231,8 @@ public class ProfileController {
     @Operation(summary = "프로필 이미지 등록", description = "업로드한 이미지를 버킷에 등록합니다.", tags = {"프로필 이미지"})
     @ApiResponse(responseCode = "200", description = "이미지가 버킷에 저장되었습니다.")
     public ResponseEntity<CommonResponse<String>> uploadProfileImage(
-        @Parameter(description = "업로드할 프로필 이미지 파일 form-data 바이너리 파일 (JPEG, PNG, WEBP 지원)", required = true)
-        @RequestParam("file") MultipartFile file) throws IOException {
+        @Parameter(description = "업로드할 프로필 이미지 파일 form-data 바이너리 파일 (JPEG, PNG, WEBP 지원)", required = true) @RequestParam("file") MultipartFile file)
+        throws IOException {
         String profileImageUrl = profileImageService.uploadProfileImage(file);
         return ResponseEntity.status(HttpStatus.OK)
             .body(CommonResponse.createSuccess(profileImageUrl));

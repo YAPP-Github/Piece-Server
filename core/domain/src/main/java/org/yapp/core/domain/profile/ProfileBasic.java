@@ -1,16 +1,18 @@
 package org.yapp.core.domain.profile;
 
+import java.time.LocalDate;
+import java.util.Map;
+
+import org.hibernate.annotations.Type;
+
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.time.LocalDate;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 
 @Embeddable
 @Getter
@@ -51,5 +53,9 @@ public class ProfileBasic {
     private Map<ContactType, String> contacts;
 
     @Column(name = "image_url")
-    private String imageUrl;
+    private String imageUrl; // 프로필에서 보여줄 이미지. (상대방에게 및 프로필 미리보기에서 보여줄 이미지)
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
