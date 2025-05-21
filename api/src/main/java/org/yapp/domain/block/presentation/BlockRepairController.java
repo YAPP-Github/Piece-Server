@@ -29,4 +29,14 @@ public class BlockRepairController {
     return ResponseEntity.status(HttpStatus.OK)
         .body(CommonResponse.createSuccessWithNoContent("블룸 필터 복구 성공"));
   }
+
+  @PostMapping("/all")
+  @Operation(summary = "모두의 블룸 필터 복구", description = "REDIS 장애나 마이그레이션 상황에 쓰는 필터 복구 API 입니다.", tags = {
+      "차단"})
+  @ApiResponse(responseCode = "200", description = "복구 성공")
+  public ResponseEntity<CommonResponse<Void>> repairAllBlock(@AuthenticationPrincipal Long userId) {
+    blockRepairService.repairBloomBlockForAllUser(userId);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(CommonResponse.createSuccessWithNoContent("블룸 필터 복구 성공"));
+  }
 }
