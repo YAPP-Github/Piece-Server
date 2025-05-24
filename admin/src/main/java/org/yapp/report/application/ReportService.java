@@ -62,6 +62,11 @@ public class ReportService {
         for (Report report : reportPage.getContent()) {
             User reporter = report.getReporter();
             String reporterNickname = null;
+            Long reporterUserId = null;
+
+            if (reporter != null) {
+                reporterUserId = report.getId();
+            }
             if (reporter != null && reporter.getProfile() != null) {
                 reporterNickname = reporter.getProfile().getProfileBasic().getNickname();
             }
@@ -69,6 +74,7 @@ public class ReportService {
             content.add(new ReportDetailResponse(
                 order++,
                 report.getReason(),
+                reporterUserId,
                 reporterNickname,
                 report.getCreatedAt().toLocalDate()
             ));
