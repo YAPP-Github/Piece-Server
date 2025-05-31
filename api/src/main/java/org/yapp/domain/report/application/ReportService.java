@@ -1,8 +1,10 @@
 package org.yapp.domain.report.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.yapp.core.domain.report.Report;
+import org.yapp.core.domain.report.event.ReportEvent;
 import org.yapp.core.domain.user.User;
 import org.yapp.domain.report.dao.ReportRepository;
 import org.yapp.domain.report.dto.request.UserReportRequest;
@@ -14,6 +16,7 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 유저 신고 기능
@@ -27,6 +30,11 @@ public class ReportService {
         User reportedUser = userService.getUserById(userReportRequest.getReportedUserId());
         Report report = Report.builder().reporter(reporter).reportedUser(reportedUser)
             .reason(userReportRequest.getReason()).build();
-        return reportRepository.save(report);
+
+        reportRepository.save(report);
+
+        eventPublisher.publishEvent(new ReportEvent(reportedUser.getId(),
+            reportedUser.getProfile().getProfileBasic().getNickname(), report.getReason()));
+        return report;
     }
 }
