@@ -18,40 +18,40 @@ import org.yapp.infra.redis.application.RedisService;
 @ExtendWith(MockitoExtension.class)
 class SmsAuthServiceTest {
 
-    private SmsAuthService smsAuthService;
+  private SmsAuthService smsAuthService;
 
-    @Mock
-    private AuthCodeGenerator authCodeGenerator;
+  @Mock
+  private AuthCodeGenerator authCodeGenerator;
 
-    @Mock
-    private SmsSenderService smsSenderService;
+  @Mock
+  private SmsSenderService smsSenderService;
 
-    @Mock
-    private RedisService redisService;
+  @Mock
+  private RedisService redisService;
 
-    @BeforeEach
-    void setUp() {
-        smsAuthService = new SmsAuthService(authCodeGenerator, smsSenderService, redisService);
-    }
+  @BeforeEach
+  void setUp() {
+    smsAuthService = new SmsAuthService(authCodeGenerator, smsSenderService, redisService);
+  }
 
-    @Test
-    @DisplayName("인증코드를 SMS 서비스로 전송한다.")
-    void shouldSendAuthCodeToPhoneNumber() {
-        // Given
-        String phoneNumber = "01012345678";
-        int mockAuthCode = 123456;
-        when(authCodeGenerator.generate()).thenReturn(mockAuthCode);
+  @Test
+  @DisplayName("인증코드를 SMS 서비스로 전송한다.")
+  void shouldSendAuthCodeToPhoneNumber() {
+    // Given
+    String phoneNumber = "01012345678";
+    String mockAuthCode = "123456";
+    when(authCodeGenerator.generate()).thenReturn(mockAuthCode);
 
-        // When
-        smsAuthService.sendAuthCodeTo(phoneNumber);
+    // When
+    smsAuthService.sendAuthCodeTo(phoneNumber);
 
-        // Then
-        ArgumentCaptor<String> phoneCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+    // Then
+    ArgumentCaptor<String> phoneCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
 
-        verify(smsSenderService, times(1)).sendSMS(phoneCaptor.capture(), messageCaptor.capture());
+    verify(smsSenderService, times(1)).sendSMS(phoneCaptor.capture(), messageCaptor.capture());
 
-        assertThat(phoneCaptor.getValue()).isEqualTo(phoneNumber);
-        assertThat(messageCaptor.getValue()).isEqualTo("[PIECE] 인증 번호는 123456 입니다.");
-    }
+    assertThat(phoneCaptor.getValue()).isEqualTo(phoneNumber);
+    assertThat(messageCaptor.getValue()).isEqualTo("[PIECE] 인증 번호는 123456 입니다.");
+  }
 }

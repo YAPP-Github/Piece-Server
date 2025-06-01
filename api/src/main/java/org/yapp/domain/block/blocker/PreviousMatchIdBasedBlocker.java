@@ -1,4 +1,4 @@
-package org.yapp.domain.match.application.blocker;
+package org.yapp.domain.block.blocker;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,7 @@ import org.yapp.domain.match.application.MatchService;
 
 @Component
 @RequiredArgsConstructor
-public class PreviousMatchBlocker implements Blocker {
+public class PreviousMatchIdBasedBlocker implements IdBasedBlocker {
 
   private final MatchService matchService;
 
