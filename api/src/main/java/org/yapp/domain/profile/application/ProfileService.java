@@ -208,4 +208,8 @@ public class ProfileService {
     public boolean isNicknameAvailable(String nickname) {
         return !profileRepository.existsByProfileBasic_Nickname(nickname);
     }
+
+    public List<Profile> findProfileListByIdList(List<Long> userIdList) {
+        return profileRepository.findAllByUser_IdIn(userIdList);
+    }
 }

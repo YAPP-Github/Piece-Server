@@ -12,4 +12,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     List<Profile> findByProfileBasic_LocationAndUser_RoleAndUser_IsAdminIsNull(
         String profileBasicLocation, String userRole);
+
+    List<Profile> findAllByUser_IdIn(List<Long> ids);
 }
