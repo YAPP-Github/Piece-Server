@@ -96,6 +96,12 @@ public class ProfileService {
             RoleStatus.USER.getStatus());
     }
 
+    @Transactional(readOnly = true)
+    public List<Profile> getValidProfiles() {
+        return profileRepository.findAllByUser_RoleAndUser_IsAdminIsNull(
+            RoleStatus.USER.getStatus());
+    }
+
     @Transactional
     public Profile updateProfileBasic(long userId, ProfileBasicUpdateRequest dto) {
         User user = this.userService.getUserById(userId);
