@@ -19,7 +19,7 @@ public interface ProfileValuePickRepository extends JpaRepository<ProfileValuePi
       + "FROM ProfileValuePick p1 "
       + "JOIN ProfileValuePick p2 "
       + "ON p1.selectedAnswer = p2.selectedAnswer "
-      + "WHERE p1.profile.id = :user1 "
-      + "AND p2.profile.id = :user2")
-  int countWeight(Long user1, Long user2);
+      + "WHERE p1.profile.id = :user1ProfileId "
+      + "AND p2.profile.id = :user2ProfileId")
+  int countWeight(Long user1ProfileId, Long user2ProfileId);
 }

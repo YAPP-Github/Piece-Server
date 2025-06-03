@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.yapp.core.domain.report.Report;
+import org.yapp.core.domain.user.User;
 import org.yapp.format.PageResponse;
 import org.yapp.report.application.dto.ReportedUserWithReasonDto;
 import org.yapp.report.dao.ReportRepository;
@@ -29,6 +30,7 @@ public class ReportService {
         Page<ReportUserResponse> reportUserResponsePage = reportedUserPage.map(dto ->
             new ReportUserResponse(
                 dto.getUser().getId(),
+                dto.getUser().getRole(),
                 dto.getUser().getProfile().getProfileBasic().getNickname(),
                 dto.getUser().getName(),
                 dto.getUser().getProfile().getProfileBasic().getBirthdate(),
@@ -58,9 +60,22 @@ public class ReportService {
         List<ReportDetailResponse> content = new ArrayList<>();
 
         for (Report report : reportPage.getContent()) {
+            User reporter = report.getReporter();
+            String reporterNickname = null;
+            Long reporterUserId = null;
+
+            if (reporter != null) {
+                reporterUserId = report.getId();
+            }
+            if (reporter != null && reporter.getProfile() != null) {
+                reporterNickname = reporter.getProfile().getProfileBasic().getNickname();
+            }
+
             content.add(new ReportDetailResponse(
                 order++,
                 report.getReason(),
+                reporterUserId,
+                reporterNickname,
                 report.getCreatedAt().toLocalDate()
             ));
         }

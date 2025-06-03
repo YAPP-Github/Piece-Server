@@ -8,7 +8,7 @@ import org.yapp.core.domain.user.User;
 
 
 @Builder
-public record UserProfileValidationResponse(Long userId, String description,
+public record UserProfileValidationResponse(Long userId, Long profileId, String description,
                                             String nickname,
                                             String name, LocalDate birthdate, String phoneNumber,
                                             LocalDate joinDate,
@@ -25,6 +25,7 @@ public record UserProfileValidationResponse(Long userId, String description,
 
         return UserProfileValidationResponse.builder()
             .userId(user.getId())
+            .profileId(profile != null ? profile.getId() : null)
             .description(profile != null ? profile.getProfileBasic().getDescription() : null)
             .nickname(profile != null ? profile.getProfileBasic().getNickname() : null)
             .name(user.getName())

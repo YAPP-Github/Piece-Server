@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
+import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.profile.ProfileImage;
 import org.yapp.core.domain.profile.ProfileImageStatus;
 import org.yapp.core.domain.profile.ProfileValueTalk;
@@ -109,8 +110,11 @@ public class UserService {
         List<ProfileValueTalk> activeProfileValueTalks = profileValueTalkRepository.findActiveProfileValueTalksByProfileId(
             profile.getId());
 
-        return UserProfileDetailResponses.from(profile.getProfileBasic().getNickname(),
-            profile.getProfileBasic().getImageUrl(),
+        ProfileBasic profileBasic = profile.getProfileBasic();
+
+        return UserProfileDetailResponses.from(profileBasic.getNickname(),
+            profileBasic.getDescription(),
+            profileBasic.getImageUrl(),
             activeProfileValueTalks);
     }
 

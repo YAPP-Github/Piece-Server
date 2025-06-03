@@ -1,5 +1,6 @@
 package org.yapp.domain.user.application;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -160,5 +161,9 @@ public class UserService {
     } else {
       throw new ApplicationException(UserErrorCode.INVALID_OAUTH_PROVIDER);
     }
+  }
+
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
   }
 }
