@@ -6,7 +6,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.notification.NotificationHistory;
 import org.yapp.core.domain.notification.enums.NotificationType;
@@ -22,7 +21,7 @@ public class NotificationService {
     private final NotificationProvider notificationProvider;
     private final NotificationHistoryRepository notificationHistoryRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional()
     public void sendNotification(String clientName, String token, Long userId,
         NotificationType notificationType, String title, String body) {
         Map<String, String> data = new HashMap<>();
