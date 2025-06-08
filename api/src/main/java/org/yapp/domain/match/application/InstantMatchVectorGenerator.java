@@ -24,7 +24,7 @@ public class InstantMatchVectorGenerator {
     }
 
     public List<Double> generate(Profile profile) {
-        List<ProfileValuePick> valuePicks = profileValuePickService.getAllProfileValuePicksByProfileId(
+        List<ProfileValuePick> valuePicks = profileValuePickService.getAllActiveProfileValuePicksOrderByValuePickId(
             profile.getId());
 
         List<Double> vector = new ArrayList<>();

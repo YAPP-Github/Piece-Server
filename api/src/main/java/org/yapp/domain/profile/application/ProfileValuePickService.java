@@ -53,7 +53,7 @@ public class ProfileValuePickService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProfileValuePick> getAllProfileValuePicksByProfileId(Long profileId) {
+    public List<ProfileValuePick> getAllActiveProfileValuePicksOrderByValuePickId(Long profileId) {
         return profileValuePickRepository.findActiveProfileValuePickByProfileIdOrderByValuePickId(
             profileId);
     }
