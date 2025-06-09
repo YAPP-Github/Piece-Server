@@ -8,7 +8,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -42,11 +46,21 @@ public class QdrantService {
         restTemplate.put(url, entity);
     }
 
+    @Retryable(
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 100, maxDelay = 300),
+        retryFor = {ResourceAccessException.class, HttpServerErrorException.class}
+    )
     public void deleteCollection(String collectionName) {
         String url = baseUrl + collectionName;
         restTemplate.delete(url);
     }
 
+    @Retryable(
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 100, maxDelay = 300),
+        retryFor = {ResourceAccessException.class, HttpServerErrorException.class}
+    )
     public void upsertVector(String collectionName, Long id, List<Double> vector) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -64,6 +78,11 @@ public class QdrantService {
         restTemplate.put(url, entity);
     }
 
+    @Retryable(
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 100, maxDelay = 300),
+        retryFor = {ResourceAccessException.class, HttpServerErrorException.class}
+    )
     public List<Long> searchVectorIdsExcluding(String collectionName, List<Double> queryVector,
         int topK, List<Long> excludeIds) {
         HttpHeaders headers = new HttpHeaders();
@@ -95,6 +114,11 @@ public class QdrantService {
             .toList();
     }
 
+    @Retryable(
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 100, maxDelay = 300),
+        retryFor = {ResourceAccessException.class, HttpServerErrorException.class}
+    )
     public List<Double> getVectorById(String collectionName, Long id) {
         String url = baseUrl + collectionName + "/points/" + id;
 
