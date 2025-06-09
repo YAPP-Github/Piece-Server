@@ -12,6 +12,7 @@ import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
 import org.yapp.core.exception.error.code.MatchErrorCode;
+import org.yapp.core.exception.error.code.QdrantErrorCode;
 import org.yapp.domain.match.application.algorithm.block.MatchBlocker;
 import org.yapp.domain.match.dao.FreeInstantMatchHistoryRepository;
 import org.yapp.domain.match.dao.MatchInfoRepository;
@@ -197,7 +198,12 @@ public class InstantMatchService {
         }
 
         // Qdrant를 통해 유사 유저 탐색 및 Redis 큐에 저장
-        List<Double> userVector = qdrantService.getVectorById(USER_VECTOR_COLLECTION, userId);
+        List<Double> userVector;
+        try {
+            userVector = qdrantService.getVectorById(USER_VECTOR_COLLECTION, userId);
+        } catch (Exception e) {
+            throw new ApplicationException(QdrantErrorCode.QDRANT_ERROR);
+        }
 
         List<Long> excludeList = new ArrayList<>(List.of(userId));
         int matchedCount = fillMatchQueue(redisKey, user, userVector, excludeList);
@@ -238,8 +244,14 @@ public class InstantMatchService {
         int totalMatched = 0;
 
         while (totalMatched < SIMILAR_USER_SIZE_THRESHOLD) {
-            List<Long> similarUsers = qdrantService.searchVectorIdsExcluding(
-                USER_VECTOR_COLLECTION, userVector, TOP_K_SIZE, excludeList);
+            List<Long> similarUsers;
+
+            try {
+                similarUsers = qdrantService.searchVectorIdsExcluding(
+                    USER_VECTOR_COLLECTION, userVector, TOP_K_SIZE, excludeList);
+            } catch (Exception e) {
+                throw new ApplicationException(QdrantErrorCode.QDRANT_ERROR);
+            }
 
             if (similarUsers.isEmpty()) {
                 break;
@@ -272,7 +284,11 @@ public class InstantMatchService {
         for (Profile profile : validProfiles) {
             User user = profile.getUser();
             List<Double> vector = instantMatchVectorGenerator.generate(profile);
-            qdrantService.upsertVector(USER_VECTOR_COLLECTION, user.getId(), vector);
+            try {
+                qdrantService.upsertVector(USER_VECTOR_COLLECTION, user.getId(), vector);
+            } catch (Exception e) {
+                throw new ApplicationException(QdrantErrorCode.QDRANT_ERROR);
+            }
         }
     }
 
@@ -281,7 +297,11 @@ public class InstantMatchService {
      */
     @PreAuthorize("hasAuthority('ADMIN')")
     public void createVectorCollection(int vectorSize) {
-        qdrantService.createCollection(USER_VECTOR_COLLECTION, vectorSize, "Manhattan");
+        try {
+            qdrantService.createCollection(USER_VECTOR_COLLECTION, vectorSize, "Manhattan");
+        } catch (Exception e) {
+            throw new ApplicationException(QdrantErrorCode.QDRANT_ERROR);
+        }
     }
 
     /**
@@ -289,6 +309,10 @@ public class InstantMatchService {
      */
     @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteVectorCollection() {
-        qdrantService.deleteCollection(USER_VECTOR_COLLECTION);
+        try {
+            qdrantService.deleteCollection(USER_VECTOR_COLLECTION);
+        } catch (Exception e) {
+            throw new ApplicationException(QdrantErrorCode.QDRANT_ERROR);
+        }
     }
 }
