@@ -25,9 +25,20 @@ services:
     networks:
       - piece-nw
 
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: piece-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    networks:
+      - piece-nw
+
 volumes:
   mysql-data:
   redis-data:
+  qdrant-data:
 
 networks:
   piece-nw:

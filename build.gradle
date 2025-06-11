@@ -75,6 +75,9 @@ subprojects {
         //S3
         implementation 'com.amazonaws:aws-java-sdk-s3:1.12.331'
 
+        //retry
+        implementation 'org.springframework.retry:spring-retry'
+
         compileOnly 'org.projectlombok:lombok'
         runtimeOnly 'com.mysql:mysql-connector-j'
         annotationProcessor 'org.projectlombok:lombok'
