@@ -2,7 +2,6 @@ package org.yapp.notification.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.notification.enums.NotificationType;
 import org.yapp.core.notification.application.NotificationService;
 import org.yapp.core.notification.dao.FcmTokenRepository;
@@ -14,7 +13,6 @@ public class AdminNotificationService {
     private final NotificationService notificationService;
     private final FcmTokenRepository fcmTokenRepository;
 
-    @Transactional
     public void sendProfileApprovedNotification(Long userId) {
         fcmTokenRepository.findByUserId(userId).ifPresent(fcmToken -> {
             notificationService.sendNotification("fcm", fcmToken.getToken(), userId,
@@ -22,7 +20,6 @@ public class AdminNotificationService {
         });
     }
 
-    @Transactional
     public void sendProfileRejectedNotification(Long userId) {
         fcmTokenRepository.findByUserId(userId).ifPresent(fcmToken -> {
             notificationService.sendNotification("fcm", fcmToken.getToken(), userId,
@@ -30,7 +27,6 @@ public class AdminNotificationService {
         });
     }
 
-    @Transactional
     public void sendProfileImageApprovedNotification(Long userId) {
         fcmTokenRepository.findByUserId(userId).ifPresent(fcmToken -> {
             notificationService.sendNotification("fcm", fcmToken.getToken(), userId,
@@ -39,7 +35,6 @@ public class AdminNotificationService {
         });
     }
 
-    @Transactional
     public void sendProfileImageRejectedNotification(Long userId) {
         fcmTokenRepository.findByUserId(userId).ifPresent(fcmToken -> {
             notificationService.sendNotification("fcm", fcmToken.getToken(), userId,

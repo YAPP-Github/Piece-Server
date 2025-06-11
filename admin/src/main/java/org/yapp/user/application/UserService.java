@@ -42,6 +42,31 @@ public class UserService {
             .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
     }
 
+    @Transactional(readOnly = true)
+    public UserProfileValidationResponse getUserProfileByUniqueKey(Long userId, Long profileId,
+        String nickname) {
+        User foundUser = null;
+
+        if (userId != null) {
+            foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+        }
+        if (profileId != null) {
+            foundUser = userRepository.findByProfileId(profileId)
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+        }
+        if (nickname != null) {
+            foundUser = userRepository.findByProfileNickname(nickname)
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+        }
+
+        if (foundUser == null) {
+            throw new ApplicationException(UserErrorCode.NOTFOUND_USER);
+        }
+
+        return convertToValidationResponse(foundUser);
+    }
+
     public Optional<User> getUserByIdIfExists(Long userId) {
         return userRepository.findById(userId);
     }
@@ -51,6 +76,7 @@ public class UserService {
             .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<UserProfileValidationResponse> getUserProfilesWithPagination(int page,
         int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -58,35 +84,7 @@ public class UserService {
         Page<User> userPage = userRepository.findAll(pageable);
 
         List<UserProfileValidationResponse> content = userPage.getContent().stream()
-            .map(user -> {
-                Optional<UserRejectHistory> optionalProfileRejectHistory =
-                    userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
-                        user.getId());
-
-                boolean reasonImage = optionalProfileRejectHistory.map(
-                    UserRejectHistory::isReasonImage).orElse(false);
-                boolean reasonDescription = optionalProfileRejectHistory.map(
-                    UserRejectHistory::isReasonDescription).orElse(false);
-
-                Profile profile = user.getProfile();
-                boolean isApproved = profile != null
-                    && profile.getProfileStatus() != null
-                    && profile.getProfileStatus().name().equals("APPROVED");
-
-                ProfileImage profileImage = null;
-                ProfileImageStatus profileImageStatus = null;
-                if (profile != null) {
-                    profileImage = adminProfileImageService.getLatestProfileImageByProfileId(
-                        profile.getId());
-                }
-                if (profileImage != null) {
-                    profileImageStatus = profileImage.getStatus();
-                }
-
-                return UserProfileValidationResponse.from(user,
-                    profileImageStatus, !isApproved && reasonImage,
-                    !isApproved && reasonDescription);
-            })
+            .map(this::convertToValidationResponse)
             .toList();
 
         return new PageResponse<>(
@@ -134,5 +132,35 @@ public class UserService {
 
         return UserProfileImageDetailResponse.from(profileImage,
             profile.getProfileBasic().getImageUrl());
+    }
+
+    private UserProfileValidationResponse convertToValidationResponse(User user) {
+        Optional<UserRejectHistory> optionalProfileRejectHistory =
+            userRejectHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(
+                user.getId());
+
+        boolean reasonImage = optionalProfileRejectHistory.map(
+            UserRejectHistory::isReasonImage).orElse(false);
+        boolean reasonDescription = optionalProfileRejectHistory.map(
+            UserRejectHistory::isReasonDescription).orElse(false);
+
+        Profile profile = user.getProfile();
+        boolean isApproved = profile != null
+            && profile.getProfileStatus() != null
+            && profile.getProfileStatus().name().equals("APPROVED");
+
+        ProfileImage profileImage = null;
+        ProfileImageStatus profileImageStatus = null;
+        if (profile != null) {
+            profileImage = adminProfileImageService.getLatestProfileImageByProfileId(
+                profile.getId());
+        }
+        if (profileImage != null) {
+            profileImageStatus = profileImage.getStatus();
+        }
+
+        return UserProfileValidationResponse.from(user,
+            profileImageStatus, !isApproved && reasonImage,
+            !isApproved && reasonDescription);
     }
 }

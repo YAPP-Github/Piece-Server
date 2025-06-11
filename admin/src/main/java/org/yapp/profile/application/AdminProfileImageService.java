@@ -53,11 +53,7 @@ public class AdminProfileImageService {
         User user = getUserByProfileImageId(profileImageId);
 
         profileImage.accept();
-        try {
-            adminNotificationService.sendProfileImageApprovedNotification(user.getId());
-        } catch (ApplicationException e) {
-            log.warn("프로필 이미지 변경 FCM 알림 전송이 실패했습니다.", e);
-        }
+        adminNotificationService.sendProfileImageApprovedNotification(user.getId());
     }
 
     @Transactional
@@ -66,11 +62,7 @@ public class AdminProfileImageService {
         User user = getUserByProfileImageId(profileImageId);
 
         profileImage.reject();
-        try {
-            adminNotificationService.sendProfileImageRejectedNotification(user.getId());
-        } catch (ApplicationException e) {
-            log.warn("프로필 이미지 변경 FCM 알림 전송이 실패했습니다.", e);
-        }
+        adminNotificationService.sendProfileImageRejectedNotification(user.getId());
     }
 
     @Transactional(readOnly = true)
