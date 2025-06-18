@@ -32,6 +32,8 @@ import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 @RequiredArgsConstructor
 public class UserService {
 
+    private static int BEARER_PREFIX_LENGTH = 7;
+
     private final UserRepository userRepository;
     private final UserRejectHistoryRepository userRejectHistoryRepository;
     private final UserDeleteReasonRepository userDeleteReasonRepository;
@@ -129,7 +131,7 @@ public class UserService {
         String profileStatus =
             profile != null ? profile.getProfileStatus().toString() : null;
 
-        String accessToken = authorizationHeader.substring(7);
+        String accessToken = extractAccessToken(authorizationHeader);
         String accessTokenRole = jwtUtil.getRole(accessToken);
         String userRole = user.getRole();
 
@@ -141,7 +143,10 @@ public class UserService {
         }
 
         return new UserBasicInfoResponse(userId, userRole, profileStatus, false, null, null);
+    }
 
+    private static String extractAccessToken(String authorizationHeader) {
+        return authorizationHeader.substring(BEARER_PREFIX_LENGTH);
     }
 
     @Transactional
