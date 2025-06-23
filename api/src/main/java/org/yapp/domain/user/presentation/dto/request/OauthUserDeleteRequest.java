@@ -14,8 +14,8 @@ public class OauthUserDeleteRequest {
 
     @NotNull(message = "providerName은 null일 수 없습니다.")
     @Pattern(
-        regexp = "^(apple|kakako|google)$",
-        message = "providerName은 apple, kakako, google 중 하나여야 합니다."
+        regexp = "^(apple|kakao|google)$",
+        message = "providerName은 apple, kakao, google 중 하나여야 합니다."
     )
     private String providerName;
     private String oauthCredential;

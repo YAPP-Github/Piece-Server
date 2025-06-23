@@ -39,6 +39,17 @@ public class UserController {
         return ResponseEntity.ok(CommonResponse.createSuccess(userProfilesWithPagination));
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<CommonResponse<UserProfileValidationResponse>> searchUser(
+        @RequestParam(required = false) Long userId,
+        @RequestParam(required = false) Long profileId,
+        @RequestParam(required = false) String nickname
+    ) {
+        return ResponseEntity.ok(CommonResponse.createSuccess(
+            userService.getUserProfileByUniqueKey(userId, profileId, nickname)));
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<CommonResponse<UserProfileDetailResponses>> getUserProfile(
         @PathVariable Long userId) {
