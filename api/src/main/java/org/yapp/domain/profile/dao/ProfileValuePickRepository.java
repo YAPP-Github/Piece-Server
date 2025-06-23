@@ -16,6 +16,7 @@ public interface ProfileValuePickRepository extends JpaRepository<ProfileValuePi
 
     List<ProfileValuePick> findByProfileId(Long profileId);
 
+
     @Query("SELECT COUNT(*)"
         + "FROM ProfileValuePick p1 "
         + "JOIN ProfileValuePick p2 "

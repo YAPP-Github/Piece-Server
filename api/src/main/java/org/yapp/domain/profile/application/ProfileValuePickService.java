@@ -43,6 +43,7 @@ public class ProfileValuePickService {
         return profileValuePicks;
     }
 
+
     private ProfileValuePick createProfileValuePick(Profile profile, ValuePick valuePick,
         Integer answer) {
         return ProfileValuePick.builder()
@@ -60,18 +61,18 @@ public class ProfileValuePickService {
 
     @Transactional(readOnly = true)
     public ProfileValuePickResponses getProfileValuePickResponses(Long userId) {
-        User user = userService.getUserById(userId);
+      User user = userService.getUserById(userId);
 
-        List<ValuePick> activeValuePicks = valuePickService.getAllActiveValuePicks();
+      List<ValuePick> activeValuePicks = valuePickService.getAllActiveValuePicks();
 
-        Map<Long, ProfileValuePick> userProfileValuePicks = profileValuePickRepository.findByProfileId(
-                user.getProfile().getId())
-            .stream()
-            .collect(Collectors.toMap(
-                profileValuePick -> profileValuePick.getValuePick().getId(),
-                profileValuePick -> profileValuePick));
+          Map<Long, ProfileValuePick> userProfileValuePicks = profileValuePickRepository.findByProfileId(
+                  user.getProfile().getId())
+              .stream()
+              .collect(Collectors.toMap(
+                  profileValuePick -> profileValuePick.getValuePick().getId(),
+                  profileValuePick -> profileValuePick));
 
-        return ProfileValuePickResponses.from(activeValuePicks, userProfileValuePicks);
+      return ProfileValuePickResponses.from(activeValuePicks, userProfileValuePicks);
     }
 
     @Transactional(readOnly = true)
