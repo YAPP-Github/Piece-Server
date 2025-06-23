@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
+import org.yapp.core.auth.AuthUtil;
 import org.yapp.core.auth.dao.BannedUserPhoneNumberRepository;
 import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.core.domain.fcm.FcmToken;
@@ -31,8 +32,6 @@ import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
-    private static int BEARER_PREFIX_LENGTH = 7;
 
     private final UserRepository userRepository;
     private final UserRejectHistoryRepository userRejectHistoryRepository;
@@ -131,7 +130,7 @@ public class UserService {
         String profileStatus =
             profile != null ? profile.getProfileStatus().toString() : null;
 
-        String accessToken = extractAccessToken(authorizationHeader);
+        String accessToken = AuthUtil.extractAccessToken(authorizationHeader);
         String accessTokenRole = jwtUtil.getRole(accessToken);
         String userRole = user.getRole();
 
@@ -145,9 +144,6 @@ public class UserService {
         return new UserBasicInfoResponse(userId, userRole, profileStatus, false, null, null);
     }
 
-    private static String extractAccessToken(String authorizationHeader) {
-        return authorizationHeader.substring(BEARER_PREFIX_LENGTH);
-    }
 
     @Transactional
     public void saveFcmToken(Long userId, FcmTokenSaveRequest request) {
