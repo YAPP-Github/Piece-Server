@@ -34,6 +34,7 @@ public class ManualMatchHistoryQueryService {
                 User user2 = userRepository.findById(user2Id).get();
 
                 return new ManualMatchHistoryResponse(
+                    manualMatchHistory.getId(),
                     manualMatchHistory.getUser1Id(),
                     user1.getName(),
                     user2Id,
