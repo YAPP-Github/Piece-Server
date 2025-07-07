@@ -1,5 +1,6 @@
 package org.yapp.match.presentation;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +31,10 @@ public class ManualMatchController {
 
     @GetMapping("/candidates")
     public ResponseEntity<CommonResponse<ManualMatchCandidateListResponse>> getManualMatchingCandidateList(
-        @RequestParam(defaultValue = "0", name = "page") int page) {
+        @RequestParam(defaultValue = "0", name = "page") int page,
+        @RequestParam(name = "match-time", required = false) LocalDateTime matchTime) {
         ManualMatchCandidateListResponse candidateList =
-            manualMatchUserQueryService.getCandidateList(page);
+            manualMatchUserQueryService.getCandidateList(page, matchTime);
 
         return ResponseEntity.ok(CommonResponse.createSuccess(candidateList));
     }
