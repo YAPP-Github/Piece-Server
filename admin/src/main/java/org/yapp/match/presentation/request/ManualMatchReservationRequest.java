@@ -1,4 +1,4 @@
-package org.yapp.match.dto.request;
+package org.yapp.match.presentation.request;
 
 import java.time.LocalDateTime;
 

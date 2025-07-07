@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.user.User;
 import org.yapp.match.dao.ManualMatchHistoryRepository;
-import org.yapp.match.dto.response.ManualMatchCandidateListResponse;
-import org.yapp.match.dto.response.ManualMatchCandidateResponse;
+import org.yapp.match.presentation.response.ManualMatchCandidateListResponse;
+import org.yapp.match.presentation.response.ManualMatchCandidateResponse;
 import org.yapp.user.dao.UserRepository;
 
 @RestController

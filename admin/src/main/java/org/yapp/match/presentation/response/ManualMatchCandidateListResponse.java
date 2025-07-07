@@ -1,4 +1,4 @@
-package org.yapp.match.dto.response;
+package org.yapp.match.presentation.response;
 
 import java.util.List;
 

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.match.ManualMatchHistory;
 import org.yapp.match.dao.ManualMatchHistoryRepository;
-import org.yapp.match.dto.request.ManualMatchCancelRequest;
-import org.yapp.match.dto.request.ManualMatchReservationRequest;
+import org.yapp.match.presentation.request.ManualMatchCancelRequest;
+import org.yapp.match.presentation.request.ManualMatchReservationRequest;
 
 @Service
 @RequiredArgsConstructor

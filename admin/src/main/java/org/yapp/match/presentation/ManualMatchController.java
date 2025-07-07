@@ -15,10 +15,10 @@ import org.yapp.format.CommonResponse;
 import org.yapp.match.application.command.ManualMatchReservationCommandService;
 import org.yapp.match.application.query.ManualMatchHistoryQueryService;
 import org.yapp.match.application.query.ManualMatchUserQueryService;
-import org.yapp.match.dto.request.ManualMatchCancelRequest;
-import org.yapp.match.dto.request.ManualMatchReservationRequest;
-import org.yapp.match.dto.response.ManualMatchCandidateListResponse;
-import org.yapp.match.dto.response.ManualMatchHistoryResponse;
+import org.yapp.match.presentation.request.ManualMatchCancelRequest;
+import org.yapp.match.presentation.request.ManualMatchReservationRequest;
+import org.yapp.match.presentation.response.ManualMatchCandidateListResponse;
+import org.yapp.match.presentation.response.ManualMatchHistoryResponse;
 
 @RequiredArgsConstructor
 @RestController

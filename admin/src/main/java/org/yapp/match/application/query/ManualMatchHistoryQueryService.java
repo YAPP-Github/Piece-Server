@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.yapp.core.domain.match.ManualMatchHistory;
 import org.yapp.core.domain.user.User;
 import org.yapp.match.dao.ManualMatchHistoryRepository;
-import org.yapp.match.dto.response.ManualMatchHistoryResponse;
+import org.yapp.match.presentation.response.ManualMatchHistoryResponse;
 import org.yapp.user.dao.UserRepository;
 
 @Service
