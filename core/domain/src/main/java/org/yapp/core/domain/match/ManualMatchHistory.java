@@ -37,4 +37,8 @@ public class ManualMatchHistory {
         this.dateTime = dateTime;
         this.isMatched = isMatched;
     }
+
+    public void checkMatched() {
+        this.isMatched = true;
+    }
 }

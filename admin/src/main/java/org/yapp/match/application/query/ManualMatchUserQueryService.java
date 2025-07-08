@@ -29,17 +29,22 @@ public class ManualMatchUserQueryService {
 
         List<ManualMatchCandidateResponse> candidateList = userPage.map(user -> {
             ProfileBasic profileBasic = user.getProfile().getProfileBasic();
-            boolean isMatched = false;
-            if (matchTime != null) {
-                isMatched = manualMatchHistoryRepository.existsByUserIdAndDateTimeBetween(
-                    user.getId(),
-                    matchTime.minusHours(24),
-                    matchTime.plusHours(24));
-            }
+            boolean canBeMatchedAtThisTime = checkIfUserCanBeMatchedAtThisTime(matchTime, user);
             return new ManualMatchCandidateResponse(
-                user.getId(), profileBasic.getNickname(), isMatched);
+                user.getId(), profileBasic.getNickname(), canBeMatchedAtThisTime);
         }).stream().toList();
 
         return new ManualMatchCandidateListResponse(candidateList);
+    }
+
+    private boolean checkIfUserCanBeMatchedAtThisTime(LocalDateTime matchTime, User user) {
+        boolean isMatched = false;
+        if (matchTime != null) {
+            isMatched = manualMatchHistoryRepository.existsByUserIdAndDateTimeBetween(
+                user.getId(),
+                matchTime.minusHours(24),
+                matchTime.plusHours(24));
+        }
+        return !isMatched;
     }
 }

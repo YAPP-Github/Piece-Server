@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.yapp.format.CommonResponse;
-import org.yapp.match.application.command.ManualMatchReservationCommandService;
+import org.yapp.match.application.command.ManualMatchCommandService;
 import org.yapp.match.application.query.ManualMatchHistoryQueryService;
 import org.yapp.match.application.query.ManualMatchUserQueryService;
 import org.yapp.match.presentation.request.ManualMatchCancelRequest;
@@ -27,7 +27,7 @@ public class ManualMatchController {
 
     private final ManualMatchHistoryQueryService manualMatchHistoryQueryService;
     private final ManualMatchUserQueryService manualMatchUserQueryService;
-    private final ManualMatchReservationCommandService manualMatchReservationCommandService;
+    private final ManualMatchCommandService manualMatchCommandService;
 
     @GetMapping("/candidates")
     public ResponseEntity<CommonResponse<ManualMatchCandidateListResponse>> getManualMatchingCandidateList(
@@ -52,7 +52,7 @@ public class ManualMatchController {
     public ResponseEntity<CommonResponse<Void>> createManualMatchHistory(
         @RequestBody ManualMatchReservationRequest request
     ) {
-        manualMatchReservationCommandService.reserveManualMatching(request);
+        manualMatchCommandService.reserveManualMatching(request);
         return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
     }
 
@@ -60,7 +60,7 @@ public class ManualMatchController {
     public ResponseEntity<CommonResponse<Void>> deleteManualMatchHistory(
         @RequestBody ManualMatchCancelRequest request
     ) {
-        manualMatchReservationCommandService.cancelManualMatching(request);
+        manualMatchCommandService.cancelManualMatching(request);
         return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
     }
 }
