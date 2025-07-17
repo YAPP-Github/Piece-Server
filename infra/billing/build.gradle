@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.yapp'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':core:domain')
+    implementation group: 'com.google.apis', name: 'google-api-services-androidpublisher', version: 'v3-rev142-1.25.0'
+    implementation group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '1.37.1'
+    implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '10.3'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
