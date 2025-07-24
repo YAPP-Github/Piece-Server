@@ -2,19 +2,24 @@ package org.yapp.match.application.query;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.yapp.core.domain.match.ManualMatchHistory;
+import org.yapp.core.domain.profile.ProfileBasic;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.exception.ApplicationException;
+import org.yapp.core.exception.error.code.UserErrorCode;
 import org.yapp.match.dao.ManualMatchHistoryRepository;
 import org.yapp.match.presentation.response.ManualMatchHistoryResponse;
 import org.yapp.user.dao.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ManualMatchHistoryQueryService {
 
     private static final int PAGE_SIZE = 10;
@@ -30,15 +35,31 @@ public class ManualMatchHistoryQueryService {
             manualMatchHistory -> {
                 Long user1Id = manualMatchHistory.getUser1Id();
                 Long user2Id = manualMatchHistory.getUser2Id();
-                User user1 = userRepository.findById(user1Id).get();
-                User user2 = userRepository.findById(user2Id).get();
+                String nickname1 = null;
+                String nickname2 = null;
+
+                try {
+                    User user1 = userRepository.findById(user1Id).orElseThrow(
+                        () -> new ApplicationException(UserErrorCode.NOTFOUND_USER)
+                    );
+                    ProfileBasic profileBasic1 = user1.getProfile().getProfileBasic();
+                    nickname1 = profileBasic1.getNickname();
+
+                    User user2 = userRepository.findById(user2Id).orElseThrow(
+                        () -> new ApplicationException(UserErrorCode.NOTFOUND_USER)
+                    );
+                    ProfileBasic profileBasic2 = user2.getProfile().getProfileBasic();
+                    nickname2 = profileBasic2.getNickname();
+                } catch (ApplicationException e) {
+                    log.error("존재하지 않는 유저가 히스토리에 포함되어있습니다. : {} or {}", user1Id, user2Id);
+                }
 
                 return new ManualMatchHistoryResponse(
                     manualMatchHistory.getId(),
                     manualMatchHistory.getUser1Id(),
-                    user1.getName(),
+                    nickname1,
                     user2Id,
-                    user2.getName(),
+                    nickname2,
                     manualMatchHistory.getDateTime(),
                     manualMatchHistory.getIsMatched()
                 );
