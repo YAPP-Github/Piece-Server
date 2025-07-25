@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.yapp.core.auth.AuthUtil;
+import org.yapp.core.domain.kpi.event.UserActivityDetectedEvent;
 import org.yapp.core.exception.error.code.AuthErrorCode;
 import org.yapp.core.exception.error.code.ErrorCode;
 import org.yapp.core.exception.error.response.ErrorResponse;
@@ -30,8 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
     private final ApplicationEventPublisher eventPublisher;
-
-
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain)
@@ -77,6 +77,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 (GrantedAuthority) () -> role));
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
+        eventPublisher.publishEvent(new UserActivityDetectedEvent(userId));
 
         filterChain.doFilter(request, response);
     }
