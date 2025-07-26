@@ -9,7 +9,7 @@ import org.yapp.kpi.dao.UserGrowthKpiRepository;
 
 @Component
 @RequiredArgsConstructor
-public class UserGrowthFetcher {
+public class UserGrowthKpiFetcher {
 
     private final UserGrowthKpiRepository userGrowthKpiRepository;
 
