@@ -10,7 +10,7 @@ import org.yapp.kpi.dao.MatchingKpiRepository;
 
 @Repository
 @RequiredArgsConstructor
-public class MatchingKpiJdbcKpiRepository implements MatchingKpiRepository {
+public class MatchingKpiJdbcRepository implements MatchingKpiRepository {
 
     private final NamedParameterJdbcTemplate jdbc;
 

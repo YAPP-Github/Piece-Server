@@ -10,7 +10,7 @@ import org.yapp.kpi.dao.UserGrowthKpiRepository;
 
 @Repository
 @RequiredArgsConstructor
-public class UserGrowthJdbcKpiRepository implements UserGrowthKpiRepository {
+public class UserGrowthKpiJdbcRepository implements UserGrowthKpiRepository {
 
     private final NamedParameterJdbcTemplate jdbc;
 
