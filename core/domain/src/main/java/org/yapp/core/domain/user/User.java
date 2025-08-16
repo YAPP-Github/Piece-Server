@@ -2,7 +2,6 @@ package org.yapp.core.domain.user;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -50,8 +49,9 @@ public class User extends BaseEntity {
     @Column(name = "is_admin")
     private Boolean isAdmin;
 
-    @Embedded
-    private Puzzle puzzleWallet;
+    @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "puzzle_wallet_id", unique = true)
+    private UserPuzzleWallet puzzleWallet;
 
     public void initializePhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
@@ -66,10 +66,6 @@ public class User extends BaseEntity {
     }
 
     public void addPuzzle(Puzzle puzzle) {
-        if (this.puzzleWallet == null) {
-            this.puzzleWallet = Puzzle.of(0L);
-        }
-
-        this.puzzleWallet = this.puzzleWallet.add(puzzle);
+        this.puzzleWallet.addPuzzle(puzzle);
     }
 }
