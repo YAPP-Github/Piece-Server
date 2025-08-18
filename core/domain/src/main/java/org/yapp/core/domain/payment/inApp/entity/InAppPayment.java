@@ -73,4 +73,8 @@ public class InAppPayment extends Payment {
 
         return this.inAppStore.createPurchaseCredential(this.purchaseCredential);
     }
+
+    public void complete() {
+        super.complete();
+    }
 }

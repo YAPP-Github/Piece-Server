@@ -50,4 +50,8 @@ public class Payment extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+
+    protected void complete() {
+        this.paymentStatus = PaymentStatus.COMPLETED;
+    }
 }
