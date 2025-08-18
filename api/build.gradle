@@ -25,10 +25,15 @@ dependencies {
     implementation project(':infra:discord')
     implementation project(':infra:billing')
 
-    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0');
-    implementation('org.bouncycastle:bcpkix-jdk18on:1.76');
+    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0')
+    implementation('org.bouncycastle:bcpkix-jdk18on:1.76')
+    implementation('com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1')
+
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
 }
 
