@@ -195,14 +195,16 @@ public class MatchService {
     @Transactional(readOnly = true)
     public MatchValuePickResponse getMatchedUserValuePicks(Long userId) {
         User user = userService.getUserById(userId);
-        ProfileBasic profileBasic = user.getProfile().getProfileBasic();
         MatchInfo matchInfo = getDailyMatchInfo(userId);
         User matchedUser = getMatchedUser(userId, matchInfo);
+        ProfileBasic matchedUserProfileBasic = matchedUser.getProfile().getProfileBasic();
         List<MatchValuePickInnerResponse> matchValuePickInnerResponses = getMatchValuePickInnerResponses(
             user.getProfile().getId(), matchedUser.getProfile().getId());
 
-        return new MatchValuePickResponse(matchInfo.getId(), profileBasic.getDescription(),
-            matchedUser.getProfile().getProfileBasic().getNickname(), matchValuePickInnerResponses);
+        return new MatchValuePickResponse(matchInfo.getId(),
+            matchedUserProfileBasic.getDescription(),
+            matchedUserProfileBasic.getNickname(),
+            matchValuePickInnerResponses);
     }
 
     private List<MatchValuePickInnerResponse> getMatchValuePickInnerResponses(Long fromProfileId,
