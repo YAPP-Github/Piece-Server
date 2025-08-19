@@ -7,7 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SettingInfoResponse {
 
-  private Boolean isNotificationEnabled;
-  private Boolean isMatchNotificationEnabled;
-  private Boolean isAcquaintanceBlockEnabled;
+    private Boolean isNotificationEnabled;
+    private Boolean isAcquaintanceBlockEnabled;
 }
