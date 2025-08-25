@@ -76,7 +76,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }}
           docker push ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:latest
 
-      - name: Deploy to prod
+      - name: Deploy to prod with Blue/Green
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.HOST_PROD }}
@@ -85,12 +85,91 @@ jobs:
           port: 22
           key: ${{ secrets.HOST_PROD_PRIVATE_KEY }}
           script: |
-            sudo docker stop piece-api-prod || true
-            sudo docker rm piece-api-prod || true
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }}
-            sudo docker run -d --name piece-api-prod -p 8080:8080 --network piece-nw \
-            --log-driver=awslogs \
-            --log-opt awslogs-group=piece/prod/log \
-            --log-opt awslogs-region=ap-northeast-2 \
-            --log-opt awslogs-stream=api-server ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }}
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            IMAGE_NAME="piece-api-prod"
+            IMAGE_TAG=${{ env.IMAGE_TAG }}
+
+            BLUE_CONTAINER_NAME="piece-api-prod-blue"
+            GREEN_CONTAINER_NAME="piece-api-prod-green"
+            BLUE_PORT=8080
+            GREEN_PORT=8081
+            
+            EXISTING_BLUE=$(sudo docker ps -q -f "name=${BLUE_CONTAINER_NAME}")
+            EXISTING_GREEN=$(sudo docker ps -q -f "name=${GREEN_CONTAINER_NAME}")
+            
+            if [ -n "$EXISTING_BLUE" ]; then
+            # Blue가 실행 중 -> Green 배포
+            CURRENT_CONTAINER_NAME=$BLUE_CONTAINER_NAME
+            NEW_CONTAINER_NAME=$GREEN_CONTAINER_NAME
+            CURRENT_COLOR="Blue"
+            NEW_PORT=$GREEN_PORT
+            NEW_COLOR="green"
+            elif [ -n "$EXISTING_GREEN" ]; then
+            CURRENT_CONTAINER_NAME=$GREEN_CONTAINER_NAME
+            CURRENT_COLOR="Green"
+            NEW_CONTAINER_NAME=$BLUE_CONTAINER_NAME
+            NEW_PORT=$BLUE_PORT
+            NEW_COLOR="blue"
+            else
+            echo "No container is running. Starting blue container for initial deployment."
+            CURRENT_CONTAINER_NAME=""
+            CURRENT_COLOR="none"
+            NEW_CONTAINER_NAME=$BLUE_CONTAINER_NAME
+            NEW_PORT=$BLUE_PORT
+            NEW_COLOR="blue"
+            fi
+            
+            echo "Current active container is ${CURRENT_COLOR}. Starting new ${NEW_COLOR} container."
+
+            sudo docker pull ${DOCKER_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
+            
+            # 기존에 떠있을 수 있는 새 버전 컨테이너(이전 배포 실패 잔여물) 제거
+            sudo docker stop ${NEW_CONTAINER_NAME} || true
+            sudo docker rm ${NEW_CONTAINER_NAME} || true
+            
+            sudo docker run -d --name ${NEW_CONTAINER_NAME} -p ${NEW_PORT}:8080 --network piece-nw \
+              --stop-timeout 30 \
+              --log-driver=awslogs \
+              --log-opt awslogs-group=piece/prod/log \
+              --log-opt awslogs-region=ap-northeast-2 \
+              --log-opt awslogs-stream=${NEW_CONTAINER_NAME} \
+              ${DOCKER_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
+            
+            echo "Waiting for new container to start..."
+            sleep 5
+            
+            HEALTH_CHECK_SUCCESS=false
+            for i in {1..20}; do
+              STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${NEW_PORT}/actuator/health)
+              if [ "$STATUS_CODE" -eq 200 ]; then
+                HEALTH_CHECK_SUCCESS=true
+                echo "Health check successful!"
+                break
+              fi
+              echo "Health check attempt ${i} failed with status ${STATUS_CODE}. Retrying in 5 seconds..."
+              sleep 5
+            done
+            
+            if [ "$HEALTH_CHECK_SUCCESS" = true ]; then
+              echo "Switching Nginx traffic to ${NEW_COLOR}..."
+              sudo ln -sfn /etc/nginx/conf.d/service-${NEW_COLOR}.conf /etc/nginx/conf.d/service-current.conf
+              sudo systemctl reload nginx
+              echo "Nginx reloaded. Traffic is now on ${NEW_COLOR}."
+
+
+              if [ -n "$CURRENT_CONTAINER_NAME" ]; then
+                echo "Stopping old container ${CURRENT_CONTAINER_NAME}..."
+                sudo docker stop ${CURRENT_CONTAINER_NAME} || true
+                sudo docker rm ${CURRENT_CONTAINER_NAME} || true
+              fi
+            
+              echo "Deployment successful!"
+            else
+              echo "Health check failed after multiple attempts. Rolling back."
+              sudo docker stop ${NEW_CONTAINER_NAME}
+              sudo docker rm ${NEW_CONTAINER_NAME}
+            
+              exit 1
+            fi
+
             sudo docker image prune -a -f
