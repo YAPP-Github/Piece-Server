@@ -93,4 +93,4 @@ jobs:
             --log-opt awslogs-group=piece/prod/log \
             --log-opt awslogs-region=ap-northeast-2 \
             --log-opt awslogs-stream=api-server ${{ secrets.DOCKER_USERNAME }}/piece-api-prod:${{ env.IMAGE_TAG }}
-            sudo docker image prune -f
+            sudo docker image prune -a -f
