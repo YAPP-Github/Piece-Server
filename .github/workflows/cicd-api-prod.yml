@@ -152,7 +152,7 @@ jobs:
             
             if [ "$HEALTH_CHECK_SUCCESS" = true ]; then
               echo "Switching Nginx traffic to ${NEW_COLOR}..."
-              sudo ln -sfn /etc/nginx/conf.d/service-${NEW_COLOR}.conf /etc/nginx/conf.d/service-current.conf
+              sudo ln -sfn /etc/nginx/conf.d/service-${NEW_COLOR}.inc /etc/nginx/conf.d/service-current.inc
               sudo systemctl reload nginx
               echo "Nginx reloaded. Traffic is now on ${NEW_COLOR}."
 
