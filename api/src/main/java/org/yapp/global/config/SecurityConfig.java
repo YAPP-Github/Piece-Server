@@ -25,48 +25,48 @@ import org.yapp.core.auth.jwt.JwtFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http.csrf(AbstractHttpConfigurer::disable)
-        .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-        .httpBasic(AbstractHttpConfigurer::disable)
-        .sessionManagement(
-            configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(registry -> registry
-            .requestMatchers(getMatcherForUserAndAdmin())
-            .hasAnyRole("USER", "ADMIN")
-            .requestMatchers(getMatcherForAnyone())
-            .permitAll()
-            .anyRequest()
-            .authenticated())
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-        .build();
-  }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http.csrf(AbstractHttpConfigurer::disable)
+            .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .sessionManagement(
+                configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(registry -> registry
+                .requestMatchers(getMatcherForUserAndAdmin())
+                .hasAnyRole("USER", "ADMIN")
+                .requestMatchers(getMatcherForAnyone())
+                .permitAll()
+                .anyRequest()
+                .authenticated())
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
 
-  private CorsConfigurationSource corsConfigurationSource() {
-    return request -> {
-      CorsConfiguration config = new CorsConfiguration();
-      config.setAllowedHeaders(Collections.singletonList("*"));
-      config.setAllowedMethods(Collections.singletonList("*"));
-      config.setAllowedOriginPatterns(Collections.singletonList("*"));
-      return config;
-    };
-  }
+    private CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+            return config;
+        };
+    }
 
-  private RequestMatcher getMatcherForAnyone() {
-    return RequestMatchers.anyOf(antMatcher("/api/login/**"), antMatcher("/api/**"),
-        antMatcher("/swagger-ui/**"),
-        antMatcher("/v3/api-docs/**"), antMatcher("/swagger-ui.html"));
-  }
+    private RequestMatcher getMatcherForAnyone() {
+        return RequestMatchers.anyOf(antMatcher("/api/login/**"), antMatcher("/api/**"),
+            antMatcher("/swagger-ui/**"), antMatcher("/actuator/**"),
+            antMatcher("/v3/api-docs/**"), antMatcher("/swagger-ui.html"));
+    }
 
-  private RequestMatcher getMatcherForRegister() {
-    return RequestMatchers.anyOf(antMatcher("/api/profiles/init"));
-  }
+    private RequestMatcher getMatcherForRegister() {
+        return RequestMatchers.anyOf(antMatcher("/api/profiles/init"));
+    }
 
-  private RequestMatcher getMatcherForUserAndAdmin() {
-    return RequestMatchers.anyOf(antMatcher("/user") //TODO: 임시이며 추후 url에 따라 수정해야.
-    );
-  }
+    private RequestMatcher getMatcherForUserAndAdmin() {
+        return RequestMatchers.anyOf(antMatcher("/user") //TODO: 임시이며 추후 url에 따라 수정해야.
+        );
+    }
 }

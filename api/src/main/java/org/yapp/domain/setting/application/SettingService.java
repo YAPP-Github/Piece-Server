@@ -13,55 +13,56 @@ import org.yapp.domain.setting.dto.response.SettingInfoResponse;
 @RequiredArgsConstructor
 public class SettingService {
 
-  private final SettingRepository settingRepository;
+    private final SettingRepository settingRepository;
 
-  @Transactional
-  public void setNotificationStatus(Long userId, boolean status) {
-    Setting userSetting = getUserSetting(userId);
-    userSetting.updateNotification(status);
-  }
+    @Transactional
+    public void setNotificationStatus(Long userId, boolean status) {
+        Setting userSetting = getUserSetting(userId);
+        userSetting.updateNotification(status);
+    }
 
-  @Transactional
-  public void setMatchNotificationStatus(Long userId, boolean status) {
-    Setting userSetting = getUserSetting(userId);
-    userSetting.updateMatchNotification(status);
-  }
+    @Transactional
+    public void setMatchNotificationStatus(Long userId, boolean status) {
+        Setting userSetting = getUserSetting(userId);
+        userSetting.updateMatchNotification(status);
+    }
 
-  @Transactional
-  public void setAcquaintanceBlockStatus(Long userId, boolean status) {
-    Setting userSetting = getUserSetting(userId);
-    userSetting.updateAcquaintanceBlock(status);
-  }
+    @Transactional
+    public void setAcquaintanceBlockStatus(Long userId, boolean status) {
+        Setting userSetting = getUserSetting(userId);
+        userSetting.updateAcquaintanceBlock(status);
+    }
 
-  @Transactional
-  public void createSetting(Long userId) {
-    Setting setting = new Setting(userId, true, false, true);
-    settingRepository.save(setting);
-  }
+    @Transactional
+    public void createSetting(Long userId) {
+        Setting setting = new Setting(userId, true, true, true);
+        settingRepository.save(setting);
+    }
 
-  public Setting getUserSetting(Long userId) {
-    return settingRepository.findByUserId(userId).orElseThrow(() -> new ApplicationException(
-        SettingErrorCode.NOT_FOUND_SETTING));
-  }
+    public Setting getUserSetting(Long userId) {
+        return settingRepository.findByUserId(userId).orElseThrow(() -> new ApplicationException(
+            SettingErrorCode.NOT_FOUND_SETTING));
+    }
 
-  public boolean isUserNotificationEnabled(Long userId) {
-    Setting userSetting = getUserSetting(userId);
-    return userSetting.isNotification();
-  }
+    public boolean isUserNotificationEnabled(Long userId) {
+        Setting userSetting = getUserSetting(userId);
+        return userSetting.isNotification();
+    }
 
-  public boolean isMatchNotificationEnabled(Long userId) {
-    Setting userSetting = getUserSetting(userId);
-    return userSetting.isNotification() && userSetting.isMatchNotification();
-  }
+    public boolean isMatchNotificationEnabled(Long userId) {
+        Setting userSetting = getUserSetting(userId);
+        return userSetting.isNotification() && userSetting.isMatchNotification();
+    }
 
-  public boolean isAcquaintanceBlockEnabled(Long userId) {
-    Setting userSetting = getUserSetting(userId);
-    return userSetting.isAcquaintanceBlock();
-  }
+    public boolean isAcquaintanceBlockEnabled(Long userId) {
+        Setting userSetting = getUserSetting(userId);
+        return userSetting.isAcquaintanceBlock();
+    }
 
-  public SettingInfoResponse getUserSettingInfo(Long userId) {
-    Setting userSetting = getUserSetting(userId);
-    return new SettingInfoResponse(userSetting.isNotification(), userSetting.isMatchNotification(),
-        userSetting.isAcquaintanceBlock());
-  }
+    public SettingInfoResponse getUserSettingInfo(Long userId) {
+        Setting userSetting = getUserSetting(userId);
+        return new SettingInfoResponse(userSetting.isNotification(),
+            userSetting.isMatchNotification(),
+            userSetting.isAcquaintanceBlock());
+    }
 }
