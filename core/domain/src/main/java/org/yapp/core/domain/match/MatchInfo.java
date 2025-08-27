@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.yapp.core.domain.BaseEntity;
 import org.yapp.core.domain.match.enums.UserMatchStatus;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.exception.ApplicationException;
@@ -22,7 +23,7 @@ import org.yapp.core.exception.error.code.MatchErrorCode;
 @Entity
 @Getter
 @NoArgsConstructor
-public class MatchInfo {
+public class MatchInfo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,14 +50,17 @@ public class MatchInfo {
     @Enumerated(EnumType.STRING)
     private UserMatchStatus user2MatchStatus = UserMatchStatus.UNCHECKED;
 
-    public MatchInfo(LocalDate date, User user1, User user2) {
+    @Column(name = "is_instant_match")
+    private Boolean isInstantMatch;
+
+    @Column(name = "is_attraction_sent")
+    private Boolean isAttractionSent = false;
+
+    public MatchInfo(LocalDate date, User user1, User user2, Boolean isInstantMatch) {
         this.date = date;
         this.user1 = user1;
         this.user2 = user2;
-    }
-
-    public static MatchInfo createMatchInfo(User user1, User user2) {
-        return new MatchInfo(LocalDate.now(), user1, user2);
+        this.isInstantMatch = isInstantMatch;
     }
 
     public void checkPiece(Long userId) {

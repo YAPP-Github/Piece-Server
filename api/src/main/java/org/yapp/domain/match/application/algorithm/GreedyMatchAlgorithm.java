@@ -50,7 +50,7 @@ public class GreedyMatchAlgorithm implements MatchAlgorithm {
       matchedSet.add(edge.user1Id);
       matchedSet.add(edge.user2Id);
 
-      matchService.createMatchInfo(edge.user1Id, edge.user2Id);
+      matchService.createMatchInfo(edge.user1Id, edge.user2Id, false);
     }
     return matchedSet;
   }

@@ -1,12 +1,15 @@
 package org.yapp.domain.user.application;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.auth.AuthToken;
 import org.yapp.core.auth.AuthTokenGenerator;
+import org.yapp.core.auth.AuthUtil;
 import org.yapp.core.auth.dao.BannedUserPhoneNumberRepository;
+import org.yapp.core.auth.jwt.JwtUtil;
 import org.yapp.core.domain.fcm.FcmToken;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.user.RoleStatus;
@@ -36,6 +39,7 @@ public class UserService {
     private final AuthTokenGenerator authTokenGenerator;
     private final FcmTokenRepository fcmTokenRepository;
     private final BannedUserPhoneNumberRepository bannedUserPhoneNumberRepository;
+    private final JwtUtil jwtUtil;
 
     /**
      * Role을 USER로 바꾸고 변경된 토큰을 반환한다.
@@ -44,8 +48,9 @@ public class UserService {
      */
     @Transactional
     public OauthLoginResponse completeProfileInitialize(Long userId, Profile profile) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+        User user =
+            userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
         user.setProfile(profile);
         user.updateUserRole(RoleStatus.PENDING.getStatus());
         String oauthId = user.getOauthId();
@@ -81,8 +86,9 @@ public class UserService {
             throw new ApplicationException(AuthErrorCode.PERMANENTLY_BANNED);
         }
 
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
+        User user =
+            userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.NOTFOUND_USER));
 
         user.updateUserRole(RoleStatus.REGISTER.getStatus());
         user.initializePhoneNumber(phoneNumber);
@@ -107,7 +113,8 @@ public class UserService {
 
         return new UserRejectHistoryResponse(
             reasonImage,
-            reasonDescription);
+            reasonDescription
+        );
     }
 
     @Transactional
@@ -116,13 +123,25 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public UserBasicInfoResponse getUserBasicInfo(Long userId) {
+    public UserBasicInfoResponse getUserBasicInfo(Long userId, String authorizationHeader) {
         User user = this.getUserById(userId);
 
         Profile profile = user.getProfile();
-        String profileStatus = profile != null ? profile.getProfileStatus().toString() : null;
+        String profileStatus =
+            profile != null ? profile.getProfileStatus().toString() : null;
 
-        return new UserBasicInfoResponse(userId, user.getRole(), profileStatus);
+        String accessToken = AuthUtil.extractAccessToken(authorizationHeader);
+        String accessTokenRole = jwtUtil.getRole(accessToken);
+        String userRole = user.getRole();
+
+        if (!accessTokenRole.equals(userRole)) {
+            AuthToken authToken = authTokenGenerator.generate(userId, user.getOauthId(),
+                user.getRole());
+            return new UserBasicInfoResponse(userId, userRole, profileStatus, true,
+                authToken.accessToken(), authToken.refreshToken());
+        }
+
+        return new UserBasicInfoResponse(userId, userRole, profileStatus, false, null, null);
     }
 
     @Transactional
@@ -156,5 +175,9 @@ public class UserService {
         } else {
             throw new ApplicationException(UserErrorCode.INVALID_OAUTH_PROVIDER);
         }
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

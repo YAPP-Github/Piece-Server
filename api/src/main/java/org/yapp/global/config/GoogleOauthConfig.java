@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class GoogleOauthConfig {
-
     @Value("${app.google.client.android.id}")
     private String googleClientId;
 

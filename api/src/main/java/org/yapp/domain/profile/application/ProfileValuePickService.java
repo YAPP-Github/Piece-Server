@@ -3,7 +3,7 @@ package org.yapp.domain.profile.application;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
@@ -19,8 +19,6 @@ import org.yapp.domain.profile.presentation.response.ProfileValuePickResponses;
 import org.yapp.domain.user.application.UserService;
 import org.yapp.domain.value.application.ValuePickService;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class ProfileValuePickService {
@@ -32,51 +30,53 @@ public class ProfileValuePickService {
 
     @Transactional
     public List<ProfileValuePick> createAllProfileValuePicks(Long profileId,
-            List<ProfileValuePickCreateRequest> createRequests) {
+        List<ProfileValuePickCreateRequest> createRequests) {
         Profile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
+            .orElseThrow(() -> new ApplicationException(ProfileErrorCode.NOTFOUND_PROFILE));
 
         List<ProfileValuePick> profileValuePicks = createRequests.stream()
-                .map(request -> createProfileValuePick(profile,
-                        ValuePick.builder().id(request.valuePickId()).build(), request.selectedAnswer()))
-                .toList();
+            .map(request -> createProfileValuePick(profile,
+                ValuePick.builder().id(request.valuePickId()).build(), request.selectedAnswer()))
+            .toList();
 
         profileValuePickRepository.saveAll(profileValuePicks);
         return profileValuePicks;
     }
 
+
     private ProfileValuePick createProfileValuePick(Profile profile, ValuePick valuePick,
-            Integer answer) {
+        Integer answer) {
         return ProfileValuePick.builder()
-                .profile(profile)
-                .valuePick(valuePick)
-                .selectedAnswer(answer)
-                .build();
+            .profile(profile)
+            .valuePick(valuePick)
+            .selectedAnswer(answer)
+            .build();
     }
 
     @Transactional(readOnly = true)
-    public List<ProfileValuePick> getAllProfileValuePicksByProfileId(Long profileId) {
-        return profileValuePickRepository.findByProfileIdOrderByValuePickId(profileId);
+    public List<ProfileValuePick> getAllActiveProfileValuePicksOrderByValuePickId(Long profileId) {
+        return profileValuePickRepository.findActiveProfileValuePickByProfileIdOrderByValuePickId(
+            profileId);
     }
 
     @Transactional(readOnly = true)
     public ProfileValuePickResponses getProfileValuePickResponses(Long userId) {
-        User user = userService.getUserById(userId);
+      User user = userService.getUserById(userId);
 
-        List<ValuePick> activeValuePicks = valuePickService.getAllActiveValuePicks();
+      List<ValuePick> activeValuePicks = valuePickService.getAllActiveValuePicks();
 
-        Map<Long, ProfileValuePick> userProfileValuePicks = profileValuePickRepository.findByProfileId(
-                user.getProfile().getId())
-                .stream()
-                .collect(Collectors.toMap(
-                        profileValuePick -> profileValuePick.getValuePick().getId(),
-                        profileValuePick -> profileValuePick));
+          Map<Long, ProfileValuePick> userProfileValuePicks = profileValuePickRepository.findByProfileId(
+                  user.getProfile().getId())
+              .stream()
+              .collect(Collectors.toMap(
+                  profileValuePick -> profileValuePick.getValuePick().getId(),
+                  profileValuePick -> profileValuePick));
 
-        return ProfileValuePickResponses.from(activeValuePicks, userProfileValuePicks);
+      return ProfileValuePickResponses.from(activeValuePicks, userProfileValuePicks);
     }
 
     @Transactional(readOnly = true)
-    public int getWeightWithSql(Long user1Id, Long user2Id) {
-        return profileValuePickRepository.countWeight(user1Id, user2Id);
+    public int getWeightWithSql(Long user1ProfileId, Long user2ProfileId) {
+        return profileValuePickRepository.countWeight(user1ProfileId, user2ProfileId);
     }
 }

@@ -96,6 +96,12 @@ public class ProfileService {
             RoleStatus.USER.getStatus());
     }
 
+    @Transactional(readOnly = true)
+    public List<Profile> getValidProfiles() {
+        return profileRepository.findAllByUser_RoleAndUser_IsAdminIsNull(
+            RoleStatus.USER.getStatus());
+    }
+
     @Transactional
     public Profile updateProfileBasic(long userId, ProfileBasicUpdateRequest dto) {
         User user = this.userService.getUserById(userId);
@@ -207,5 +213,9 @@ public class ProfileService {
 
     public boolean isNicknameAvailable(String nickname) {
         return !profileRepository.existsByProfileBasic_Nickname(nickname);
+    }
+
+    public List<Profile> findProfileListByIdList(List<Long> userIdList) {
+        return profileRepository.findAllByUser_IdIn(userIdList);
     }
 }

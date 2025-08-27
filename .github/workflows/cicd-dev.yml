@@ -116,4 +116,4 @@ jobs:
             sudo docker rm piece-admin-dev || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
             sudo docker run -d --name piece-admin-dev -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
-            sudo docker image prune -f
+            sudo docker image prune -a -f
