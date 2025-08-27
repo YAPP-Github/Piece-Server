@@ -144,7 +144,6 @@ public class UserService {
         return new UserBasicInfoResponse(userId, userRole, profileStatus, false, null, null);
     }
 
-
     @Transactional
     public void saveFcmToken(Long userId, FcmTokenSaveRequest request) {
         Optional<FcmToken> fcmTokenOptional = fcmTokenRepository.findByUserId(userId);

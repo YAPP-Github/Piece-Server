@@ -45,6 +45,14 @@ jobs:
           echo "${{ secrets.FIREBASE_KEY }}" | base64 --decode > ./firebasekey.json
         shell: bash
 
+      - name: make playStore.json with base 64 decoding
+        run: |
+          mkdir -p ./infra/billing/src/main/resources
+          cd ./infra/billing/src/main/resources
+          touch ./playStoreKey.json
+          echo "${{ secrets.PLAYSTORE_KEY }}" | base64 --decode > ./playStoreKey.json
+        shell: bash
+
       - name: Build API with Gradle
         run: |
           chmod u+x ./gradlew
