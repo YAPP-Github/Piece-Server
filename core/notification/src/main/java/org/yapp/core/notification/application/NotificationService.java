@@ -40,6 +40,7 @@ public class NotificationService {
         NotificationHistory newNotificationHistory = notificationHistoryRepository.save(
             notificationHistory);
         data.put("notificationId", String.valueOf(newNotificationHistory.getId()));
+        data.put("notificationType", notificationType.name());
 
         try {
             notificationClient.sendNotificationWithData(token, title, body, data);

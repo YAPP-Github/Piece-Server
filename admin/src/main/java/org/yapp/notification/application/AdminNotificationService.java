@@ -39,7 +39,7 @@ public class AdminNotificationService {
         fcmTokenRepository.findByUserId(userId).ifPresent(fcmToken -> {
             notificationService.sendNotification("fcm", fcmToken.getToken(), userId,
                 NotificationType.PROFILE_IMAGE_REJECTED, "프로필 사진 변경이 반려되었어요",
-                "얼굴이 잘 나온 정면 사진으로 다시 등록해주세요!");
+                "얼굴이 잘 보이는 사진으로 다시 등록해주세요!");
         });
     }
 }
