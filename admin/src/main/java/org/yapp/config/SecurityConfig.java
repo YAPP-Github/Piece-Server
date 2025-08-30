@@ -52,6 +52,7 @@ public class SecurityConfig {
     }
 
     private RequestMatcher getMatcherForAnyone() {
-        return RequestMatchers.anyOf(antMatcher("/admin/v1/auth/login/**"));
+        return RequestMatchers.anyOf(antMatcher("/admin/v1/auth/login/**"),
+            antMatcher("/actuator/**"));
     }
 }
