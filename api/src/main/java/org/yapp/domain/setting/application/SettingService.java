@@ -61,8 +61,8 @@ public class SettingService {
 
     public SettingInfoResponse getUserSettingInfo(Long userId) {
         Setting userSetting = getUserSetting(userId);
-        return new SettingInfoResponse(userSetting.isNotification(),
-            userSetting.isMatchNotification(),
+        return new SettingInfoResponse(
+            userSetting.isNotification(),
             userSetting.isAcquaintanceBlock());
     }
 }
