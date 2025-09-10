@@ -180,4 +180,10 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public Long getUserPuzzleCount(Long userId) {
+        User user = getUserById(userId);
+        return user.getPuzzleWallet() != null ? user.getPuzzleWallet().getPuzzleCount() : 0L;
+    }
 }

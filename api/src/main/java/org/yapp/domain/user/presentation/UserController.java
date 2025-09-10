@@ -20,8 +20,10 @@ import org.yapp.domain.user.presentation.dto.request.FcmTokenSaveRequest;
 import org.yapp.domain.user.presentation.dto.request.OauthUserDeleteRequest;
 import org.yapp.domain.user.presentation.dto.request.UserDeleteRequest;
 import org.yapp.domain.user.presentation.dto.response.UserBasicInfoResponse;
+import org.yapp.domain.user.presentation.dto.response.UserPuzzleResponse;
 import org.yapp.domain.user.presentation.dto.response.UserRejectHistoryResponse;
 import org.yapp.format.CommonResponse;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -83,5 +85,16 @@ public class UserController {
         @RequestBody FcmTokenSaveRequest request) {
         userService.saveFcmToken(userId, request);
         return ResponseEntity.ok(CommonResponse.createSuccessWithNoContent());
+    }
+
+    @GetMapping("/puzzle")
+    @PreAuthorize(value = "hasAuthority('USER')")
+    @Operation(summary = "사용자 퍼즐 조회", description = "사용자의 현재 퍼즐 개수를 조회합니다.", tags = {"사용자"})
+    public ResponseEntity<CommonResponse<UserPuzzleResponse>> getUserPuzzle(
+        @AuthenticationPrincipal Long userId) {
+        Long puzzleCount = userService.getUserPuzzleCount(userId);
+        UserPuzzleResponse response = new UserPuzzleResponse(puzzleCount);
+
+        return ResponseEntity.ok(CommonResponse.createSuccess(response));
     }
 }
