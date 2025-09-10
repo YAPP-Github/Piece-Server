@@ -9,5 +9,4 @@ import org.yapp.core.domain.payment.inApp.entity.InAppPayment;
 public interface InAppPaymentRepository extends JpaRepository<InAppPayment, Long> {
 
     Optional<InAppPayment> findByPurchaseId(String purchaseId);
-
 }
