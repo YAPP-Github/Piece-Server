@@ -14,15 +14,15 @@ repositories {
 
 dependencies {
     // Komoran 형태소 분석기
-    implementation('com.github.shin285:KOMORAN:3.3.9')
-    
+    api('com.github.shin285:KOMORAN:3.3.9')
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    
+
     // 로깅
     implementation 'org.slf4j:slf4j-api'
-    
+
     // 테스트
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.assertj:assertj-core'
