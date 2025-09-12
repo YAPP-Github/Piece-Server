@@ -86,11 +86,9 @@ class TextCleanerTest {
     @DisplayName("텍스트 정제기들이 타입을 올바르게 반환한다")
     void textCleaners_returnCorrectTypes() {
         // given
-        KoreanTextCleaner defaultCleaner = new KoreanTextCleaner();
         KoreanTextCleaner koreanCleaner = new KoreanTextCleaner();
 
         // when & then
-        assertThat(defaultCleaner.getType()).isEqualTo("DEFAULT");
         assertThat(koreanCleaner.getType()).isEqualTo("KOREAN");
     }
 }
