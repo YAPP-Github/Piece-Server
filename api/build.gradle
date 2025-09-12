@@ -7,6 +7,7 @@ version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -17,6 +18,7 @@ dependencies {
     implementation project(':core:sse')
     implementation project(':core:notification')
     implementation project(':core:log')
+    implementation project(':core:similarity')
 
     implementation project(':infra:s3')
     implementation project(':infra:redis')
@@ -29,7 +31,7 @@ dependencies {
     implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0')
     implementation('org.bouncycastle:bcpkix-jdk18on:1.76')
     implementation('com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1')
-    
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testCompileOnly 'org.projectlombok:lombok'
