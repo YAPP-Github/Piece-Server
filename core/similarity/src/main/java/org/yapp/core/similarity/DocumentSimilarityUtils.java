@@ -20,6 +20,7 @@ public class DocumentSimilarityUtils {
     private static final SimilarityPipeline KOREAN_TF_COSINE_PIPELINE = createKoreanTfCosinePipeline();
     private static final SimilarityPipeline KOREAN_TFIDF_COSINE_PIPELINE = createKoreanTfIdfCosinePipeline();
     private static final SimilarityPipeline KOREAN_BM25_COSINE_PIPELINE = createKoreanBM25CosinePipeline();
+    private static final SimilarityPipeline DEFAULT_PIPELINE = KOREAN_TF_COSINE_PIPELINE;
 
     /**
      * 기본 한국어 유사도 계산 (한국어 전처리 + TF + Cosine 유사도)
@@ -29,7 +30,11 @@ public class DocumentSimilarityUtils {
      * @return 0.0 ~ 1.0 사이의 유사도 값
      */
     public static double calculateSimilarity(String text1, String text2) {
-        return calculateWithTfCosine(text1, text2);
+        return DEFAULT_PIPELINE.calculateSimilarity(text1, text2);
+    }
+
+    public static String getDefaultPipelineInfo() {
+        return DEFAULT_PIPELINE.getPipelineInfo();
     }
 
     public static double calculateWithTfCosine(String text1, String text2) {
