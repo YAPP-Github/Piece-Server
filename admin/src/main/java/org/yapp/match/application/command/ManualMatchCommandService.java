@@ -1,6 +1,5 @@
 package org.yapp.match.application.command;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +44,9 @@ public class ManualMatchCommandService {
             manualMatchHistory.checkMatched();
             User user1 = userRepository.getReferenceById(manualMatchHistory.getUser1Id());
             User user2 = userRepository.getReferenceById(manualMatchHistory.getUser2Id());
-            manualMatchRepository.save(new MatchInfo(LocalDate.now(), user1, user2, false));
+            manualMatchRepository.save(
+                new MatchInfo(manualMatchHistory.getDateTime().toLocalDate(),
+                    user1, user2, false));
         });
     }
 }
