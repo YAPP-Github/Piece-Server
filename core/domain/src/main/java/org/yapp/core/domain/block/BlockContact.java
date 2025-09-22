@@ -6,7 +6,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -28,22 +27,19 @@ import org.yapp.core.domain.user.User;
 @Table(name = "blocked_contacts",
     uniqueConstraints = {
         @UniqueConstraint(name = "unq_user_phone", columnNames = {"user_id", "phoneNumber"})
-    },
-    indexes = {
-        @Index(name = "idx_phone_number", columnList = "phoneNumber"),
     }
 )
 public class BlockContact extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
 
-  @Column(nullable = false)
-  private String phoneNumber;
+    @Column(nullable = false)
+    private String phoneNumber;
 }
