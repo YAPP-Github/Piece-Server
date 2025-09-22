@@ -9,6 +9,7 @@ import org.yapp.core.auth.AuthTokenGenerator;
 import org.yapp.core.auth.token.RefreshTokenService;
 import org.yapp.core.domain.user.RoleStatus;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.domain.user.UserPuzzleWallet;
 import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
@@ -38,7 +39,9 @@ public class OauthService {
         //이미 가입된 유저인지 확인하고 가입되어 있지 않으면 회원가입 처리
         Optional<User> userOptional = userRepository.findByOauthId(oauthId);
         if (userOptional.isEmpty()) {
+            UserPuzzleWallet newWallet = new UserPuzzleWallet();
             User newUser = User.builder().oauthId(oauthId).role(RoleStatus.NONE.getStatus())
+                .puzzleWallet(newWallet)
                 .build();
             User savedUser = userRepository.save(newUser);
             Long userId = savedUser.getId();

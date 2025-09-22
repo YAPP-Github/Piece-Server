@@ -39,3 +39,7 @@ out/
 *.env
 **/application-*.yml
 /infra/fcm/src/main/resources/firebasekey.json
+**/cursor/*
+**/.cursor/**
+piece.code-workspace
+**/*.json

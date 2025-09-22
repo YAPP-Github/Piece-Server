@@ -29,6 +29,9 @@ include 'core:log'
 findProject(':core:log')?.name = 'log'
 include 'infra:discord'
 findProject(':infra:discord')?.name = 'discord'
+include 'infra:billing'
+findProject(':infra:billing')?.name = 'billing'
 include 'infra:qdrant'
 findProject(':infra:qdrant')?.name = 'qdrant'
+
 

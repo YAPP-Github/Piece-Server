@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.yapp.core.domain.BaseEntity;
+import org.yapp.core.domain.common.vo.Puzzle;
 import org.yapp.core.domain.profile.Profile;
 
 @Table(name = "user_table")
@@ -24,40 +25,47 @@ import org.yapp.core.domain.profile.Profile;
 @NoArgsConstructor
 public class User extends BaseEntity {
 
-  @Id
-  @Column(name = "user_id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(name = "oauth_id")
-  private String oauthId;
+    @Column(name = "oauth_id")
+    private String oauthId;
 
-  @Column(name = "name")
-  private String name;
+    @Column(name = "name")
+    private String name;
 
-  @Column(name = "phone")
-  private String phoneNumber;
+    @Column(name = "phone")
+    private String phoneNumber;
 
-  @Column(name = "role")
-  private String role;
+    @Column(name = "role")
+    private String role;
 
-  @OneToOne(cascade = {CascadeType.REMOVE})
-  @JoinColumn(name = "profile_id", unique = true)  // User가 profile_id를 FK로 가짐
-  private Profile profile;
+    @OneToOne(cascade = {CascadeType.REMOVE})
+    @JoinColumn(name = "profile_id", unique = true) // User가 profile_id를 FK로 가짐
+    private Profile profile;
 
-  @Column(name = "is_admin")
-  private Boolean isAdmin;
+    @Column(name = "is_admin")
+    private Boolean isAdmin;
 
-  public void initializePhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
+    @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "puzzle_wallet_id", unique = true)
+    private UserPuzzleWallet puzzleWallet;
 
-  public void setProfile(Profile profile) {
-    this.profile = profile;
-  }
+    public void initializePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-  public void updateUserRole(String role) {
-    this.role = role;
-  }
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public void updateUserRole(String role) {
+        this.role = role;
+    }
+
+    public void addPuzzle(Puzzle puzzle) {
+        this.puzzleWallet.addPuzzle(puzzle);
+    }
 }
-
