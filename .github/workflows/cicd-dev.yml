@@ -30,11 +30,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: make API application-secret.yml
+      - name: make API application-dev.yml
         run: |
           cd ./api/src/main/resources
-          touch ./application-secret.yml 
-          echo "${{ secrets.API_DEV_YML }}" > ./application-secret.yml
+          touch ./application-dev.yml 
+          echo "${{ secrets.API_DEV_YML }}" > ./application-dev.yml
         shell: bash
 
       - name: make firebasekey.json with base64 decoding
@@ -81,14 +81,14 @@ jobs:
             sudo docker stop piece-api-dev || true
             sudo docker rm piece-api-dev || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }}
-            sudo docker run -d --name piece-api-dev -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }}
+            sudo docker run -e "SPRING_PROFILES_ACTIVE=dev" -d --name piece-api-dev -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-api-dev:${{ env.IMAGE_TAG }}
             sudo docker image prune -f
 
-      - name: make ADMIN application-secret.yml
+      - name: make ADMIN application-dev.yml
         run: |
           cd ./admin/src/main/resources
-          touch ./application-secret.yml 
-          echo "${{ secrets.ADMIN_DEV_YML }}" > ./application-secret.yml
+          touch ./application-dev.yml 
+          echo "${{ secrets.ADMIN_DEV_YML }}" > ./application-dev.yml
         shell: bash
 
       - name: Build ADMIN with Gradle
@@ -115,5 +115,5 @@ jobs:
             sudo docker stop piece-admin-dev || true
             sudo docker rm piece-admin-dev || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
-            sudo docker run -d --name piece-admin-dev -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
+            sudo docker run -e "SPRING_PROFILES_ACTIVE=dev" -d --name piece-admin-dev -p 8081:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin-dev:${{ env.IMAGE_TAG }}
             sudo docker image prune -a -f
