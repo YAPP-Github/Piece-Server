@@ -48,11 +48,12 @@ jobs:
           echo "${{ secrets.FIREBASE_KEY }}" | base64 --decode > ./firebasekey.json
         shell: bash
 
-      - name: make ADMIN application-secret.yml
+
+      - name: make ADMIN application-prod.yml
         run: |
           cd ./admin/src/main/resources
-          touch ./application-secret.yml 
-          echo "${{ secrets.ADMIN_PROD_YML }}" > ./application-secret.yml
+          touch ./application-prod.yml 
+          echo "${{ secrets.ADMIN_PROD_YML }}" > ./application-prod.yml
         shell: bash
 
       - name: Build ADMIN with Gradle
@@ -83,5 +84,5 @@ jobs:
             sudo docker stop piece-admin-prod || true
             sudo docker rm piece-admin-prod || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/piece-admin-prod:${{ env.IMAGE_TAG }}
-            sudo docker run -d --name piece-admin-prod -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin-prod:${{ env.IMAGE_TAG }}
+            sudo docker run -e "SPRING_PROFILES_ACTIVE=prod" -d --name piece-admin-prod -p 8080:8080 --network piece-nw ${{ secrets.DOCKER_USERNAME }}/piece-admin-prod:${{ env.IMAGE_TAG }}
             sudo docker image prune -a -f

@@ -45,11 +45,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: make application-secret.yml
+      - name: make application-prod.yml
         run: |
           cd ./api/src/main/resources
-          touch ./application-secret.yml
-          echo "${{ secrets.API_PROD_YML }}" > ./application-secret.yml
+          touch ./application-prod.yml
+          echo "${{ secrets.API_PROD_YML }}" > ./application-prod.yml
         shell: bash
 
       - name: make firebasekey.json with base64 decoding
@@ -137,7 +137,7 @@ jobs:
             sudo docker stop ${NEW_CONTAINER_NAME} || true
             sudo docker rm ${NEW_CONTAINER_NAME} || true
             
-            sudo docker run -d --name ${NEW_CONTAINER_NAME} -p ${NEW_PORT}:8080 --network piece-nw \
+            sudo docker run -e "SPRING_PROFILES_ACTIVE=prod" -d --name ${NEW_CONTAINER_NAME} -p ${NEW_PORT}:8080 --network piece-nw \
               --stop-timeout 30 \
               --log-driver=awslogs \
               --log-opt awslogs-group=piece/prod/log \
