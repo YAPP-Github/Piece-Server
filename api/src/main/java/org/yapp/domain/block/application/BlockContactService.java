@@ -2,7 +2,6 @@ package org.yapp.domain.block.application;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,6 +13,7 @@ import org.yapp.core.domain.user.User;
 import org.yapp.domain.block.application.dto.BlockContactCreateDto;
 import org.yapp.domain.block.dao.BlockContactRepository;
 import org.yapp.domain.setting.application.BlockContactSyncTimeService;
+import org.yapp.global.util.PhoneNumberDecoder;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +27,12 @@ public class BlockContactService {
     public void blockPhoneNumbers(BlockContactCreateDto blockContactCreateDto) {
         Long userId = blockContactCreateDto.userId();
         List<String> phoneNumberList = blockContactCreateDto.phoneNumbers();
-        Set<String> phoneNumbers = new HashSet<>(phoneNumberList);
+
+        // 핸드폰 번호 디코딩 처리 (iOS Base64 인코딩 대응)
+        Set<String> decodedPhoneNumbers = phoneNumberList.stream()
+            .map(PhoneNumberDecoder::decodeIfBase64)
+            .collect(Collectors.toSet());
+
         List<BlockContact> newBlockContacts = new ArrayList<>();
         List<String> newPhoneNumbers = new ArrayList<>();
 
@@ -36,7 +41,7 @@ public class BlockContactService {
             .map(BlockContact::getPhoneNumber)
             .collect(Collectors.toSet());
 
-        phoneNumbers.stream()
+        decodedPhoneNumbers.stream()
             .filter(phoneNumber -> !blockedPhoneNumbers.contains(phoneNumber))
             .forEach(phoneNumber -> {
                 BlockContact blockContact = BlockContact.builder()
@@ -58,6 +63,8 @@ public class BlockContactService {
     }
 
     public boolean checkIfUserBlockedPhoneNumber(Long userId, String phoneNumber) {
-        return blockContactRepository.existsByUser_IdAndPhoneNumber(userId, phoneNumber);
+        // 조회 시에도 디코딩 처리
+        String decodedPhoneNumber = PhoneNumberDecoder.decodeIfBase64(phoneNumber);
+        return blockContactRepository.existsByUser_IdAndPhoneNumber(userId, decodedPhoneNumber);
     }
 }
