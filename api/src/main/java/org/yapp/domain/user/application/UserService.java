@@ -186,4 +186,10 @@ public class UserService {
         User user = getUserById(userId);
         return user.getPuzzleWallet() != null ? user.getPuzzleWallet().getPuzzleCount() : 0L;
     }
+
+    @Transactional(readOnly = true)
+    public boolean checkUserHasAdminFlag(Long adminUserId) {
+        User user = this.getUserById(adminUserId);
+        return Boolean.TRUE.equals(user.getIsAdmin());
+    }
 }
