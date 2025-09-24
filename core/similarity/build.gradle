@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'application'
+}
+
+application {
+    mainClass = 'org.yapp.core.similarity.DocumentSimilarityUtils'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Komoran 형태소 분석기
+    api('com.github.shin285:KOMORAN:3.3.9')
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 로깅
+    implementation 'org.slf4j:slf4j-api'
+
+    // 테스트
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'ch.qos.logback:logback-classic'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
