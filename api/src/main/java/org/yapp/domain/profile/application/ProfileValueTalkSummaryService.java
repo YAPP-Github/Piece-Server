@@ -2,17 +2,19 @@ package org.yapp.domain.profile.application;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yapp.core.domain.profile.Profile;
 import org.yapp.core.domain.profile.ProfileValueTalk;
+import org.yapp.core.domain.profile.event.ProfileTalkSimilarityAnalyzedEvent;
 import org.yapp.core.domain.user.User;
+import org.yapp.core.similarity.DocumentSimilarityUtils;
 import org.yapp.core.sse.SsePersonalService;
 import org.yapp.core.sse.dto.EventType;
 import org.yapp.core.sse.dto.SsePayload;
@@ -33,6 +35,9 @@ public class ProfileValueTalkSummaryService {
     private final SsePersonalService ssePersonalService;
     private final ProfileValueTalkService profileValueTalkService;
     private final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
+
+    private static final double SIMILARITY_THRESHOLD = 0.3;
 
     private static final String SYSTEM_PROMPT = """
             당신은 사용자가 작성한 자기소개/가치관 관련 글을 바탕으로, 소개팅 앱 프로필에 어울리는 문장을 작성하는 역할입니다.
@@ -135,21 +140,50 @@ public class ProfileValueTalkSummaryService {
                     .map(ProfileValueTalkAnswerDto::answer)
                     .orElse(null);
 
-                // 변경된 경우에만 요약
-                if (newAnswer != null && !Objects.equals(currentAnswer, newAnswer)) {
-                    return summarizationService.summarize(SYSTEM_PROMPT, newAnswer + TEXT_CONDITION)
-                        .map(summarizedAnswer -> {
-                            summarizedAnswer = summarizedAnswer.replaceAll("[\"']", "");
-                            summarizedAnswer = summarizedAnswer.substring(0,
-                                Math.min(summarizedAnswer.length(), 50));
+                // 텍스트 변경이 있는 경우 유사도 계산
+                if (newAnswer != null && !newAnswer.equals(currentAnswer)) {
+                    double similarity = DocumentSimilarityUtils.calculateSimilarity(
+                        currentAnswer, newAnswer);
 
-                            sentSummaryResponse(userId, profileValueTalk.getId(), summarizedAnswer);
-                            return new ProfileValueTalkSummaryResponse(profileValueTalk.getId(),
-                                summarizedAnswer);
-                        });
+                    String similarityPipelineInfo = DocumentSimilarityUtils.getDefaultPipelineInfo();
+                    boolean isSignificantChange = similarity < SIMILARITY_THRESHOLD;
+
+                    // 유의미한 변경이 있는 경우에만 요약 실행
+                    if (isSignificantChange) {
+                        return summarizationService.summarize(SYSTEM_PROMPT,
+                                newAnswer + TEXT_CONDITION)
+                            .map(summarizedAnswer -> {
+                                summarizedAnswer = summarizedAnswer.replaceAll("[\"']", "");
+                                summarizedAnswer = summarizedAnswer.substring(0,
+                                    Math.min(summarizedAnswer.length(), 50));
+
+                                // 요약 완료 후 유사도 계산 및 이벤트 발행
+                                String currentSummary = profileValueTalk.getSummary();
+                                double summarySimilarity = DocumentSimilarityUtils.calculateSimilarity(
+                                    currentSummary, summarizedAnswer);
+
+                                eventPublisher.publishEvent(new ProfileTalkSimilarityAnalyzedEvent(
+                                    userId, profileValueTalk.getId(), currentAnswer, newAnswer,
+                                    similarity, currentSummary, summarizedAnswer, summarySimilarity,
+                                    similarityPipelineInfo, true
+                                ));
+
+                                sentSummaryResponse(userId, profileValueTalk.getId(),
+                                    summarizedAnswer);
+                                return new ProfileValueTalkSummaryResponse(profileValueTalk.getId(),
+                                    summarizedAnswer);
+                            });
+                    } else {
+                        eventPublisher.publishEvent(new ProfileTalkSimilarityAnalyzedEvent(
+                            userId, profileValueTalk.getId(), currentAnswer, newAnswer,
+                            similarity, profileValueTalk.getSummary(),
+                            profileValueTalk.getSummary(),
+                            1.0, similarityPipelineInfo, false
+                        ));
+                    }
                 }
 
-                // 변경되지 않은 경우 기존 summary 사용
+                // 변경이 없거나 유의미하지 않은 변경인 경우 기존 summary 사용
                 sentSummaryResponse(userId, profileValueTalk.getId(),
                     profileValueTalk.getSummary());
                 return Mono.just(new ProfileValueTalkSummaryResponse(
