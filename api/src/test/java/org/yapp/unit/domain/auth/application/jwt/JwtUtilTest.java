@@ -1,4 +1,4 @@
-package org.yapp.domain.auth.application.jwt;
+package org.yapp.unit.domain.auth.application.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
