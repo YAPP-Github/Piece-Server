@@ -1,4 +1,4 @@
-package org.yapp.domain.payment.application.command;
+package org.yapp.integration.domain.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +27,7 @@ import org.yapp.core.domain.product.CashProduct;
 import org.yapp.core.domain.user.User;
 import org.yapp.core.domain.user.UserPuzzleWallet;
 import org.yapp.domain.cashProduct.dao.CashProductRepository;
+import org.yapp.domain.payment.application.command.InAppPurchaseRewardService;
 import org.yapp.domain.payment.dao.InAppPaymentRepository;
 import org.yapp.domain.user.dao.UserRepository;
 import org.yapp.infra.billing.common.VerificationResult;

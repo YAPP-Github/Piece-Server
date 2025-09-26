@@ -1,4 +1,4 @@
-package org.yapp.global.util;
+package org.yapp.unit.global.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,6 +6,7 @@ import java.util.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.yapp.global.util.PhoneNumberDecoder;
 
 @Slf4j
 class PhoneNumberDecoderTest {
@@ -60,7 +61,7 @@ class PhoneNumberDecoderTest {
             .encodeToString(originalPhoneNumber.getBytes());
 
         // When
-        String result = PhoneNumberDecoder.decodeIfBase64("MDEwNDcxMzA1OTg=");
+        String result = PhoneNumberDecoder.decodeIfBase64(base64EncodedPhoneNumber);
 
         // Then
         assertThat(result).isEqualTo(originalPhoneNumber);
