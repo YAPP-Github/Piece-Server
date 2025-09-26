@@ -30,7 +30,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Unit Tests with Gradle
-        run: ./gradlew --info test --tests "*unit*"
+        run: ./gradlew --info :api:test --tests "org.yapp.unit.*"
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
