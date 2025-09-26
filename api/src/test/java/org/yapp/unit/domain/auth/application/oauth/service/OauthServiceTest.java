@@ -1,4 +1,4 @@
-package org.yapp.domain.auth.application.oauth.service;
+package org.yapp.unit.domain.auth.application.oauth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,6 +21,7 @@ import org.yapp.core.auth.token.RefreshTokenService;
 import org.yapp.core.domain.user.User;
 import org.yapp.domain.auth.application.oauth.OauthProvider;
 import org.yapp.domain.auth.application.oauth.OauthProviderResolver;
+import org.yapp.domain.auth.application.oauth.service.OauthService;
 import org.yapp.domain.auth.presentation.dto.request.OauthLoginRequest;
 import org.yapp.domain.auth.presentation.dto.response.OauthLoginResponse;
 import org.yapp.domain.setting.application.SettingService;
