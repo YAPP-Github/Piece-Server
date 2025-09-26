@@ -60,7 +60,7 @@ class PhoneNumberDecoderTest {
             .encodeToString(originalPhoneNumber.getBytes());
 
         // When
-        String result = PhoneNumberDecoder.decodeIfBase64("MDEwNDcxMzA1OTg=");
+        String result = PhoneNumberDecoder.decodeIfBase64(base64EncodedPhoneNumber);
 
         // Then
         assertThat(result).isEqualTo(originalPhoneNumber);
